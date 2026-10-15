@@ -1696,12 +1696,36 @@
   <main class="main-panel">
   <!-- LEFT SIDEBAR: Search & Scrollable List -->
   <div class="panel-col" style="background: var(--navy-2); border-radius: 8px; border: 1px solid var(--border-dim); display: flex; flex-direction: column;">
-    <div style="padding: 16px; border-bottom: 1px solid var(--border-dim); display: flex; gap: 8px;">
-      <input type="text" id="tournament-search" onkeyup="window.filterTournaments()" placeholder="Search events, locations, or winners..." style="flex: 1; padding: 8px 12px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif;">
-      <!-- Moved Add Event Button Here -->
-      <button class="btn-action" onclick="document.getElementById('admin-modal').classList.add('open')" style="background: var(--brand-main); color: var(--navy); padding: 8px 12px;" title="Add Tournament">
-        Add Event
-      </button>
+    
+    <!-- Multi-field Filters Container -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border-dim); display: flex; flex-direction: column; gap: 12px;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: var(--text-mid); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Match Filters</span>
+        <button class="btn-action" onclick="document.getElementById('admin-modal').classList.add('open')" style="background: var(--brand-main); color: var(--navy); padding: 6px 12px; font-size: 13px;" title="Add Tournament">
+          <i class="ti ti-plus"></i> Add Event
+        </button>
+      </div>
+      
+      <!-- Filter Inputs Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <input type="text" id="filter-event" onkeyup="window.filterTournaments()" placeholder="Event Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-location" onkeyup="window.filterTournaments()" placeholder="Location..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-winner" onkeyup="window.filterTournaments()" placeholder="Winner Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-deck" onkeyup="window.filterTournaments()" placeholder="Deck / Oshi..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <div style="grid-column: span 2; display: flex; gap: 8px;">
+          <input type="date" id="filter-date" onchange="window.filterTournaments()" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+          
+          <!-- Clear Filters Button -->
+          <button onclick="window.clearFilters()" style="background: rgba(255,82,82,0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: 'nunito', sans-serif; font-weight: 700; font-size: 13px;" onmouseover="this.style.background='rgba(255,82,82,0.2)'" onmouseout="this.style.background='rgba(255,82,82,0.1)'" title="Clear Filters">
+            <i class="ti ti-filter-off"></i>
+          </button>
+        </div>
+      </div>
     </div>
     <div id="tournament-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
       <!-- Javascript will inject list items here -->
@@ -2119,24 +2143,31 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
     }
   }
 
-  // RESTORED: Sidebar List Renderer
-  window.renderTournamentList = function(searchTerm = "") {
+  // RESTORED & UPGRADED: Sidebar List Renderer with Multi-Filters
+  window.renderTournamentList = function(filters = {}) {
     const listContainer = document.getElementById("tournament-list");
     if (!listContainer) return;
     listContainer.innerHTML = "";
     
-    const lowerTerm = searchTerm.toLowerCase();
-    
-    // Filter the history based on the search box
+    // Filter the history based on multiple fields (AND logic)
     const filtered = tournamentHistory.filter(event => {
-      const eName = event.eventName ? event.eventName.toLowerCase() : "";
-      const wName = event.winner && event.winner.name ? event.winner.name.toLowerCase() : "";
-      const loc = event.location ? event.location.toLowerCase() : "";
-      return eName.includes(lowerTerm) || wName.includes(lowerTerm) || loc.includes(lowerTerm);
+      const eName = (event.eventName || "").toLowerCase();
+      const wName = (event.winner?.name || "").toLowerCase();
+      const loc = (event.location || "").toLowerCase();
+      const dName = (event.winner?.deckName || "").toLowerCase();
+      const eDate = event.date || "";
+
+      if (filters.event && !eName.includes(filters.event)) return false;
+      if (filters.location && !loc.includes(filters.location)) return false;
+      if (filters.winner && !wName.includes(filters.winner)) return false;
+      if (filters.deck && !dName.includes(filters.deck)) return false;
+      if (filters.date && eDate !== filters.date) return false;
+
+      return true;
     });
 
     if (filtered.length === 0) {
-      listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 14px;">No matches found.</div>`;
+      listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 14px;">No matches found matching criteria.</div>`;
       return;
     }
 
@@ -2161,6 +2192,45 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
       `;
       listContainer.appendChild(div);
     });
+  };
+
+  // MULTI-FILTER TRIGGER
+  window.filterTournaments = function() {
+    // Safely fetch values to prevent errors during initial page load
+    const fEvent = document.getElementById("filter-event") ? document.getElementById("filter-event").value.toLowerCase() : "";
+    const fLocation = document.getElementById("filter-location") ? document.getElementById("filter-location").value.toLowerCase() : "";
+    const fWinner = document.getElementById("filter-winner") ? document.getElementById("filter-winner").value.toLowerCase() : "";
+    const fDeck = document.getElementById("filter-deck") ? document.getElementById("filter-deck").value.toLowerCase() : "";
+    const fDate = document.getElementById("filter-date") ? document.getElementById("filter-date").value : "";
+
+    const filters = {
+      event: fEvent,
+      location: fLocation,
+      winner: fWinner,
+      deck: fDeck,
+      date: fDate
+    };
+    
+    window.renderTournamentList(filters);
+  };
+
+  // CLEAR FILTERS BUTTON ACTION
+  window.clearFilters = function() {
+    if(document.getElementById("filter-event")) document.getElementById("filter-event").value = "";
+    if(document.getElementById("filter-location")) document.getElementById("filter-location").value = "";
+    if(document.getElementById("filter-winner")) document.getElementById("filter-winner").value = "";
+    if(document.getElementById("filter-deck")) document.getElementById("filter-deck").value = "";
+    if(document.getElementById("filter-date")) document.getElementById("filter-date").value = "";
+    window.filterTournaments();
+  };
+
+  // CLEANED UP: Update active tournament highlight
+  window.changeTournament = function(eventId) {
+    activeTournament = tournamentHistory.find(t => t.id === eventId);
+    if (activeTournament) {
+      window.filterTournaments(); // Re-trigger the filter to re-render the list with the correct highlight
+      window.renderTournamentData(); 
+    }
   };
 
   window.renderTournamentData = function() {
@@ -2392,23 +2462,7 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
       }
     }
   }
-  
 
-  window.filterTournaments = function() {
-    const term = document.getElementById("tournament-search").value;
-    window.renderTournamentList(term);
-  };
-
-  // Update changeTournament to re-render the list so the active highlight moves
-  window.changeTournament = function(eventId) {
-    activeTournament = tournamentHistory.find(t => t.id === eventId);
-    if (activeTournament) {
-      const term = document.getElementById("tournament-search").value;
-      window.renderTournamentList(term); 
-      window.renderTournamentData(); // <-- Added 'window.' here
-    }
-  };
-  
   // Helper function to neutralize malicious HTML tags
   function escapeHTML(str) {
     if (!str) return "";
@@ -2606,6 +2660,18 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
   };
 
   window.generateTournament = async function() {
+    if (!auth.currentUser) {
+      const email = prompt("Admin Email required to add an event:");
+      if (!email) return;
+      const password = prompt("Admin Password:"); 
+      if (!password) return;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        console.error("Auth error:", error);
+        return alert("Access Denied: Incorrect email or password.");
+      }
+    }
     const eventName = document.getElementById("add-event-name").value;
     const date = document.getElementById("add-date").value;
     const location = document.getElementById("add-location").value || "Unknown Location"; 
