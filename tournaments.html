@@ -2660,12 +2660,14 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
 
       saveButton.innerHTML = "Saving to Database... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
 
-      // 2. Save the Tournament Data to Firestore
+      // 2. Save the Tournament Data to Firestore (UPDATED WITH MISSING FIELDS)
       const newEvent = {
         eventName: eventName,
         date: date,
         location: location,
         players: parseInt(players),
+        themeColor: themeColor,
+        metaBreakdown: metaBreakdown,
         winner: { 
             name: winnerName, 
             deckName: deckName, 
@@ -2689,6 +2691,8 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
       document.getElementById("add-players").value = "";
       document.getElementById("add-deck-name").value = "";
       document.getElementById("add-deck-code").value = "";
+      document.getElementById("add-meta-breakdown").value = "";
+      document.getElementById("add-theme-color").value = "blue";
       fileInput.value = ""; 
     } catch (error) {
       console.error("Error writing document: ", error);
