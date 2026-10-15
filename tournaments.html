@@ -1696,17 +1696,37 @@
   <main class="main-panel">
   <!-- LEFT SIDEBAR: Search & Scrollable List -->
   <div class="panel-col" style="background: var(--navy-2); border-radius: 8px; border: 1px solid var(--border-dim); display: flex; flex-direction: column;">
-    <div style="padding: 16px; border-bottom: 1px solid var(--border-dim); display: flex; gap: 8px;">
-      <input type="text" id="tournament-search" onkeyup="window.filterTournaments()" placeholder="Search events, locations, or winners..." style="flex: 1; padding: 8px 12px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif;">
-      <!-- Moved Add Event Button Here -->
-      <button class="btn-action" onclick="document.getElementById('admin-modal').classList.add('open')" style="background: var(--brand-main); color: var(--navy); padding: 8px 12px;" title="Add Tournament">
-        Add Event
-      </button>
+    
+    <!-- Multi-field Filters Container -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border-dim); display: flex; flex-direction: column; gap: 12px;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: var(--text-mid); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Match Filters</span>
+        <button class="btn-action" onclick="document.getElementById('admin-modal').classList.add('open')" style="background: var(--brand-main); color: var(--navy); padding: 6px 12px; font-size: 13px;" title="Add Tournament">
+          <i class="ti ti-plus"></i> Add Event
+        </button>
+      </div>
+      
+      <!-- Filter Inputs Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <input type="text" id="filter-event" onkeyup="window.filterTournaments()" placeholder="Event Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-location" onkeyup="window.filterTournaments()" placeholder="Location..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-winner" onkeyup="window.filterTournaments()" placeholder="Winner Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <input type="text" id="filter-deck" onkeyup="window.filterTournaments()" placeholder="Deck / Oshi..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+        
+        <div style="grid-column: span 2; display: flex; gap: 8px;">
+          <input type="date" id="filter-date" onchange="window.filterTournaments()" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px;">
+          
+          <!-- Clear Filters Button -->
+          <button onclick="window.clearFilters()" style="background: rgba(255,82,82,0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: 'nunito', sans-serif; font-weight: 700; font-size: 13px;" onmouseover="this.style.background='rgba(255,82,82,0.2)'" onmouseout="this.style.background='rgba(255,82,82,0.1)'" title="Clear Filters">
+            <i class="ti ti-filter-off"></i>
+          </button>
+        </div>
+      </div>
     </div>
-    <div id="tournament-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
-      <!-- Javascript will inject list items here -->
-    </div>
-  </div>
 
   <!-- RIGHT PANEL: Tournament Details -->
   <div class="panel-col" style="background: var(--navy-2); border-radius: 8px; border: 1px solid var(--border-dim); display: flex; flex-direction: column; overflow: hidden;">
