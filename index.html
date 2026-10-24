@@ -1257,99 +1257,67 @@
           --angle: 360deg;
         }
       }
-      /* ── DYNAMIC HOLO-CYBER BACKGROUND ── */
+      /* ── PREMIUM HOLO-CYBER BACKGROUND ── */
       .holo-bg-container {
         position: fixed;
         inset: 0;
-        z-index: 0; /* Fixed the layer bug! */
+        z-index: 0;
         pointer-events: none;
         overflow: hidden;
+        /* Adds a subtle spotlight effect at the top */
+        background: radial-gradient(circle at 50% 0%, var(--navy-3) 0%, var(--navy) 70%);
       }
 
-      /* 1. The subtle tech grid - Brightness increased! */
+      /* 1. Animated Ambient Aurora / Nebula */
+      .holo-bg-aurora {
+        position: absolute;
+        inset: -20%;
+        background: 
+          radial-gradient(circle at 20% 30%, rgba(65, 195, 227, 0.15) 0%, transparent 40%),
+          radial-gradient(circle at 80% 70%, rgba(255, 94, 153, 0.12) 0%, transparent 40%),
+          radial-gradient(circle at 60% 20%, rgba(176, 114, 214, 0.1) 0%, transparent 40%);
+        filter: blur(60px);
+        animation: auroraSway 25s ease-in-out infinite alternate;
+      }
+      
+      @keyframes auroraSway {
+        0% { transform: scale(1) translate(0, 0) rotate(0deg); }
+        50% { transform: scale(1.1) translate(-2%, 4%) rotate(3deg); }
+        100% { transform: scale(1.05) translate(3%, -3%) rotate(-2deg); }
+      }
+
+      /* 2. Modern Dot Matrix Scan-grid */
       .holo-bg-grid {
         position: absolute;
         inset: 0;
-        background-image:
-          linear-gradient(rgba(65, 195, 227, 0.15) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(65, 195, 227, 0.15) 1px, transparent 1px);
-        background-size: 40px 40px;
-        -webkit-mask-image: radial-gradient(
-          circle at center,
-          black 40%,
-          transparent 100%
-        );
-        mask-image: radial-gradient(
-          circle at center,
-          black 40%,
-          transparent 100%
-        );
+        background-image: radial-gradient(rgba(65, 195, 227, 0.25) 1px, transparent 1px);
+        background-size: 24px 24px; /* Tighter, more high-tech grid */
+        -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+        mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
       }
 
-      /* 2. The official Hololive-style diagonal slash */
-      .holo-bg-slash {
+      /* 3. Sweeping Stage Ray (Conic Gradient) */
+      .holo-bg-ray {
         position: absolute;
-        inset: -50%;
-        background: linear-gradient(
-          135deg,
-          transparent 48%,
-          rgba(255, 255, 255, 0.03) 48%,
-          rgba(255, 255, 255, 0.03) 52%,
-          transparent 52%
+        top: -100%;
+        left: -100%;
+        width: 300%;
+        height: 300%;
+        background: conic-gradient(
+          from 180deg at 50% 50%, 
+          transparent 0deg, 
+          rgba(65, 195, 227, 0.06) 45deg, 
+          transparent 90deg, 
+          rgba(255, 94, 153, 0.04) 225deg, 
+          transparent 270deg
         );
+        animation: raySweep 40s linear infinite;
+        transform-origin: center;
       }
 
-      /* 3. The floating ambient glow orbs - Brightness increased! */
-      .holo-bg-glow {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.6;
-      }
-      .glow-cyan {
-        width: 70vw;
-        height: 70vw;
-        max-width: 600px;
-        max-height: 600px;
-        top: -10%;
-        left: -10%;
-        background: radial-gradient(
-          circle,
-          var(--brand-main) 0%,
-          transparent 60%
-        );
-        animation: floatCyan 22s infinite alternate ease-in-out;
-      }
-      .glow-pink {
-        width: 60vw;
-        height: 60vw;
-        max-width: 500px;
-        max-height: 500px;
-        bottom: -10%;
-        right: -10%;
-        background: radial-gradient(
-          circle,
-          var(--brand-pink) 0%,
-          transparent 60%
-        );
-        animation: floatPink 28s infinite alternate ease-in-out;
-      }
-
-      @keyframes floatCyan {
-        0% {
-          transform: translate(0, 0);
-        }
-        100% {
-          transform: translate(8vw, 8vh);
-        }
-      }
-      @keyframes floatPink {
-        0% {
-          transform: translate(0, 0);
-        }
-        100% {
-          transform: translate(-8vw, -8vh);
-        }
+      @keyframes raySweep {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
       /* ── FULL SCREEN LAYOUT TOGGLES ── */
       .main-panel.layout-left-full { grid-template-columns: 1fr !important; }
@@ -1431,11 +1399,10 @@
     </style>
   </head>
   <body>
-    <div class="holo-bg-container">
+<div class="holo-bg-container">
+      <div class="holo-bg-aurora"></div>
+      <div class="holo-bg-ray"></div>
       <div class="holo-bg-grid"></div>
-      <div class="holo-bg-slash"></div>
-      <div class="holo-bg-glow glow-cyan"></div>
-      <div class="holo-bg-glow glow-pink"></div>
     </div>
     <header class="topbar">
       <div class="topbar-left">
