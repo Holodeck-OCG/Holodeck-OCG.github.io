@@ -663,9 +663,11 @@
         flex-direction: column;
         gap: 8px;
         padding-right: 4px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;  
       }
       .tl-scroll-area::-webkit-scrollbar {
-        width: 4px;
+        display: none;
       }
       .tl-scroll-area::-webkit-scrollbar-thumb {
         background: var(--text-dim);
@@ -1455,17 +1457,6 @@
           </a>
         </nav>
       </div>
-
-      <div class="topbar-center">
-        <div class="search-bar hide-on-mobile">
-          <i class="ti ti-search"></i>
-          <input
-            type="search"
-            id="search-db-input"
-            placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
-          />
-        </div>
-      </div>
       <div class="topbar-right">
         <button class="btn-about-header" onclick="openAboutModal()">
           <i class="ti ti-info-circle"></i> About
@@ -1690,6 +1681,8 @@
                 "
                 >Premium:</span
               >
+              <div>
+      </div>
               <button class="chip" onclick="setChipFilter('_SR', this)">
                 SR
               </button>
@@ -1706,6 +1699,14 @@
                 SEC
               </button>
             </div>
+                    <div class="search-bar hide-on-mobile">
+          <i class="ti ti-search"></i>
+          <input
+            type="search"
+            id="search-db-input"
+            placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
+          />
+        </div>
           </div>
 
           <div class="card-grid" id="scanned-pool">
