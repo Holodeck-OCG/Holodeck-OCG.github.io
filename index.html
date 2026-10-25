@@ -66,7 +66,7 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        background: rgba(11, 17, 26, 0.95);
+        background:var(--navy);
         backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border-dim);
         display: flex;
@@ -1164,7 +1164,16 @@
 
         #current-deck {
           overflow: auto;
-          max-height: 50vh;
+          max-height: 80vh;
+          scrollbar-width: none;
+          -ms-overflow-style: none;  
+        }
+        #current-deck::-webkit-scrollbar {
+        display: none;
+        }
+        #current-deck::-webkit-scrollbar-thumb {
+        background: var(--text-dim);
+        border-radius: 2px;
         }
         .section-header {
           align-items: flex-start;
@@ -1399,6 +1408,57 @@
           margin-bottom: 4px;
         }
       }
+    /* ── ACCESSIBILITY & TAP TARGETS ── */
+.bookmark-btn, .btn-hide-overlay, .btn-alt-toggle, .btn-close-modal, .btn-action {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Apply tap target size to the burger button without overriding its display property */
+.burger-btn {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+}
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .card-face img, .list-thumb img, .list-full-img img {
+      background-color: var(--navy-4); /* Placeholder color before image loads */
+    }
+
+    /* ── SKELETON LOADER ── */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      width: 100%;
+      padding-right: 8px;
+    }
+    .skeleton-card {
+      aspect-ratio: 5/7;
+      background: linear-gradient(90deg, var(--navy-3) 25%, var(--navy-4) 50%, var(--navy-3) 75%);
+      background-size: 200% 100%;
+      border-radius: 8px;
+      border: 0.5px solid var(--border-dim);
+      animation: shimmer 1.5s infinite linear;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── PREFERS REDUCED MOTION ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
     </style>
   </head>
   <body>
@@ -1482,31 +1542,21 @@
                 >0</span
               >
             </h3>
-            <div class="header-actions">
-              <button class="btn-action" onclick="window.exportDecklist()">
-                <i class="ti ti-clipboard-text"></i> Copy
-              </button>
-              <button class="btn-action danger" onclick="window.clearAllBookmarks()">
-                <i class="ti ti-trash"></i> Clear
-              </button>
+              <div class="header-actions">
+                <button id="btn-copy-deck" class="btn-action" onclick="window.exportDecklist()">
+                  <i class="ti ti-clipboard-text"></i> <span>Copy</span>
+                </button>
+                <button class="btn-action danger" onclick="window.clearAllBookmarks()">
+                  <i class="ti ti-trash"></i> Clear
+                </button>
+                <button class="btn-action btn-max-left" onclick="toggleLayout('left')" title="Maximize Bookmarks" aria-label="Maximize Bookmarks">
+                  <i class="ti ti-arrows-maximize"></i>
+                </button>
+                <button class="btn-action btn-def-left" onclick="toggleLayout('default')" title="Default View" style="background: var(--brand-main); color: var(--navy);" aria-label="Default View">
+                  <i class="ti ti-layout-columns"></i>
+                </button>
+              </div>
 
-              <!-- 👉 NEW: Bookmark Fullscreen Toggles -->
-              <button class="btn-action btn-max-left" onclick="toggleLayout('left')" title="Maximize Bookmarks">
-                <i class="ti ti-arrows-maximize"></i>
-              </button>
-              <button class="btn-action btn-def-left" onclick="toggleLayout('default')" title="Default View" style="background: var(--brand-main); color: var(--navy);">
-                <i class="ti ti-layout-columns"></i>
-              </button>
-
-            </div>
-            <div class="search-bar hide-on-desktop">
-              <i class="ti ti-search"></i>
-              <input
-                type="search"
-                id="search-db-input2"
-                placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
-              />
-            </div>
           </div>
 
           <div class="card-grid list-view" id="current-deck"></div>
@@ -1519,15 +1569,9 @@
                 <h3 style="color: var(--text-bright)">
                   <i class="ti ti-database"></i> Database
                 </h3>
-                <span
-                  class="result-count"
-                  style="
-                    font-size: 15px;
-                    color: var(--text-dim);
-                    margin-top: 4px;
-                    display: block;
-                  "
-                >
+                <span class="result-count" style="font-size: 15px; color: var(--text-dim); margin-top: 4px; display: block;">
+                <b id="cardCount" style="color: var(--text-bright); font-size: 18px">Loading...</b> cards loaded
+                </span>
                   <b
                     id="cardCount"
                     style="color: var(--text-bright); font-size: 18px"
@@ -1708,16 +1752,25 @@
             placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
           />
         </div>
+                    <div class="search-bar hide-on-desktop">
+              <i class="ti ti-search"></i>
+              <input
+                type="search"
+                id="search-db-input2"
+                placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
+              />
+            </div>
           </div>
 
           <div class="card-grid" id="scanned-pool">
-            <div id="db-loading-state" class="db-loader-container">
-              <img
-                src="image_a69c0a.png"
-                class="holo-logo-loader"
-                alt="Loading..."
-              />
-              <div class="loader-text">Compiling Database...</div>
+            <div id="db-loading-state" class="skeleton-grid">
+              <!-- Generate 12 skeleton cards for visual placeholder -->
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div><div class="skeleton-card"></div>
             </div>
           </div>
         </div>
@@ -1729,120 +1782,42 @@
       class="about-overlay"
       onclick="closeAboutModal()"
     ></div>
-    <div id="about-modal" class="about-modal">
-      <div class="about-header">
+          <div id="about-modal" class="about-modal">
+            <div class="about-header">
         <h3>About hOCG DB</h3>
-        <button class="btn-close-modal" onclick="closeAboutModal()">
+        <button class="btn-close-modal" onclick="closeAboutModal()" aria-label="Close About">
           <i class="ti ti-x"></i>
         </button>
       </div>
       <div class="about-content">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-          "
-        >
-          <p style="margin: 0"><strong>Developed by:</strong> Siuspras</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <span class="app-version" style="background: var(--navy-4); color: var(--brand-main); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; border: 1px solid var(--border-mid); letter-spacing: 0.05em;"></span>
         </div>
 
-        <p style="margin-bottom: 16px; line-height: 1.8">
-          <strong>Contact & Feedback:</strong><br />
-          <i
-            class="ti ti-brand-discord"
-            style="color: #5865f2; font-size: 16px"
-          ></i>
-          Discord:
-          <span style="color: var(--text-bright); font-weight: 600"
-            >Siuspras</span
-          ><br />
-          <i
-            class="ti ti-mail"
-            style="color: var(--danger); font-size: 16px"
-          ></i>
-          Email:
-          <a
-            href="mailto:Holodecktcg@gmail.com"
-            style="
-              display: inline;
-              border: none;
-              margin: 0;
-              font-weight: 600;
-              color: var(--brand-main);
-            "
-            >Holodecktcg@gmail.com</a
-          >
+        <h4 style="color: var(--brand-main); margin-bottom: 8px;">Credits</h4>
+        <p style="margin-bottom: 16px;">
+          <strong>Developed by:</strong> Siuspras<br>
+          <strong>Translations:</strong> ogbajoj <a href="https://docs.google.com/spreadsheets/d/1IdaueY-Jw8JXjYLOhA9hUd2w0VRBao9Z1URJwmCWJ64/edit?pli=1&gid=975361685#gid=975361685" target="_blank" aria-label="View Translation Sheet"><i class="ti ti-external-link"></i></a><br>
+          <strong>Images:</strong> <a href="https://hololive-official-cardgame.com/" target="_blank">hololive-official-cardgame</a>
         </p>
 
-        <p>
-          <strong>Translations provided by:</strong> ogbajoj<br />
-          <a
-            href="https://docs.google.com/spreadsheets/d/1IdaueY-Jw8JXjYLOhA9hUd2w0VRBao9Z1URJwmCWJ64/edit?pli=1&gid=975361685#gid=975361685"
-            target="_blank"
-            ><i class="ti ti-external-link"></i> View Translation Sheet</a
-          >
-        </p>
-        <p>
-          <strong>Card Images sourced from:</strong>
-          hololive-official-cardgame<br />
-          <a href="https://hololive-official-cardgame.com/" target="_blank"
-            ><i class="ti ti-external-link"></i> Visit holocard
-            hololive-official-cardgame</a
-          >
+        <h4 style="color: var(--brand-main); margin-bottom: 8px;">Contact</h4>
+        <p style="margin-bottom: 16px; line-height: 1.8;">
+          <i class="ti ti-brand-discord" style="color: #5865f2; font-size: 16px"></i> Discord: <span style="color: var(--text-bright); font-weight: 600">Siuspras</span><br />
+          <i class="ti ti-mail" style="color: var(--danger); font-size: 16px"></i> Email: <a href="mailto:Holodecktcg@gmail.com" style="display: inline; border: none; margin: 0; font-weight: 600; color: var(--brand-main);">Holodecktcg@gmail.com</a>
         </p>
 
-        <hr style="border-color: var(--border-dim); margin: 20px 0" />
-
-        <div
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border-dim);
-          "
-        >
-          <span
-            style="font-weight: 700; color: var(--text-mid); font-size: 14px"
-            >Total Visitors</span
-          >
-          <span
-            id="visitor-count"
-            style="
-              font-weight: 800;
-              color: var(--brand-main);
-              font-size: 16px;
-              background: var(--navy-4);
-              padding: 2px 8px;
-              border-radius: 4px;
-              border: 0.5px solid var(--border-mid);
-            "
-            >...</span
-          >
+        <div style="display: flex; align-items: center; justify-content: space-between; margin: 20px 0; background: rgba(0, 0, 0, 0.2); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-dim);">
+          <span style="font-weight: 700; color: var(--text-mid); font-size: 14px">Total Visitors</span>
+          <span id="visitor-count" style="font-weight: 800; color: var(--brand-main); font-size: 16px; background: var(--navy-4); padding: 2px 8px; border-radius: 4px; border: 0.5px solid var(--border-mid);">...</span>
         </div>
 
-        <hr style="border-color: var(--border-dim); margin: 20px 0" />
-        <p
-          style="
-            font-size: 12px;
-            color: var(--text-dim);
-            margin: 0;
-            line-height: 1.4;
-          "
-        >
-          This is an unofficial fan-made application. Not affiliated with or
-          endorsed by COVER Corp. or Hololive Production. All intellectual
-          property belongs to their respective owners.
+        <!-- Muted Disclaimer -->
+        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4; padding-top: 12px; border-top: 1px solid var(--border-dim);">
+          This is an unofficial fan-made application. Not affiliated with or endorsed by COVER Corp. or Hololive Production. All intellectual property belongs to their respective owners.
         </p>
       </div>
     </div>
-
     <div
       id="sheet-overlay"
       class="sheet-overlay"
@@ -2518,15 +2493,15 @@
         
         // 👉 Includes the Alt-Art toggle button dynamically!
         const hasAltArts = window.cardVariants[baseId] && window.cardVariants[baseId].length > 1;
-        const altToggleHtml = hasAltArts ? `<button class="btn-alt-toggle" onclick="event.stopPropagation(); window.toggleAltArt(this, '${baseId}')" title="Switch Art"><i class="ti ti-refresh"></i></button>` : "";
+        const altToggleHtml = hasAltArts ? `<button class="btn-alt-toggle" aria-label="Switch Art" onclick="event.stopPropagation(); window.toggleAltArt(this, '${baseId}')" title="Switch Art"><i class="ti ti-refresh"></i></button>` : "";
 
         const { formattedTagsHtml, formattedSkillHtml, formattedArtsHtml } = formatSkillText(card);
         const isAltArt = card.card_id.match(/_(OUR|SEC|UR|HR|SR)$/i);
         const premiumClass = isAltArt ? "premium-alt-art" : "";
 
         let btnHtml = isSaved
-          ? `<button class="bookmark-btn saved" data-card-id="${card.card_id}" onclick="event.stopPropagation(); window.toggleBookmarkFromSheet('${card.card_id}')"><i class="ti ti-star-filled"></i></button>`
-          : `<button class="bookmark-btn unsaved" data-card-id="${card.card_id}" onclick="event.stopPropagation(); window.toggleBookmarkFromSheet('${card.card_id}')"><i class="ti ti-star"></i></button>`;
+          ? `<button class="bookmark-btn saved" aria-label="Remove Bookmark" data-card-id="${card.card_id}" onclick="event.stopPropagation(); window.toggleBookmarkFromSheet('${card.card_id}')"><i class="ti ti-star-filled"></i></button>`
+          : `<button class="bookmark-btn unsaved" aria-label="Add Bookmark" data-card-id="${card.card_id}" onclick="event.stopPropagation(); window.toggleBookmarkFromSheet('${card.card_id}')"><i class="ti ti-star"></i></button>`;
 
         let hpHtml = card.hp ? `<div class="tl-hp">HP: ${card.hp}</div>` : "";
 
@@ -3009,11 +2984,7 @@
           const level = card.bloom_level ? `[${card.bloom_level}] ` : "";
           const { skillText, artsText, isLimited } = formatSkillText(card);
           exportText += `Code: ${card.card_id}\nName: ${level}${card.card_name}\n`;
-          if (
-            skillText !== "None" &&
-            skillText !== "No skills listed." &&
-            skillText.trim() !== ""
-          ) {
+          if (skillText !== "None" && skillText !== "No skills listed." && skillText.trim() !== "") {
             let limitedLabel = isLimited ? "[LIMITED] " : "";
             exportText += `Skill:\n${limitedLabel}${skillText.replace(/<br>/g, "\n")}\n`;
           }
@@ -3021,9 +2992,22 @@
             exportText += `Arts:\n${artsText.replace("Arts:", "").trim().replace(/<br>/g, "\n")}\n`;
           exportText += `\n`;
         });
-        navigator.clipboard
-          .writeText(exportText.trim())
-          .then(() => alert("Bookmark list copied to your clipboard!"));
+        
+        navigator.clipboard.writeText(exportText.trim()).then(() => {
+          // Visual Feedback
+          const copyBtn = document.getElementById("btn-copy-deck");
+          if(copyBtn) {
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = `<i class="ti ti-check"></i> <span>Copied!</span>`;
+            copyBtn.style.color = "var(--brand-main)";
+            copyBtn.style.borderColor = "var(--brand-main)";
+            setTimeout(() => {
+              copyBtn.innerHTML = originalHTML;
+              copyBtn.style.color = "";
+              copyBtn.style.borderColor = "";
+            }, 2000);
+          }
+        });
       };
 
       window.clearAllBookmarks = function () {
@@ -3069,28 +3053,17 @@
         if (!counterEl) return;
 
         try {
-          const response = await fetch(
-            "https://api.counterapi.dev/v1/hocg_db_siuspras/visits_2/up",
-          );
+          const response = await fetch("https://api.counterapi.dev/v1/hocg_db_siuspras/visits_2/up");
           if (response.ok) {
             const data = await response.json();
             let count = data.count;
-            let displayStr = "";
-
-            if (count < 10) {
-              displayStr = count.toString();
-            } else {
-              const magnitude = Math.pow(10, Math.floor(Math.log10(count)));
-              const rounded = Math.floor(count / magnitude) * magnitude;
-              displayStr = rounded.toLocaleString() + "+";
-            }
-
+            let displayStr = count < 10 ? count.toString() : (Math.floor(count / Math.pow(10, Math.floor(Math.log10(count)))) * Math.pow(10, Math.floor(Math.log10(count)))).toLocaleString() + "+";
             counterEl.innerText = displayStr;
           } else {
-            counterEl.innerText = "Online";
+            counterEl.parentElement.style.display = "none"; // Hide row if fails
           }
         } catch (error) {
-          counterEl.innerText = "1";
+          counterEl.parentElement.style.display = "none"; // Hide row if fails
         }
       }
 
