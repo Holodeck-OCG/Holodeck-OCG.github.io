@@ -15,36 +15,8 @@
       href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
     />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
+    <link rel="stylesheet" href="theme.css">
     <style>
-      :root {
-        /* ── CARD EFFECT COLORS (DO NOT CHANGE) ── */
-        --holo-teal: #1d9e75; /* Gift */
-        --holo-rose: #ff2c2c; /* Collab */
-        --holo-romance: #ff2c72; /* Arts */
-        --holo-gold: #ba7517; /* Saved Stars */
-        --holo-blue: #378add; /* Bloom */
-        --holo-orange: #ef9f27; /* Auto / Cheer */
-        --danger: #ff5252;
-
-        /* ── HOLOLIVE BRAND UI THEME ── */
-        --brand-main: #41c3e3; /* Hololive Cyan */
-        --brand-hover: #00a6d6; /* Hololive Deep Blue */
-        --brand-pink: #ff5e99; /* Hololive Pink Accent */
-
-        /* ── DEEP NAVY LAYOUT ── */
-        --navy: #0b111a;
-        --navy-2: #15202b;
-        --navy-3: #1a2636;
-        --navy-4: #243447;
-
-        --border-dim: rgba(65, 195, 227, 0.15);
-        --border-mid: rgba(65, 195, 227, 0.35);
-
-        --text-bright: #f8fafc;
-        --text-mid: #94a3b8;
-        --text-dim: #475569;
-        --radius: 12px;
-      }
       *,
       *::before,
       *::after {
@@ -87,8 +59,10 @@
         display: flex;
         justify-content: center;
       }
-      .topbar-right {
+          .topbar-right {
         flex: 1;
+        display: flex;
+        justify-content: flex-end;
       }
 
       .logo {
@@ -895,77 +869,7 @@
       <div class="holo-bg-glow glow-cyan"></div>
       <div class="holo-bg-glow glow-pink"></div>
     </div>
-    <header class="topbar">
-      <div class="topbar-left">
-        
-        <!-- 👉 NEW: Wrapper to keep the logo and burger button on the same line on mobile -->
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <a href="index.html" class="brand-logo">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="38" height="38" class="logo-icon">
-    <!-- Card Base Rotated 12 Degrees -->
-    <g transform="rotate(12 32 32)">
-      <!-- Outer Card with Cyan Border -->
-      <rect x="14" y="8" width="36" height="48" rx="4" fill="#FFFFFF" stroke="#41C3E3" stroke-width="3"/>
-      <!-- Cyan Diagonal Split -->
-      <path d="M15.5 9.5 h 33 a 2.5 2.5 0 0 1 2.5 2.5 v 24 L 15.5 16 z" fill="#41C3E3"/>
-      <!-- White Play Button -->
-      <polygon points="26,22 42,32 26,42" fill="#FFFFFF" stroke="#41C3E3" stroke-width="2" stroke-linejoin="round" />
-    </g>
-  </svg>
-  
-  <span class="brand-text">
-    <span class="text-white">Holo</span><span class="text-cyan">Deck</span>
-  </span>
-</a>
-            
-            <button class="burger-btn" onclick="document.getElementById('mobile-tabs').classList.toggle('open')">
-                <i class="ti ti-menu-2"></i>
-            </button>
-        </div>
-
-        <!-- 👉 NEW: Added id="mobile-tabs" -->
-        <nav class="tabs" id="mobile-tabs">
-          <a href="index.html" class="tab">
-            <span class="tab-title">Modern Library</span>
-          </a>
-          <a href="deckbuilder.html" class="tab">
-            <span class="tab-title">Deck Builder</span>
-          </a>
-          <a href="card-library.html" class="tab active">
-            <span class="tab-title">Simple Library</span>
-          </a>
-          <div class="tab dropdown" onclick="this.classList.toggle('open')">
-            <span class="tab-title" style="display: flex; align-items: center; gap: 4px;">
-              Games <i class="ti ti-chevron-down" style="font-size: 14px;"></i>
-            </span>
-            <div class="dropdown-content">
-              <a href="quiz.html" class="dropdown-item">Endless Minigames</a>
-              <a href="daily.html" class="dropdown-item">Daily Gauntlet</a>
-            </div>
-          </div>
-            <a href="tournaments.html" class="tab">
-            <span class="tab-title">Winning Decks</span>
-          </a>
-        </nav>
-      </div>
-
-      <div class="topbar-center">
-        <div class="search-bar hide-on-mobile">
-          <i class="ti ti-search"></i>
-          <input
-            type="search"
-            id="search-db-input"
-            placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
-          />
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="btn-about-header" onclick="openAboutModal()">
-          <i class="ti ti-info-circle"></i> About
-        </button>
-      </div>
-    </header>
-
+    <div id="navbar-placeholder"></div>
     <div class="body-wrapper">
       <div class="main-wrapper">
         <div class="preview-panel">
@@ -998,6 +902,14 @@
         <div class="panel">
           <div class="deck-header">
             <h3>Master Database</h3>
+            <div class="search-bar hide-on-mobile">
+          <i class="ti ti-search"></i>
+          <input
+            type="search"
+            id="search-db-input"
+            placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
+          />
+        </div>
           </div>
           <div id="scanned-pool" class="card-list">
             <div class="empty-state">Loading database...</div>
@@ -1038,7 +950,7 @@
         >
           <p style="margin: 0"><strong>Developed by:</strong> Siuspras</p>
           <span class="app-version" style="background: var(--navy-4); color: var(--brand-main); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; border: 1px solid var(--border-mid); letter-spacing: 0.05em;"></span>
-          >
+
         </div>
 
         <!-- Contact Info -->
@@ -1993,5 +1905,44 @@
       src="//gc.zgo.at/count.js"
     ></script>
     <script src="version.js"></script>
+    <script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      // 1. Inject the navbar
+      document.getElementById('navbar-placeholder').innerHTML = data;
+      
+      // 2. Remove ALL hardcoded 'active' classes so nothing is stuck
+      document.querySelectorAll('#navbar-placeholder .active').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // 3. Get the exact full URL from your browser (e.g., http://127.0.0.1:5500/quiz.html)
+      const currentUrl = window.location.href.split('?')[0].split('#')[0]; // Ignores extra query/hash stuff
+      
+      // 4. Loop through EVERY link in the navbar to find the match
+      const allLinks = document.querySelectorAll('#navbar-placeholder a');
+      allLinks.forEach(link => {
+        
+        const linkUrl = link.href.split('?')[0].split('#')[0]; // The full absolute URL of the link
+        
+        if (linkUrl === currentUrl) {
+          // A. If it's a main tab, highlight it
+          if (link.classList.contains('tab')) {
+            link.classList.add('active');
+          } 
+          // B. If it's a dropdown item (like Quiz), highlight its parent tab ("Games")
+          else if (link.classList.contains('dropdown-item')) {
+            const dropdown = link.closest('.dropdown');
+            if (dropdown) {
+              const parentTab = dropdown.querySelector('.tab');
+              if (parentTab) parentTab.classList.add('active');
+            }
+          }
+        }
+      });
+    })
+    .catch(error => console.error('Error loading navbar:', error));
+</script>
   </body>
 </html>

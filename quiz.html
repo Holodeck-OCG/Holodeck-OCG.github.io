@@ -9,22 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
+    <link rel="stylesheet" href="theme.css">
     <style>
-        :root {
-            --brand-main: #41C3E3; 
-            --brand-hover: #00A6D6; 
-            --holo-teal: #1D9E75; 
-            --holo-orange: #EF9F27;
-            --danger: #FF5252;
-            --navy: #0B111A;
-            --navy-2: #15202B;
-            --navy-3: #1A2636;
-            --text-bright: #F8FAFC;
-            --text-mid: #94A3B8;
-            --text-dim: #475569;
-            --border-dim: rgba(65, 195, 227, 0.15);
-        }
-        
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: var(--navy); color: var(--text-bright); font-family: 'nunito', sans-serif; z-index: 10; position: relative;}
 
@@ -316,65 +302,7 @@
       <div class="holo-bg-glow glow-cyan"></div>
       <div class="holo-bg-glow glow-pink"></div>
   </div>
-<header class="topbar">
-      <div class="topbar-left">
-        
-        <!-- 👉 NEW: Wrapper to keep the logo and burger button on the same line on mobile -->
-        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <a href="index.html" class="brand-logo">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="38" height="38" class="logo-icon">
-    <!-- Card Base Rotated 12 Degrees -->
-    <g transform="rotate(12 32 32)">
-      <!-- Outer Card with Cyan Border -->
-      <rect x="14" y="8" width="36" height="48" rx="4" fill="#FFFFFF" stroke="#41C3E3" stroke-width="3"/>
-      <!-- Cyan Diagonal Split -->
-      <path d="M15.5 9.5 h 33 a 2.5 2.5 0 0 1 2.5 2.5 v 24 L 15.5 16 z" fill="#41C3E3"/>
-      <!-- White Play Button -->
-      <polygon points="26,22 42,32 26,42" fill="#FFFFFF" stroke="#41C3E3" stroke-width="2" stroke-linejoin="round" />
-    </g>
-  </svg>
-  
-  <span class="brand-text">
-    <span class="text-white">Holo</span><span class="text-cyan">Deck</span>
-  </span>
-</a>
-            
-            <button class="burger-btn" onclick="document.getElementById('mobile-tabs').classList.toggle('open')">
-                <i class="ti ti-menu-2"></i>
-            </button>
-        </div>
-
-        <!-- 👉 NEW: Added id="mobile-tabs" -->
-        <nav class="tabs" id="mobile-tabs">
-          <a href="index.html" class="tab">
-            <span class="tab-title">Modern Library</span>
-          </a>
-          <a href="deckbuilder.html" class="tab">
-            <span class="tab-title">Deck Builder</span>
-          </a>
-          <a href="card-library.html" class="tab">
-            <span class="tab-title">Simple Library</span>
-          </a>
-          <div class="tab dropdown active" onclick="this.classList.toggle('open')">
-            <span class="tab-title" style="display: flex; align-items: center; gap: 4px;">
-              Games <i class="ti ti-chevron-down" style="font-size: 14px;"></i>
-            </span>
-            <div class="dropdown-content">
-              <a href="quiz.html" class="dropdown-item">Endless Minigames</a>
-              <a href="daily.html" class="dropdown-item">Daily Gauntlet</a>
-            </div>
-          </div>
-            <a href="tournaments.html" class="tab">
-            <span class="tab-title">Winning Decks</span>
-          </a>
-        </nav>
-      </div>
-      <div class="topbar-right">
-        <button class="btn-about-header" onclick="openAboutModal()">
-          <i class="ti ti-info-circle"></i> About
-        </button>
-      </div>
-    </header>
+  <div id="navbar-placeholder"></div>
   <!-- ABOUT CREDITS MODAL -->
 <div id="about-overlay" class="about-overlay" onclick="closeAboutModal()"></div>
 <div id="about-modal" class="about-modal">
@@ -945,5 +873,41 @@
   window.getDoc = getDoc;
 </script>
 <script src="version.js"></script>
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      // 1. Inject the navbar
+      document.getElementById('navbar-placeholder').innerHTML = data;
+      
+      // 2. Get current page (e.g., "quiz.html")
+      const currentPath = window.location.pathname;
+      const currentPage = currentPath.split('/').pop() || 'index.html';
+      
+      // 3. REMOVE any hardcoded active classes so they don't get stuck
+      document.querySelectorAll('#navbar-placeholder .active').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // 4. Find the link that matches the current page
+      const activeLink = document.querySelector(`#navbar-placeholder a[href="${currentPage}"]`);
+      
+      if (activeLink) {
+        // If it's a standard top-level tab, make it active
+        if (activeLink.classList.contains('tab')) {
+          activeLink.classList.add('active');
+        } 
+        // If it's inside a dropdown (like Games -> Quiz), highlight the parent tab
+        else {
+          const parentDropdown = activeLink.closest('.dropdown');
+          if (parentDropdown) {
+            const parentTab = parentDropdown.querySelector('.tab');
+            if (parentTab) parentTab.classList.add('active');
+          }
+        }
+      }
+    })
+    .catch(error => console.error('Error loading navbar:', error));
+</script>
 </body>
 </html>
