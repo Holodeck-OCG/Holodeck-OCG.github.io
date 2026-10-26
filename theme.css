@@ -1,18 +1,18 @@
 /* theme.css */
 :root {
   /* ── CARD EFFECT COLORS (DO NOT CHANGE) ── */
-  --holo-teal: #1d9e75; 
-  --holo-rose: #ff2c2c; 
-  --holo-romance: #ff2c72; 
-  --holo-gold: #ba7517; 
-  --holo-blue: #378add; 
-  --brand-orange: #ef9f27; 
+  --holo-teal: #1d9e75;
+  --holo-rose: #ff2c2c;
+  --holo-romance: #ff2c72;
+  --holo-gold: #ba7517;
+  --holo-blue: #378add;
+  --brand-orange: #ef9f27;
   --danger: #ff5252;
 
   /* ── HOLOLIVE BRAND UI THEME (NEON POP) ── */
-  --brand-main: #00E5FF;  /* Electric Neon Cyan */
-  --brand-hover: #00BFFF; /* Deep vibrant blue-cyan */
-  --brand-pink: #FF1E89;  /* Hot Neon Pink */
+  --brand-main: #00e5ff; /* Electric Neon Cyan */
+  --brand-hover: #00bfff; /* Deep vibrant blue-cyan */
+  --brand-pink: #ff1e89; /* Hot Neon Pink */
 
   /* ── DEEP NAVY LAYOUT (Kept exactly the same) ── */
   --navy: #0b111a;
@@ -21,13 +21,13 @@
   --navy-4: #243447;
 
   /* Crisper, slightly brighter glowing borders */
-  --border-dim: rgba(0, 229, 255, 0.20);
+  --border-dim: rgba(0, 229, 255, 0.2);
   --border-mid: rgba(0, 229, 255, 0.45);
 
   /* ── TYPOGRAPHY ── */
   --text-bright: #ffffff; /* Pure white for maximum contrast */
-  --text-mid: #a1b0c7;    /* Slightly brighter slate for secondary text */
+  --text-mid: #a1b0c7; /* Slightly brighter slate for secondary text */
   --text-dim: #475569;
-  
+
   --tag-r: 4px;
 }

@@ -367,7 +367,7 @@ body {
   .topbar { padding: 10px 16px; gap: 8px; display: grid; justify-content: stretch; height: auto; }
   .topbar-left { flex: 100%; flex-direction: column; align-items: stretch; gap: 10px; }
   .topbar-center { display: none; }
-  .topbar-right { display: flex !important; justify-content: center; width: 100%; order: 4; margin-top: 8px; }
+  .topbar-right { display: none !important; justify-content: center; width: 100%; order: 4; margin-top: 8px; }
   
   .burger-btn { display: flex; align-items: center; background: transparent; color: var(--brand-main); border: 1px solid var(--border-dim); padding: 4px 8px; border-radius: 6px; font-size: 24px; cursor: pointer; }
   
