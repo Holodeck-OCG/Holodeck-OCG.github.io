@@ -357,8 +357,9 @@ body {
 /* ── 9. RESPONSIVE UTILITIES ── */
 .hide-on-mobile { display: flex; }
 .hide-on-desktop { display: none; }
+.burger-btn { display: none; }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hide-on-mobile { display: none !important; }
   .hide-on-desktop { display: flex !important; }
 
@@ -377,9 +378,6 @@ body {
   /* Mobile Dropdown Fix */
   .dropdown { flex-direction: column; }
   .dropdown-content { position: static; transform: none; width: 100%; box-shadow: none; border: 1px solid var(--border-dim); background: rgba(0, 0, 0, 0.2); }
-}
-.burger-btn { display: none; }
-
-@media (max-width: 768px) {
   .burger-btn{display: flex;}
 }
+
