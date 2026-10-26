@@ -231,7 +231,7 @@
       /* ── CARD GRID ── */
       .card-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
         gap: 16px;
         grid-auto-rows: max-content;
         gap: 16px;
@@ -703,7 +703,7 @@
         }
 
         .card-grid {
-          grid-template-columns: repeat(2, 1fr) !important;
+          grid-template-columns: repeat(3, 1fr) !important;
           gap: 12px;
           padding: 4px 0;
           overflow: visible;
@@ -737,10 +737,6 @@
           flex: 1;
           min-width: 0;
           margin-right: 8px;
-        }
-
-        .translation-overlay.grid-element {
-          display: none !important;
         }
         .search-bar {
           max-width: 100%;
@@ -1255,7 +1251,7 @@
                 SEC
               </button>
             </div>
-            <div class="search-bar hide-on-mobile">
+            <div class="search-bar">
               <i class="ti ti-search"></i>
               <input
                 type="search"
