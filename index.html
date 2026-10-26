@@ -16,14 +16,8 @@
     />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
     <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="component.css">
     <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
       html,
       body {
         height: 100%;
@@ -31,140 +25,6 @@
         color: var(--text-bright);
         font-family: "nunito", sans-serif;
         overflow: hidden;
-      }
-
-      /* ── UNIFIED TOPBAR ── */
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background:var(--navy);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border-dim);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-      }
-      .topbar-left {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        flex: 1;
-      }
-      .topbar-center {
-        flex: 2;
-        display: flex;
-        justify-content: center;
-      }
-      .topbar-right {
-        flex: 1;
-        display: flex;
-        justify-content: flex-end;
-      }
-
-      .logo {
-        font-size: 20px;
-        font-weight: 800;
-        letter-spacing: 0.1em;
-        color: var(--text-bright);
-        white-space: nowrap;
-      }
-      .logo span {
-        color: var(--brand-main);
-      }
-
-      .tabs {
-        display: flex;
-        gap: 6px;
-      }
-      .tab {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 14px;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        text-decoration: none;
-        color: var(--text-mid);
-        transition: all 0.2s ease;
-      }
-      .tab-title {
-        font-family: "nunito", sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-      }
-
-      .tab:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-bright);
-      }
-      .tab.active {
-        background: rgba(65, 195, 227, 0.15);
-        border-color: rgba(65, 195, 227, 0.3);
-        color: var(--brand-main);
-      }
-
-      .search-bar {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--navy-3);
-        border: 0.5px solid var(--border-dim);
-        border-radius: 6px;
-        padding: 0 16px;
-        height: 42px;
-        width: 100%;
-        max-width: 500px;
-        transition: 0.2s;
-      }
-      .search-bar:focus-within {
-        border-color: var(--brand-main);
-        box-shadow: 0 0 0 2px rgba(65, 195, 227, 0.2);
-      }
-      .search-bar i {
-        font-size: 18px;
-        color: var(--text-dim);
-      }
-      .search-bar input {
-        background: transparent;
-        border: none;
-        outline: none;
-        font-family: "nunito", sans-serif;
-        font-size: 16px;
-        color: var(--text-bright);
-        width: 100%;
-      }
-      .search-bar input::placeholder {
-        color: var(--text-dim);
-      }
-
-      /* ── ABOUT / CREDITS BUTTON ── */
-      .btn-about-header {
-        background: transparent;
-        border: 1px solid var(--border-dim);
-        color: var(--text-mid);
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-family: "nunito", sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .btn-about-header:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-bright);
-        border-color: var(--border-mid);
-      }
-      .btn-about-header i {
-        font-size: 16px;
-        color: var(--brand-main);
       }
 
       /* ── BODY LAYOUT ── */
@@ -219,7 +79,8 @@
         display: flex;
         gap: 8px;
         align-items: center;
-        flex-wrap: wrap;
+        width: 100%;
+        justify-content: space-between;
       }
       .btn-action {
         background: var(--navy-3);
@@ -841,111 +702,6 @@
         padding: 0 20px 20px;
         flex: 1;
       }
-
-      /* ── ABOUT CREDITS MODAL ── */
-      .about-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(5px);
-        z-index: 2999;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-      .about-overlay.open {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .about-modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -45%) scale(0.95);
-        background: var(--navy-2);
-        border: 1px solid var(--border-mid);
-        border-radius: 16px;
-        width: 90%;
-        max-width: 400px;
-        z-index: 3000;
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-      .about-modal.open {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translate(-50%, -50%) scale(1);
-      }
-
-      .about-header {
-        background: var(--navy-3);
-        padding: 16px 20px;
-        border-bottom: 1px solid var(--border-dim);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .about-header h3 {
-        font-size: 18px;
-        font-weight: 800;
-        color: var(--brand-main);
-        margin: 0;
-      }
-      .btn-close-modal {
-        background: transparent;
-        border: none;
-        color: var(--text-dim);
-        font-size: 20px;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-      .btn-close-modal:hover {
-        color: var(--danger);
-        transform: scale(1.1);
-      }
-
-      .about-content {
-        padding: 24px 20px;
-        font-size: 15px;
-        color: var(--text-bright);
-        line-height: 1.6;
-      }
-      .about-content p {
-        margin-bottom: 16px;
-      }
-      .about-content strong {
-        color: var(--text-bright);
-        font-weight: 800;
-      }
-      .about-content a {
-        color: var(--brand-main);
-        text-decoration: none;
-        font-weight: 700;
-        display: inline-block;
-        margin-top: 4px;
-        border-bottom: 1px dashed var(--border-dim);
-        transition: 0.2s;
-      }
-      .about-content a:hover {
-        color: var(--brand-hover);
-        border-color: var(--brand-hover);
-      }
-
-      .hide-on-mobile {
-        display: flex;
-      }
-      .hide-on-desktop {
-        display: none;
-      }
       /* ── ALT ART TOGGLE BUTTON ── */
       .btn-alt-toggle {
         position: absolute;
@@ -982,125 +738,9 @@
       .card-grid.list-view .btn-alt-toggle:hover {
         transform: translateY(-50%) scale(1.1) rotate(45deg);
       }
-      .burger-btn { display: none; }
-      /* ── DROPDOWN MENU ── */
-      .dropdown {
-        position: relative;
-        cursor: pointer;
-      }
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: var(--navy-3);
-        border: 1px solid var(--border-dim);
-        border-radius: 8px;
-        padding: 4px 0;
-        min-width: 180px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        z-index: 200;
-      }
-      /* Opens on hover (Desktop) or click (Mobile) */
-      .dropdown.open .dropdown-content {
-        display: flex;
-        flex-direction: column;
-      }
-      .dropdown-item {
-        padding: 10px 16px;
-        color: var(--text-mid);
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 700;
-        transition: 0.2s;
-        text-align: center;
-      }
-      .dropdown-item:hover {
-        background: rgba(65, 195, 227, 0.1);
-        color: var(--brand-main);
-      }
-
+      
       /* ── MOBILE RESPONSIVE FIXES ── */
       @media (max-width: 768px) {
-        /* ── MOBILE DROPDOWN FIX ── */
-        .dropdown {
-          flex-direction: column;
-        }
-        .dropdown-content {
-          position: static; /* Forces it to push other items down instead of floating */
-          transform: none;
-          width: 100%;
-          box-shadow: none;
-          border: 1px solid var(--border-dim);
-          background: rgba(0, 0, 0, 0.2);
-        }
-        .topbar {
-          padding: 10px 16px;
-          gap: 8px;
-          display: grid;
-          justify-content: stretch;
-          height: auto;
-        }
-        .topbar-left {
-          flex: 100%;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
-        }
-        .topbar-center {
-          flex: 100%;
-          order: 3;
-        }
-        .topbar-right {
-          display: none;
-        }
-
-        /* Shows and styles the burger button on mobile */
-        .burger-btn { 
-            display: flex; 
-            align-items: center; 
-            background: transparent; 
-            color: var(--brand-main); 
-            border: 1px solid var(--border-dim); 
-            padding: 4px 8px; 
-            border-radius: 6px; 
-            font-size: 24px; 
-            cursor: pointer;
-        }
-
-        .topbar-left {
-          flex: 100%;
-          flex-direction: column;
-          align-items: stretch;
-          gap: 10px;
-        }
-
-        /* ── THE VERTICAL MENU STACK ── */
-        .tabs {
-          display: none; /* Hidden by default */
-          flex-direction: column; /* Stacks top-to-bottom */
-          width: 100%;
-          gap: 8px;
-        }
-        
-        .tabs.open {
-          display: flex; /* Shown when burger button is clicked */
-        }
-        
-        .tab {
-          padding: 12px;
-          flex-direction: row;
-          width: 100%;
-          justify-content: center;
-        }
-        .tab-desc {
-          display: none;
-        }
-        .tab-title {
-          font-size: 14px;
-        }
-
         .main-panel {
           display: flex;
           flex-direction: column;
@@ -1166,18 +806,6 @@
         .translation-overlay.grid-element {
           display: none !important;
         }
-        .hide-on-mobile {
-          display: none;
-        }
-        .hide-on-desktop {
-          display: flex;
-        }
-        .topbar-center {
-          display: none;
-        }
-        .search-bar {
-          max-width: 100%;
-        }
         /* ── ALT ART TOGGLE LIST VIEW FIX ── */
         .card-grid.list-view .btn-alt-toggle {
           top: 5px !important;
@@ -1241,16 +869,6 @@
         100% {
           --angle: 360deg;
         }
-      }
-      /* ── PREMIUM HOLO-CYBER BACKGROUND ── */
-      .holo-bg-container {
-        position: fixed;
-        inset: 0;
-        z-index: 0;
-        pointer-events: none;
-        overflow: hidden;
-        /* Adds a subtle spotlight effect at the top */
-        background: radial-gradient(circle at 50% 0%, var(--navy-3) 0%, var(--navy) 70%);
       }
 
       /* 1. Animated Ambient Aurora / Nebula */
@@ -1317,37 +935,6 @@
 
       /* Hide the 'Default' buttons by default */
       .btn-def-left, .btn-def-right { display: none !important; }
-      .brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.logo-icon {
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-  transition: transform 0.2s ease;
-}
-
-.brand-logo:hover .logo-icon {
-  transform: translateY(-2px) scale(1.05);
-}
-
-.brand-text {
-  /* Uses your system's default clean sans-serif font */
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-.text-white {
-  color: #FFFFFF;
-}
-
-.text-cyan {
-  color: #41C3E3;
-}
 /* ── SHORT SCREEN & TABLET LANDSCAPE FIX ── */
       @media (max-height: 900px) {
         /* Move the scrollbar to the outer column so headers scroll away */
@@ -1390,12 +977,7 @@
   justify-content: center;
 }
 
-/* Apply tap target size to the burger button without overriding its display property */
-.burger-btn {
-  min-width: 44px;
-  min-height: 44px;
-  justify-content: center;
-}
+
 
     /* ── IMAGE PLACEHOLDER ── */
     .card-face img, .list-thumb img, .list-full-img img {
@@ -3018,26 +2600,6 @@
       src="//gc.zgo.at/count.js"
     ></script>
     <script src="version.js"></script>
-    <script>
-  fetch('navbar.html')
-    .then(response => response.text())
-    .then(data => {
-      // 1. Inject the navbar
-      document.getElementById('navbar-placeholder').innerHTML = data;
-      
-      // 2. Figure out what page we are currently on
-      const currentPath = window.location.pathname;
-      const currentPage = currentPath.split('/').pop() || 'index.html'; // Defaults to index.html if at root
-      
-      // 3. Find the matching tab and make it active
-      const tabs = document.querySelectorAll('#navbar-placeholder .tab');
-      tabs.forEach(tab => {
-        if (tab.getAttribute('href') === currentPage) {
-          tab.classList.add('active');
-        }
-      });
-    })
-    .catch(error => console.error('Error loading navbar:', error));
-</script>
+    <script src="main.js"></script>
   </body>
 </html>

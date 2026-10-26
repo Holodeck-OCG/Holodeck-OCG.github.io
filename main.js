@@ -414,3 +414,42 @@ if (clearBtn) {
         }
     });
 }
+// main.js
+
+fetch('navbar.html')
+  .then(response => response.text())
+  .then(data => {
+    // 1. Inject the navbar
+    document.getElementById('navbar-placeholder').innerHTML = data;
+    
+    // 2. Remove ALL hardcoded 'active' classes so nothing is stuck
+    document.querySelectorAll('#navbar-placeholder .active').forEach(el => {
+      el.classList.remove('active');
+    });
+    
+    // 3. Get the exact full URL from your browser
+    const currentUrl = window.location.href.split('?')[0].split('#')[0]; 
+    
+    // 4. Loop through EVERY link in the navbar to find the match
+    const allLinks = document.querySelectorAll('#navbar-placeholder a');
+    allLinks.forEach(link => {
+      
+      const linkUrl = link.href.split('?')[0].split('#')[0]; 
+      
+      if (linkUrl === currentUrl) {
+        // A. If it's a main tab, highlight it
+        if (link.classList.contains('tab')) {
+          link.classList.add('active');
+        } 
+        // B. If it's a dropdown item (like Quiz), highlight its parent tab ("Games")
+        else if (link.classList.contains('dropdown-item')) {
+          const dropdown = link.closest('.dropdown');
+          if (dropdown) {
+            const parentTab = dropdown.querySelector('.tab');
+            if (parentTab) parentTab.classList.add('active');
+          }
+        }
+      }
+    });
+  })
+  .catch(error => console.error('Error loading navbar:', error));
