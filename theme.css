@@ -1,4 +1,4 @@
-/* theme.css */
+/* ☀️ LIGHT THEME (Soft Sky & Slate - Default) */
 :root {
   /* ── CARD EFFECT COLORS (DO NOT CHANGE) ── */
   --holo-teal: #1d9e75;
@@ -9,12 +9,39 @@
   --brand-orange: #ef9f27;
   --danger: #ff5252;
 
-  /* ── HOLOLIVE BRAND UI THEME (NEON POP) ── */
-  --brand-main: #00e5ff; /* Electric Neon Cyan */
-  --brand-hover: #00bfff; /* Deep vibrant blue-cyan */
-  --brand-pink: #ff1e89; /* Hot Neon Pink */
+  /* ── BRAND UI THEME (Deepened for Light Mode Contrast) ── */
+  --brand-main: #0097b2; /* Deep Cyan so it's readable on white */
+  --brand-hover: #007a90; 
+  --brand-pink: #d81b60; /* Deeper pink */
 
-  /* ── DEEP NAVY LAYOUT (Kept exactly the same) ── */
+  /* ── LAYOUT (Overriding your "navy" names with Light colors) ── */
+  --navy: #EEF2F6;       /* Main Background: Soft grayish-blue */
+  --navy-2: #FFFFFF;     /* Panels, Cards, Navbar: Pure White */
+  --navy-3: #F1F5F9;     /* Hover states / Dropdowns */
+  --navy-4: #E2E8F0;     /* Deeper UI elements */
+
+  /* Crisper, subtle gray borders */
+  --border-dim: rgba(0, 0, 0, 0.1);
+  --border-mid: rgba(0, 0, 0, 0.2);
+
+  /* ── TYPOGRAPHY ── */
+  --text-bright: #2C3E50; /* Deep slate (Replacing white for main text) */
+  --text-mid: #64748B;    /* Medium gray for secondary text */
+  --text-dim: #94A3B8;    /* Dim gray */
+
+  --tag-r: 4px;
+
+  --overlay-bg: rgba(255, 255, 255, 0.75);
+}
+
+/* 🌙 DARK THEME (Your Exact Original Neon/Navy Theme) */
+html[data-theme="dark"] {
+  /* ── HOLOLIVE BRAND UI THEME (NEON POP) ── */
+  --brand-main: #00e5ff; 
+  --brand-hover: #00bfff; 
+  --brand-pink: #ff1e89; 
+
+  /* ── DEEP NAVY LAYOUT ── */
   --navy: #0b111a;
   --navy-2: #15202b;
   --navy-3: #1a2636;
@@ -25,9 +52,16 @@
   --border-mid: rgba(0, 229, 255, 0.45);
 
   /* ── TYPOGRAPHY ── */
-  --text-bright: #ffffff; /* Pure white for maximum contrast */
-  --text-mid: #a1b0c7; /* Slightly brighter slate for secondary text */
+  --text-bright: #ffffff; 
+  --text-mid: #a1b0c7; 
   --text-dim: #475569;
 
-  --tag-r: 4px;
+  --overlay-bg: rgba(11, 17, 26, 0.85);
+}
+
+/* Smooth transition for the whole page */
+body {
+  background-color: var(--navy);
+  color: var(--text-bright);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

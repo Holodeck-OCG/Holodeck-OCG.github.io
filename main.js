@@ -496,3 +496,30 @@ fetch("navbar.html")
     });
   })
   .catch((error) => console.error("Error loading navbar:", error));
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+});
+
+document.addEventListener("click", (event) => {
+  // .closest() ensures it works even if you click an icon inside the button
+  const themeToggle = event.target.closest('#theme-toggle');
+  
+  if (themeToggle) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      console.log("Switched to Light Mode");
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      console.log("Switched to Dark Mode");
+    }
+  }
+});

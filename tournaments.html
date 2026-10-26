@@ -726,8 +726,8 @@
       }
 
       @keyframes popIn {
-        0% { opacity: 0; transform: scale(0.95); }
-        100% { opacity: 1; transform: scale(1); }
+        0% { opacity: 0;}
+        100% { opacity: 1;}
       }
       /* ── ALT ART TOGGLE BUTTON ── */
       .btn-alt-toggle {
@@ -1144,8 +1144,8 @@
         grid-column: 1 / -1;
       }
       @keyframes popIn {
-        0% { opacity: 0; transform: scale(0.95); }
-        100% { opacity: 1; transform: scale(1); }
+        0% { opacity: 0; transform: scale(0); }
+        100% { opacity: 1; transform: scale(0); }
       }
       .about-header {
         background: var(--navy-3);
@@ -1173,6 +1173,40 @@
           gap: 12px;
         }
       }
+      .about-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.about-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.about-modal {
+  background: var(--navy-2);
+  border: 1px solid var(--border-mid);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh; /* Prevents it from clipping off tall screens */
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+}
     </style>
 </head>
 <body>
@@ -1188,22 +1222,22 @@
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span style="color: var(--text-mid); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Match Filters</span>
         <button class="btn-action" onclick="document.getElementById('admin-modal').classList.add('open')" style="background: var(--brand-main); color: var(--navy); padding: 6px 12px; font-size: 13px;" title="Add Tournament">
-          <i class="ti ti-plus"></i> Add Event
-        </button>
+        <i class="ti ti-plus"></i> Add Event
+</button>
       </div>
       
       <!-- Filter Inputs Grid -->
       <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-        <input type="text" id="filter-event" onkeyup="window.filterTournaments()" placeholder="Event Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
+        <input type="text" id="filter-event" onkeyup="window.filterTournaments()" placeholder="Event Name..." style="padding: 8px; background: var(--navy-2); color:var(--text-bright); border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
         
-        <input type="text" id="filter-location" onkeyup="window.filterTournaments()" placeholder="Location..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
+        <input type="text" id="filter-location" onkeyup="window.filterTournaments()" placeholder="Location..." style="padding: 8px; background: var(--navy-2); color:var(--text-bright); border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
         
-        <input type="text" id="filter-winner" onkeyup="window.filterTournaments()" placeholder="Winner Name..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
+        <input type="text" id="filter-winner" onkeyup="window.filterTournaments()" placeholder="Winner Name..." style="padding: 8px; background: var(--navy-2); color:var(--text-bright); border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
         
-        <input type="text" id="filter-deck" onkeyup="window.filterTournaments()" placeholder="Deck / Oshi..." style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
+        <input type="text" id="filter-deck" onkeyup="window.filterTournaments()" placeholder="Deck / Oshi..." style="padding: 8px; background: var(--navy-2); color:var(--text-bright); border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
         
         <div style="grid-column: span 2; display: flex; gap: 8px;">
-          <input type="date" id="filter-date" onchange="window.filterTournaments()" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
+          <input type="date" id="filter-date" onchange="window.filterTournaments()" style="flex: 1; padding: 8px; background: var(--navy-2); color:var(--text-bright); border: 1px solid var(--border-dim); border-radius: 6px; outline: none; font-family: 'nunito', sans-serif; font-size: 13px; width: 30%;">
         </div>
         <!-- Clear Filters Button -->
         <button onclick="window.clearFilters()" style="background: rgba(255,82,82,0.1); border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: 'nunito', sans-serif; font-weight: 700; font-size: 13px; " onmouseover="this.style.background='rgba(255,82,82,0.2)'" onmouseout="this.style.background='rgba(255,82,82,0.1)'" title="Clear Filters">
@@ -1237,7 +1271,7 @@
             Loading...
           </h2>
         </div>
-        <div style="display: inline-flex; align-items: center; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-dim); padding: 6px 14px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">
+        <div style="display: inline-flex; align-items: center; background: rgba(0, 0, 0, 0.1); border: 1px solid var(--border-dim); padding: 6px 14px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">
             <span style="color: var(--text-mid); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 8px;">Oshi / Deck</span>
             <span id="champ-deck-name" style="color: var(--brand-main); font-size: 15px; font-weight: 800;">...</span>
           </div>
@@ -1312,21 +1346,21 @@
     <div class="about-content" style="display: flex; flex-direction: column; gap: 12px;">
       
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="add-event-name" placeholder="Event Name (e.g. Weekly #3 + place)" style="flex: 2; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="date" id="add-date" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="add-event-name" placeholder="Event Name (e.g. Weekly #3 + place)" style="flex: 2; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="date" id="add-date" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
       </div>
 
       <!-- NEW ROW: Location and Players -->
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="add-location" placeholder="Location/Venue (e.g. Local Game Store)" style="flex: 2; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="number" id="add-players" placeholder="Players" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="add-location" placeholder="Location/Venue (e.g. Local Game Store)" style="flex: 2; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="number" id="add-players" placeholder="Players" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
       </div>
 
       <!-- ROW: Winner Name and Deck Name -->
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="add-winner-name" placeholder="Winner Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="text" id="add-deck-name" placeholder="Oshi Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <select id="add-theme-color" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;">
+        <input type="text" id="add-winner-name" placeholder="Winner Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="add-deck-name" placeholder="Oshi Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <select id="add-theme-color" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;">
         <option value="blue">Blue</option>
         <option value="red">Red</option>
         <option value="green">Green</option>
@@ -1336,19 +1370,19 @@
       </select>
       </div>
       <!-- META BREAKDOWN -->
-      <textarea id="add-meta-breakdown" placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')" rows="3" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
+      <textarea id="add-meta-breakdown" placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')" rows="3" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
       
       <!-- DECK IMAGE UPLOAD -->
       <!-- UPLOAD IMAGE -->
       <div style="display: flex; gap: 12px; align-items: center; background: var(--navy-3); padding: 8px; border: 1px solid var(--border-dim); border-radius: 4px;">
         <span style="color: var(--text-mid); font-size: 14px; font-weight: 700;">Deck Image:</span>
-        <input type="file" id="add-deck-image" accept="image/*" style="color: white; font-size: 14px; outline: none;">
+        <input type="file" id="add-deck-image" accept="image/*" style="color: var(--text-bright); font-size: 14px; outline: none;">
       </div>
 
       <div style="text-align: center; color: var(--text-dim); font-size: 12px; font-weight: 700;">— OR —</div>
 
       <!-- PASTE CODE -->
-      <textarea id="add-deck-code" placeholder="Paste Base64 Deck Code Here..." rows="3" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: monospace;"></textarea>
+      <textarea id="add-deck-code" placeholder="Paste Base64 Deck Code Here..." rows="3" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: monospace;"></textarea>
 
       <button id="save-tournament-btn" class="btn-action" onclick="window.generateTournament()" style="justify-content: center; background: var(--brand-main); color: var(--navy); margin-top: 10px;">
         Save to Firebase Database
@@ -1369,19 +1403,19 @@
     <div class="about-content" style="display: flex; flex-direction: column; gap: 12px; max-height: 80vh; overflow-y: auto;">
       
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="edit-event-name" placeholder="Event Name (e.g. Weekly #3 + place)" style="flex: 2; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="date" id="edit-date" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="edit-event-name" placeholder="Event Name (e.g. Weekly #3 + place)" style="flex: 2; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="date" id="edit-date" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
       </div>
 
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="edit-location" placeholder="Location/Venue (e.g. Local Game Store)" style="flex: 2; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="number" id="edit-players" placeholder="Players" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="edit-location" placeholder="Location/Venue (e.g. Local Game Store)" style="flex: 2; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="number" id="edit-players" placeholder="Players" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
       </div>
 
       <div style="display: flex; gap: 12px;">
-        <input type="text" id="edit-winner-name" placeholder="Winner Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <input type="text" id="edit-deck-name" placeholder="Oshi Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-        <select id="edit-theme-color" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;">
+        <input type="text" id="edit-winner-name" placeholder="Winner Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <input type="text" id="edit-deck-name" placeholder="Oshi Name" style="flex: 1; padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+        <select id="edit-theme-color" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;">
           <option value="blue">Blue</option>
           <option value="red">Red</option>
           <option value="green">Green</option>
@@ -1391,19 +1425,19 @@
         </select>
       </div>
       
-      <input type="url" id="edit-youtube-link" placeholder="YouTube Match Link URL" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px;">
-      <textarea id="edit-comments" placeholder="Match history, player notes, or deck performance..." rows="3" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
+      <input type="url" id="edit-youtube-link" placeholder="YouTube Match Link URL" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px;">
+      <textarea id="edit-comments" placeholder="Match history, player notes, or deck performance..." rows="3" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
       
-      <textarea id="edit-meta-breakdown" placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')" rows="3" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
+      <textarea id="edit-meta-breakdown" placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')" rows="3" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: 'nunito', sans-serif;"></textarea>
 
       <div style="display: flex; gap: 12px; align-items: center; background: var(--navy-3); padding: 8px; border: 1px solid var(--border-dim); border-radius: 4px;">
         <span style="color: var(--text-mid); font-size: 14px; font-weight: 700;">Deck Image:</span>
-        <input type="file" id="edit-deck-image" accept="image/*" style="color: white; font-size: 14px; outline: none;">
+        <input type="file" id="edit-deck-image" accept="image/*" style="color: var(--text-bright); font-size: 14px; outline: none;">
       </div>
 
       <div style="text-align: center; color: var(--text-dim); font-size: 12px; font-weight: 700;">— OR —</div>
 
-      <textarea id="edit-deck-code" placeholder="Paste Base64 Deck Code Here..." rows="3" style="padding: 8px; background: var(--navy-3); color: white; border: 1px solid var(--border-dim); border-radius: 4px; font-family: monospace;"></textarea>
+      <textarea id="edit-deck-code" placeholder="Paste Base64 Deck Code Here..." rows="3" style="padding: 8px; background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; font-family: monospace;"></textarea>
 
       <button id="save-update-btn" class="btn-action" onclick="window.saveTournamentUpdates()" style="justify-content: center; background: var(--brand-main); color: var(--navy); margin-top: 10px;">
         Save Updates
@@ -1733,42 +1767,8 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
     const themeColor = activeTournament.themeColor || "blue";
 
     // 4. APPLY THE THEME
-    if (themeColor === "red") {
-        rightPanel.style.setProperty('--brand-main', '#D58936');
-        rightPanel.style.setProperty('--navy', '#3C1518');
-        rightPanel.style.setProperty('--navy-2', '#4f1d20');
-        rightPanel.style.setProperty('--navy-3', '#69140E');
-        rightPanel.style.setProperty('--border-dim', 'rgba(213, 137, 54, 0.2)');
-        rightPanel.style.setProperty('--border-mid', 'rgba(213, 137, 54, 0.4)');
-    } else if (themeColor === "green") {
-        rightPanel.style.setProperty('--brand-main', '#5dcaa5');
-        rightPanel.style.setProperty('--navy', '#0a1510');
-        rightPanel.style.setProperty('--navy-2', '#0f2a20');
-        rightPanel.style.setProperty('--navy-3', '#143d2e');
-        rightPanel.style.setProperty('--border-dim', 'rgba(93, 202, 165, 0.2)');
-        rightPanel.style.setProperty('--border-mid', 'rgba(93, 202, 165, 0.4)');
-    } else if (themeColor === "yellow") {
-        rightPanel.style.setProperty('--brand-main', '#ef9f27');
-        rightPanel.style.setProperty('--navy', '#1a140a');
-        rightPanel.style.setProperty('--navy-2', '#2a220f');
-        rightPanel.style.setProperty('--navy-3', '#3d3114');
-        rightPanel.style.setProperty('--border-dim', 'rgba(239, 159, 39, 0.2)');
-        rightPanel.style.setProperty('--border-mid', 'rgba(239, 159, 39, 0.4)');
-    } else if (themeColor === "purple") {
-        rightPanel.style.setProperty('--brand-main', '#b072d6');
-        rightPanel.style.setProperty('--navy', '#0f0a14');
-        rightPanel.style.setProperty('--navy-2', '#1a102a');
-        rightPanel.style.setProperty('--navy-3', '#2d1a47');
-        rightPanel.style.setProperty('--border-dim', 'rgba(176, 114, 214, 0.2)');
-        rightPanel.style.setProperty('--border-mid', 'rgba(176, 114, 214, 0.4)');
-    } else if (themeColor === "white") {
-        rightPanel.style.setProperty('--brand-main', '#e2e8f0');
-        rightPanel.style.setProperty('--navy', '#0f172a');
-        rightPanel.style.setProperty('--navy-2', '#1e293b');
-        rightPanel.style.setProperty('--navy-3', '#334155');
-        rightPanel.style.setProperty('--border-dim', 'rgba(226, 232, 240, 0.2)');
-        rightPanel.style.setProperty('--border-mid', 'rgba(226, 232, 240, 0.4)');
-    }
+    rightPanel.setAttribute('data-deck', themeColor);
+   
     // 1. Update the Hero Banner
     document.getElementById("champ-name").innerHTML = `<i class="ti ti-trophy" style="color: var(--holo-gold); font-size: 36px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));"></i> ${escapeHTML(activeTournament.winner.name)}`;
     document.getElementById("champ-deck-name").innerText = activeTournament.winner.deckName || "Unknown Deck";
@@ -2026,7 +2026,9 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
   }
 
   window.openUpdateModal = async function() {
+    document.getElementById("update-modal").classList.add("open");
     if (!activeTournament) return alert("No tournament selected!");
+    
     
     // Check if the user is already logged in
     if (!auth.currentUser) {
@@ -2063,6 +2065,7 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
   };
 
   window.saveTournamentUpdates = async function() {
+    document.getElementById("update-modal").classList.remove("open");
     
     if (!activeTournament) return;
     
@@ -2144,6 +2147,7 @@ import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/fir
   };
 
   window.generateTournament = async function() {
+    document.getElementById('admin-modal').classList.remove('open');
     if (!auth.currentUser) {
       const email = prompt("Admin Email required to add an event:");
       if (!email) return;
