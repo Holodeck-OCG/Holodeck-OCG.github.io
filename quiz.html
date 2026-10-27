@@ -9,102 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
-    <link rel="stylesheet" href="theme.css">
-    <link rel="stylesheet" href="component.css">
-    <style>
-        body { background: var(--navy); color: var(--text-bright); font-family: 'nunito', sans-serif; z-index: 10; position: relative;}
-        /* ── QUIZ STYLES ── */
-        .panel { 
-            background-color: color-mix(in srgb, var(--navy-3) 70%, transparent); border: 1px solid var(--border-dim); 
-            border-radius: 12px; padding: 2rem; box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
-            margin-top: 2rem; position: relative;z-index: 10;
-        }
-        .btn-export { 
-            background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); 
-            border-radius: 8px; font-weight: 800; padding: 0.8rem 1.5rem; cursor: pointer; 
-            transition: all 0.2s ease; font-family: inherit; font-size: 1rem; text-transform: uppercase; 
-        }
-        .btn-export:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: #ffffff;}
-        
-        .quiz-image { max-width: 200px; border-radius: 8px; transition: filter 0.5s ease; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
-        /* We use a heavy blur and boost the colors slightly to make it a fun color-palette guessing game */
-        .silhouette-mode { 
-            filter: blur(14.5px) saturate(1) brightness(0.5); 
-            transform: scale(1.02); /* hides the fuzzy blurred edges */
-        }
-        .revealed-mode { filter: brightness(1); }
-
-        .btn-choice {
-            background: var(--navy-2); color: var(--text-bright); border: 1px solid var(--border-dim);
-            padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit;
-        }
-        .btn-choice:hover { background: var(--brand-main); color: var(--navy); }
-        .btn-choice.correct { background: var(--holo-teal); border-color: var(--holo-teal); color: #fff; }
-        .btn-choice.wrong { background: var(--danger); border-color: var(--danger); color: #fff; }
-        .btn-about-header {
-            background: transparent; border: 1px solid var(--border-dim); color: var(--text-mid);
-            padding: 8px 14px; border-radius: 6px; font-family: 'nunito', sans-serif; font-size: 14px; font-weight: 700;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
-            }
-        .btn-about-header:hover { background: rgba(255,255,255,0.05); color: var(--text-bright); border-color: var(--border-mid); }
-        .btn-about-header i { font-size: 16px; color: var(--brand-main); }
-
-        /* ── DYNAMIC HOLO-CYBER BACKGROUND ── */
-  .holo-bg-container {
-      position: fixed; inset: 0; z-index: 0; /* Fixed the layer bug! */
-      pointer-events: none; overflow: hidden; 
-  }
-  
-  /* 1. The subtle tech grid - Brightness increased! */
-  .holo-bg-grid {
-      position: absolute; inset: 0;
-      background-image: 
-          linear-gradient(rgba(65, 195, 227, 0.15) 1px, transparent 1px), 
-          linear-gradient(90deg, rgba(65, 195, 227, 0.15) 1px, transparent 1px);
-      background-size: 40px 40px;
-      -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-      mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-  }
-
-  /* 2. The official Hololive-style diagonal slash */
-  .holo-bg-slash {
-      position: absolute; inset: -50%;
-      background: linear-gradient(135deg, 
-          transparent 48%, 
-          rgba(255, 255, 255, 0.03) 48%, 
-          rgba(255, 255, 255, 0.03) 52%, 
-          transparent 52%);
-  }
-
-  /* 3. The floating ambient glow orbs - Brightness increased! */
-  .holo-bg-glow {
-      position: absolute; border-radius: 50%; 
-      filter: blur(80px); opacity: 0.6; 
-  }
-  .glow-cyan {
-      width: 70vw; height: 70vw; 
-      max-width: 600px; max-height: 600px;
-      top: -10%; left: -10%;
-      background: radial-gradient(circle, var(--brand-main) 0%, transparent 60%);
-      animation: floatCyan 22s infinite alternate ease-in-out;
-  }
-  .glow-pink {
-      width: 60vw; height: 60vw; 
-      max-width: 500px; max-height: 500px;
-      bottom: -10%; right: -10%;
-      background: radial-gradient(circle, var(--brand-pink) 0%, transparent 60%);
-      animation: floatPink 28s infinite alternate ease-in-out;
-  }
-
-  @keyframes floatCyan { 
-      0% { transform: translate(0,0); } 
-      100% { transform: translate(8vw, 8vh); } 
-  }
-  @keyframes floatPink { 
-      0% { transform: translate(0,0); } 
-      100% { transform: translate(-8vw, -8vh); } 
-  }
-    </style>
+    <link rel="stylesheet" href="css/component.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/quiz.css">
 </head>
 <body>
 
@@ -248,10 +155,19 @@
         }
     };
     // 1. DATABASE LOADER (Copied from your library)
-    const csvFilesToLoad = [
-        'hBP01.csv', 'hBP02.csv', 'hBP03.csv', 'hBP04.csv',
-        'hBP05.csv', 'hBP06.csv', 'hBP07.csv', 'hBP08.csv', 'hSD.csv', "hEB01.csv","hBP09.csv","hEB01.csv",
-    ];
+      const csvFilesToLoad = [
+        "data/hBP01.csv",
+        "data/hBP02.csv",
+        "data/hBP03.csv",
+        "data/hBP04.csv",
+        "data/hBP05.csv",
+        "data/hBP06.csv",
+        "data/hBP07.csv",
+        "data/hBP08.csv",
+        "data/hBP09.csv",
+        "data/hEB01.csv",
+        "data/hSD.csv",
+      ];
     let masterCardPool = [];
 
     function parseCSV(text) {
@@ -684,7 +600,7 @@
   window.doc = doc;
   window.getDoc = getDoc;
 </script>
-<script src="version.js"></script>
-<script src="main.js"></script>
+    <script src="js/version.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

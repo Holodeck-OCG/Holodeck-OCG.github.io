@@ -1,0 +1,565 @@
+html,
+      body {
+        height: 100%;
+        background: var(--navy);
+        color: var(--text-bright);
+        font-family: "nunito", sans-serif;
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+      }
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--navy-3);
+        border: 0.5px solid var(--border-dim);
+        border-radius: 6px;
+        padding: 0 16px;
+        height: 42px;
+        width: 100%;
+        max-width: 500px;
+        transition: 0.2s;
+      }
+      .search-bar:focus-within {
+        border-color: var(--brand-main);
+        box-shadow: 0 0 0 2px rgba(65, 195, 227, 0.2);
+      }
+      .search-bar i {
+        font-size: 18px;
+        color: var(--text-dim);
+      }
+      .search-bar input {
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: "nunito", sans-serif;
+        font-size: 16px;
+        color: var(--text-bright);
+        width: 100%;
+      }
+      .search-bar input::placeholder {
+        color: var(--text-dim);
+      }
+
+      /* ── SIMPLE LIBRARY LAYOUT ── */
+      .body-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: calc(100vh - 72px);
+        overflow: hidden;
+        padding: 1rem;
+        z-index: 10;
+        position: relative;
+      }
+      .main-wrapper {
+        display: grid;
+        grid-template-columns: 320px 1fr 1fr;
+        gap: 1.5rem;
+        flex: 1;
+        min-height: 0;
+        max-width: 1600px;
+        width: 100%;
+      }
+
+      .panel {
+        background-color: var(--navy-3);
+        border: 1px solid var(--border-dim);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+      }
+      .preview-panel {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      #preview-container {
+        width: 100%;
+        aspect-ratio: 2.5 / 3.5;
+        background: linear-gradient(145deg, var(--navy-2), var(--navy-3));
+        border-radius: 16px;
+        border: 1px solid var(--border-dim);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow:
+          inset 0 0 40px rgba(0, 0, 0, 0.5),
+          0 12px 24px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+      }
+      #large-card-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+
+      .deck-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        flex-shrink: 0;
+      }
+      h3 {
+        color: var(--brand-main);
+        font-size: 1.4rem;
+        margin: 0;
+        font-weight: 800;
+      }
+      .card-count {
+        background: rgba(65, 195, 227, 0.15);
+        border: 1px solid rgba(65, 195, 227, 0.3);
+        color: var(--brand-main);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
+      .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        min-height: 0;
+      }
+      .card-list::-webkit-scrollbar {
+        width: 6px;
+      }
+      .card-list::-webkit-scrollbar-thumb {
+        background: var(--border-mid);
+        border-radius: 8px;
+      }
+      .card-list::-webkit-scrollbar-thumb:hover {
+        background: var(--brand-main);
+      }
+      .card-list::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .deck-history-item {
+        border: 1px solid var(--border-dim);
+        border-left: 5px solid var(--border-dim);
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: var(--navy-2);
+        flex-shrink: 0;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .deck-history-item:hover {
+        border-color: var(--border-mid);
+        transform: translateX(2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .deck-accordion-btn {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0.8rem;
+        cursor: pointer;
+        transition: 0.2s;
+        user-select: none;
+      }
+      .deck-accordion-btn:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+      .deck-accordion-btn.active {
+        background-color: var(--navy-4);
+      }
+
+      .card-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        object-fit: cover;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        flex-shrink: 0;
+      }
+      .card-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-bright);
+      }
+      .card-meta {
+        font-size: 0.8rem;
+        color: var(--text-mid);
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .btn-add,
+      .btn-remove {
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s;
+        font-family: inherit;
+        font-size: 0.85rem;
+      }
+      .btn-add {
+        background: rgba(65, 195, 227, 0.15);
+        color: var(--brand-main);
+        border: 1px solid rgba(65, 195, 227, 0.3);
+      }
+      .btn-add:hover {
+        background: var(--brand-main);
+        color: #0b111a;
+        box-shadow: 0 0 10px rgba(65, 195, 227, 0.4);
+      }
+
+      .btn-remove {
+        background: rgba(255, 82, 82, 0.1);
+        border: 1px solid rgba(255, 82, 82, 0.3);
+        color: var(--danger);
+      }
+      .btn-remove:hover {
+        background: var(--danger);
+        color: #fff;
+        box-shadow: 0 0 10px rgba(255, 82, 82, 0.4);
+      }
+
+      .btn-saved {
+        background: transparent;
+        color: var(--text-mid);
+        border: 1px dashed var(--border-dim);
+        cursor: default;
+      }
+      .empty-state {
+        text-align: center;
+        color: var(--text-mid);
+        font-style: italic;
+        font-size: 1rem;
+        padding: 2rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+      }
+
+      .deck-accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background-color: var(--navy-2);
+      }
+      .card-details-box {
+        padding: 1.25rem;
+        background: #e8eff8;
+        background-image: radial-gradient(#d1dce8 1px, transparent 1px);
+        background-size: 20px 20px;
+        border-top: 1px solid var(--border-dim);
+      }
+      .proxy-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 3px solid #8fa3bf;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .proxy-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0a0d1a;
+        line-height: 1.1;
+      }
+      .proxy-stats {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #4a5a70;
+      }
+
+      .accordion-icon {
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--text-mid);
+        width: 24px;
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+        display: inline-block;
+      }
+      .deck-accordion-btn.active .accordion-icon {
+        transform: rotate(45deg);
+        color: var(--brand-main);
+      }
+
+      .btn-export {
+        background: var(--navy-4);
+        color: var(--text-bright);
+        border: 1px solid var(--border-dim);
+        width: 100%;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        font-weight: 800;
+        padding: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        font-family: inherit;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn-export:hover {
+        background: var(--brand-hover);
+        border-color: var(--brand-hover);
+        color: #ffffff;
+      }
+
+      .btn-clear {
+        background: rgba(255, 82, 82, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(255, 82, 82, 0.3);
+        border-radius: 8px;
+        font-weight: 800;
+        padding: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .btn-clear:hover {
+        background: var(--danger);
+        color: #fff;
+        box-shadow: 0 0 16px rgba(255, 82, 82, 0.4);
+      }
+      /* ── DROPDOWN MENU ── */
+      .dropdown {
+        position: relative;
+        cursor: pointer;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--navy-3);
+        border: 1px solid var(--border-dim);
+        border-radius: 8px;
+        padding: 4px 0;
+        min-width: 180px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        z-index: 200;
+      }
+      /* Opens ONLY on click */
+      .dropdown.open .dropdown-content {
+        display: flex;
+        flex-direction: column;
+      }
+      .dropdown-item {
+        padding: 10px 16px;
+        color: var(--text-mid);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s;
+        text-align: center;
+      }
+      .dropdown-item:hover {
+        background: rgba(65, 195, 227, 0.1);
+        color: var(--brand-main);
+      }
+      /* ── MOBILE RESPONSIVE FIXES ── */
+      @media (max-width: 1024px) {
+        .body-wrapper {
+          height: auto;
+          overflow: auto;
+        }
+        .main-wrapper {
+          grid-template-columns: 1fr;
+          height: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        .preview-panel {
+          position: static;
+          max-width: 250px;
+          margin: 0 auto;
+          display: none;
+        }
+        .panel {
+          height: 65vh;
+          min-height: 500px;
+        }
+      }
+      @media (max-width: 768px) {
+        /* ── MOBILE DROPDOWN FIX ── */
+        .dropdown {
+          flex-direction: column;
+        }
+        .dropdown-content {
+          position: static; /* Forces it to push other items down instead of floating */
+          transform: none;
+          width: 100%;
+          box-shadow: none;
+          border: 1px solid var(--border-dim);
+          background: rgba(0, 0, 0, 0.2);
+        }
+        body {
+          overflow: auto;
+        }
+        .btn-export {
+          font-size: 12px;
+        }
+        .btn-clear {
+          font-size: 12px;
+        }
+      }
+      .btn-close-modal {
+        background: transparent;
+        border: none;
+        color: var(--text-dim);
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-close-modal:hover {
+        color: var(--danger);
+        transform: scale(1.1);
+      }
+
+      .about-content {
+        padding: 24px 20px;
+        font-size: 15px;
+        color: var(--text-bright);
+        line-height: 1.6;
+      }
+      .about-content p {
+        margin-bottom: 16px;
+      }
+      .about-content strong {
+        color: var(--text-bright);
+        font-weight: 800;
+      }
+      .about-content a {
+        color: var(--brand-main);
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-block;
+        margin-top: 4px;
+        border-bottom: 1px dashed var(--border-dim);
+        transition: 0.2s;
+      }
+      .about-content a:hover {
+        color: var(--brand-hover);
+        border-color: var(--brand-hover);
+      }
+
+      /* 1. The subtle tech grid faded at the edges */
+      .holo-bg-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(65, 195, 227, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(65, 195, 227, 0.04) 1px, transparent 1px);
+        background-size: 40px 40px;
+        -webkit-mask-image: radial-gradient(
+          circle at center,
+          black 30%,
+          transparent 100%
+        );
+        mask-image: radial-gradient(
+          circle at center,
+          black 30%,
+          transparent 100%
+        );
+      }
+
+      /* 2. The official Hololive-style diagonal slash */
+      .holo-bg-slash {
+        position: absolute;
+        inset: -50%;
+        background: linear-gradient(
+          135deg,
+          transparent 48%,
+          rgba(255, 255, 255, 0.015) 48%,
+          rgba(255, 255, 255, 0.015) 52%,
+          transparent 52%
+        );
+      }
+
+      /* 3. The floating ambient glow orbs */
+      .holo-bg-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.4;
+      }
+      .glow-cyan {
+        width: 70vw;
+        height: 70vw;
+        max-width: 600px;
+        max-height: 600px;
+        top: -10%;
+        left: -10%;
+        background: radial-gradient(
+          circle,
+          var(--brand-main) 0%,
+          transparent 70%
+        );
+        animation: floatCyan 22s infinite alternate ease-in-out;
+      }
+      .glow-pink {
+        width: 60vw;
+        height: 60vw;
+        max-width: 500px;
+        max-height: 500px;
+        bottom: -10%;
+        right: -10%;
+        background: radial-gradient(
+          circle,
+          var(--brand-pink) 0%,
+          transparent 70%
+        );
+        animation: floatPink 28s infinite alternate ease-in-out;
+      }
+
+      @keyframes floatCyan {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(8vw, 8vh);
+        }
+      }
+      @keyframes floatPink {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(-8vw, -8vh);
+        }
+      }
+      #navbar-placeholder {
+        position: sticky;
+        top: 0;
+        z-index: 2500;
+      }
