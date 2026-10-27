@@ -69,7 +69,7 @@
         overflow: hidden;
         height: calc(100vh - 72px); /* Fallback for very old browsers */
         height: calc(
-          100dvh - 72px
+          70vh - 72px
         ); /* 👉 THE FIX: Dynamic height for modern tablets */
         position: relative;
         z-index: 10;
@@ -1471,20 +1471,7 @@
           "
         >
           <!-- Modern Esports-Style Hero Banner -->
-          <div
-            id="tournament-hero"
-            style="
-              background: linear-gradient(
-                135deg,
-                var(--navy-3) 0%,
-                var(--navy) 100%
-              );
-              padding: 24px;
-              border-bottom: 1px solid var(--border-mid);
-              position: relative;
-              overflow: hidden;
-            "
-          >
+<div id="tournament-hero" style="background: linear-gradient(135deg, var(--navy-3) 0%, var(--navy) 100%); padding: 24px; border-bottom: 1px solid var(--border-mid); position: relative; overflow: hidden; flex-shrink: 0;">
             <!-- Decorative Background Trophy -->
             <div
               style="
