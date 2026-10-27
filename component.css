@@ -372,8 +372,8 @@ body {
 @keyframes floatPink { 0% { transform: translate(0, 0); } 100% { transform: translate(-8vw, -8vh); } }
 
 /* ── 9. RESPONSIVE UTILITIES ── */
-.hide-on-mobile { display: flex; }
-.hide-on-desktop { display: none; }
+.hide-on-mobile { display: flex!important; }
+.hide-on-desktop { display: none!important; }
 .burger-btn { display: none; }
 
 @media (max-width: 1024px) {
