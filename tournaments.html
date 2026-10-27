@@ -67,7 +67,7 @@
         justify-content: center;
         width: 100%;
         overflow: hidden;
-        max-height: 40dvh; /* Fallback for very old browsers */
+        max-height: 100%;
         position: relative;
         z-index: 10;
       }
@@ -1446,7 +1446,6 @@
               display: flex;
               flex-direction: column;
               -webkit-overflow-scrolling: touch;
-              overscroll-behavior-y: contain;
               padding-bottom: 24px;
             "
           >
@@ -1468,7 +1467,21 @@
           "
         >
           <!-- Modern Esports-Style Hero Banner -->
-<div id="tournament-hero" style="background: linear-gradient(135deg, var(--navy-3) 0%, var(--navy) 100%); padding: 24px; border-bottom: 1px solid var(--border-mid); position: relative; overflow: hidden; flex-shrink: 0;">
+          <div
+            id="tournament-hero"
+            style="
+              background: linear-gradient(
+                135deg,
+                var(--navy-3) 0%,
+                var(--navy) 100%
+              );
+              padding: 24px;
+              border-bottom: 1px solid var(--border-mid);
+              position: relative;
+              overflow: hidden;
+              flex-shrink: 0;
+            "
+          >
             <!-- Decorative Background Trophy -->
             <div
               style="
