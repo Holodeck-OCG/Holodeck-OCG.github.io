@@ -168,6 +168,20 @@ function deleteHistoryItem(index) {
   renderHistory();
 }
 
+function escapeHtml(str) {
+  if (str == null) return "";
+  return String(str).replace(/[&<>'"]/g, (match) => {
+    const escapeMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "'": "&#39;",
+      '"': "&quot;",
+    };
+    return escapeMap[match];
+  });
+}
+
 function renderHistory() {
   const container = document.getElementById("history-container");
   const history = getHistory();
@@ -184,11 +198,14 @@ function renderHistory() {
   if (clearBtn) clearBtn.style.display = "block";
   container.innerHTML = "";
 
+  const itemHtmlList = [];
   history.forEach((card, index) => {
-    const type = card.card_type || "Type";
-    const hp = card.hp ? ` | HP: ${card.hp}` : "";
-    const level = card.bloom_level ? `[${card.bloom_level}] ` : "";
-    const id = card.card_id ? ` • ${card.card_id}` : "";
+    const type = escapeHtml(card.card_type || "Type");
+    const hp = card.hp ? ` | HP: ${escapeHtml(card.hp)}` : "";
+    const level = card.bloom_level ? `[${escapeHtml(card.bloom_level)}] ` : "";
+    const id = card.card_id ? ` • ${escapeHtml(card.card_id)}` : "";
+    const name = escapeHtml(card.card_name || "");
+    const arts = escapeHtml(card.arts_text || "None");
 
     const imgTag = card.thumbnail
       ? `<img src="${card.thumbnail}" class="history-thumb" alt="thumb"/>`
@@ -210,7 +227,7 @@ function renderHistory() {
                     <div class="accordion-title-area">
                         ${imgTag}
                         <div>
-                            <div>${level}${card.card_name}</div>
+                            <div>${level}${name}</div>
                             <div class="accordion-meta">${type}${id}</div>
                         </div>
                     </div>
@@ -224,15 +241,16 @@ function renderHistory() {
                         ${skillHtml}
                         <div class="result-item item-arts">
                             <div class="result-label" style="color: var(--brand-pink); font-size: 0.85rem; text-transform: uppercase; font-weight: 800;">Arts Skill</div>
-                            <div class="result-value">${card.arts_text || "None"}</div>
+                            <div class="result-value">${arts}</div>
                         </div>
                         <button class="btn-delete-item" data-index="${index}">Delete This Scan</button>
                     </div>
                 </div>
             </div>
         `;
-    container.innerHTML += itemHTML;
+    itemHtmlList.push(itemHTML);
   });
+  container.innerHTML = itemHtmlList.join("");
 
   const accButtons = document.querySelectorAll(".accordion-btn");
   accButtons.forEach((btn) => {
@@ -384,7 +402,10 @@ const handleFileInput = async (event) => {
   const previewImg = document.getElementById("image-preview");
   const previewContainer = document.getElementById("image-preview-container");
   if (previewImg && previewContainer) {
-    previewImg.src = URL.createObjectURL(file);
+    const newObjectUrl = URL.createObjectURL(file);
+    if (previewImg.dataset.objectUrl) URL.revokeObjectURL(previewImg.dataset.objectUrl);
+    previewImg.dataset.objectUrl = newObjectUrl;
+    previewImg.src = newObjectUrl;
     previewContainer.style.display = "block";
   }
 
@@ -410,7 +431,10 @@ window.addEventListener("paste", async (event) => {
         "image-preview-container",
       );
       if (previewImg && previewContainer) {
-        previewImg.src = URL.createObjectURL(file);
+        const newObjectUrl = URL.createObjectURL(file);
+    if (previewImg.dataset.objectUrl) URL.revokeObjectURL(previewImg.dataset.objectUrl);
+    previewImg.dataset.objectUrl = newObjectUrl;
+    previewImg.src = newObjectUrl;
         previewContainer.style.display = "block";
       }
       currentBase64 = await fileToBase64(file);
