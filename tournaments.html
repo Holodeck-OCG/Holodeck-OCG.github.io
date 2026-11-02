@@ -947,8 +947,9 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
+        width: 100%;
         height: 100vh;
+        height: 100dvh;
         background: rgba(5, 10, 20, 0.88);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
@@ -958,6 +959,8 @@
         justify-content: center;
         padding: 20px;
         box-sizing: border-box;
+        overscroll-behavior: contain;
+        touch-action: manipulation;
       "
       onclick="if (event.target === this) window.closeDeckImage();"
     >
@@ -974,16 +977,16 @@
         <button
           onclick="window.closeDeckImage()"
           style="
-            position: absolute;
-            top: -16px;
-            right: -16px;
+            position: fixed;
+            top: calc(12px + env(safe-area-inset-top));
+            right: calc(12px + env(safe-area-inset-right));
             background: #1e293b;
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #ffffff;
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1985,12 +1988,15 @@
         const img = document.getElementById("lightbox-image");
         img.src = url;
         overlay.style.display = "flex";
+        // Stop the page behind the lightbox from scrolling on touch devices
+        document.body.style.overflow = "hidden";
       };
 
       window.closeDeckImage = function () {
         const overlay = document.getElementById("image-overlay");
         overlay.style.display = "none";
         document.getElementById("lightbox-image").src = "";
+        document.body.style.overflow = "";
       };
     </script>
     <script src="js/version.js"></script>
