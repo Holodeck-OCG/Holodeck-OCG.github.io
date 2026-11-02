@@ -394,20 +394,13 @@ window.setView = function (mode) {
   const dbGrid = document.getElementById("scanned-pool");
   const gridBtn = document.getElementById("btn-grid-view");
   const listBtn = document.getElementById("btn-list-view");
+  const isList = mode === "list";
 
-  if (mode === "list") {
-    dbGrid.classList.add("list-view");
-    listBtn.style.background = "var(--brand-main)";
-    listBtn.style.color = "white";
-    gridBtn.style.background = "transparent";
-    gridBtn.style.color = "var(--text-dim)";
-  } else {
-    dbGrid.classList.remove("list-view");
-    gridBtn.style.background = "var(--brand-main)";
-    gridBtn.style.color = "white";
-    listBtn.style.background = "transparent";
-    listBtn.style.color = "var(--text-dim)";
-  }
+  dbGrid.classList.toggle("list-view", isList);
+  gridBtn.classList.toggle("active", !isList);
+  listBtn.classList.toggle("active", isList);
+  gridBtn.setAttribute("aria-pressed", String(!isList));
+  listBtn.setAttribute("aria-pressed", String(isList));
 };
 
 window.toggleAccordion = function (element) {
@@ -924,9 +917,11 @@ function renderCardPool(searchQuery = "") {
 
   if (currentFilteredPool.length === 0) {
     poolContainer.innerHTML = `<div class="empty-state">No cards found matching "${searchQuery}".</div>`;
+    resetChunkSentinel();
     return;
   }
 
+  resetChunkSentinel();
   loadNextChunk();
 }
 
@@ -957,25 +952,76 @@ function loadNextChunk() {
       card.classList.add("fade-in");
     }, index * 20);
   });
+
+  ensureChunkSentinel();
 }
 
-// Desktop Scroll
+// Desktop: the database pane scrolls on its own
+let chunkQueued = false;
+function queueChunk() {
+  if (chunkQueued) return;
+  chunkQueued = true;
+  requestAnimationFrame(() => {
+    chunkQueued = false;
+    if (renderedCount < currentFilteredPool.length) loadNextChunk();
+  });
+}
+
+/* ── INFINITE SCROLL SENTINEL ──
+   One IntersectionObserver handles both layouts: the desktop pane and the
+   full-page scroll on tablets/phones. It also survives the case where a
+   scroll event never fires (e.g. short lists, momentum scrolling). */
+let chunkObserver = null;
+
+function ensureChunkSentinel() {
+  const pool = document.getElementById("scanned-pool");
+  if (!pool) return;
+
+  if (!chunkObserver && "IntersectionObserver" in window) {
+    chunkObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) queueChunk();
+      },
+      { rootMargin: "600px 0px" },
+    );
+  }
+
+  let sentinel = document.getElementById("chunk-sentinel");
+  if (!sentinel) {
+    sentinel = document.createElement("div");
+    sentinel.id = "chunk-sentinel";
+    sentinel.setAttribute("aria-hidden", "true");
+  }
+  // Re-append so the sentinel always trails the newest chunk of cards.
+  pool.appendChild(sentinel);
+  if (chunkObserver) chunkObserver.observe(sentinel);
+}
+
+function resetChunkSentinel() {
+  if (chunkObserver) chunkObserver.disconnect();
+  const sentinel = document.getElementById("chunk-sentinel");
+  if (sentinel) sentinel.remove();
+}
+
 document.getElementById("scanned-pool").addEventListener("scroll", function () {
-  if (window.innerWidth > 768) {
-    if (this.scrollTop + this.clientHeight >= this.scrollHeight - 600) {
-      if (renderedCount < currentFilteredPool.length) loadNextChunk();
-    }
+  if (window.innerWidth <= 1199) return;
+  if (this.scrollTop + this.clientHeight >= this.scrollHeight - 600) {
+    queueChunk();
   }
 });
 
-// Mobile Scroll
-document.querySelector(".main-panel").addEventListener("scroll", function () {
-  if (window.innerWidth <= 768) {
-    if (this.scrollTop + this.clientHeight >= this.scrollHeight - 800) {
-      if (renderedCount < currentFilteredPool.length) loadNextChunk();
-    }
-  }
-});
+// Tablet + phone: the page itself scrolls
+window.addEventListener(
+  "scroll",
+  function () {
+    if (window.innerWidth > 1199) return;
+    const nearBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 800;
+    if (nearBottom) queueChunk();
+  },
+  { passive: true },
+);
 
 /* ── NATIVE APP BOTTOM SHEET SWIPE-TO-CLOSE LOGIC ── */
 const dragArea = document.getElementById("sheet-drag-area");
@@ -1025,7 +1071,7 @@ dragArea.addEventListener("touchend", () => {
 });
 
 function tapToggle(el) {
-  if (window.innerWidth > 768) return;
+  if (window.innerWidth > 1199) return;
   if (el.closest(".card-grid").classList.contains("list-view")) return;
 
   const cardId = el.getAttribute("data-id");

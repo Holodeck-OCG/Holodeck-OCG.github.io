@@ -563,3 +563,81 @@ html,
         top: 0;
         z-index: 2500;
       }
+/* =========================================
+   MODERN SHELL OVERRIDES (tablet + phone)
+   Natural page scroll instead of a fixed
+   height shell with three inner scrollers.
+   ========================================= */
+@media (max-width: 1024px) {
+  html,
+  body {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .body-wrapper {
+    height: auto;
+    overflow: visible;
+    padding: 12px 12px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: auto;
+    max-width: none;
+  }
+
+  .panel {
+    height: auto;
+    min-height: 0;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  /* Keep long lists bounded so the next panel stays reachable */
+  .card-list {
+    max-height: 52vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .search-bar {
+    height: 48px;
+    max-width: none;
+    border-radius: 14px;
+  }
+
+  .btn-action {
+    min-height: 44px;
+  }
+
+  #navbar-placeholder .topbar {
+    min-height: 64px;
+  }
+
+  #navbar-placeholder .tab {
+    min-height: 46px;
+  }
+}
+
+@media (max-width: 700px) {
+  .body-wrapper {
+    padding: 10px 10px calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .card-list {
+    max-height: 46vh;
+  }
+
+  .search-bar {
+    height: 50px;
+  }
+}

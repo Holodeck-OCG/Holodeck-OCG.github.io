@@ -17,10 +17,10 @@
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
     <link rel="stylesheet" href="css/component.css" />
     <link rel="stylesheet" href="css/theme.css" />
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
-<div class="holo-bg-container">
+    <div class="holo-bg-container">
       <div class="holo-bg-aurora"></div>
       <div class="holo-bg-ray"></div>
       <div class="holo-bg-grid"></div>
@@ -28,69 +28,67 @@
     <div id="navbar-placeholder"></div>
     <div class="body-wrapper">
       <main class="main-panel">
+        <!-- ── BOOKMARKS ── -->
         <div class="panel-col">
           <div class="section-header">
-            <h3>
-              <i class="ti ti-bookmark"></i> Bookmarks
-              <span
-                class="badge"
-                style="
-                  background: var(--navy-4);
-                  color: var(--text-bright);
-                  margin-left: 8px;
-                "
-                id="deck-count"
-                >0</span
+            <div class="title-group">
+              <h3><i class="ti ti-bookmark"></i> Bookmarks</h3>
+              <span id="deck-count" aria-live="polite">0</span>
+            </div>
+
+            <div class="header-actions">
+              <button
+                id="btn-copy-deck"
+                class="btn-action"
+                onclick="window.exportDecklist()"
               >
-            </h3>
-              <div class="header-actions">
-                <button id="btn-copy-deck" class="btn-action" onclick="window.exportDecklist()">
-                  <i class="ti ti-clipboard-text"></i> <span>Copy</span>
-                </button>
-                <button class="btn-action danger" onclick="window.clearAllBookmarks()">
-                  <i class="ti ti-trash"></i> Clear
-                </button>
-                <button class="btn-action btn-max-left" onclick="toggleLayout('left')" title="Maximize Bookmarks" aria-label="Maximize Bookmarks">
+                <i class="ti ti-clipboard-text"></i> <span>Copy</span>
+              </button>
+              <button
+                class="btn-action danger"
+                onclick="window.clearAllBookmarks()"
+              >
+                <i class="ti ti-trash"></i> <span>Clear</span>
+              </button>
+              <div class="segmented" role="group" aria-label="Bookmarks layout">
+                <button
+                  class="btn-action icon-only btn-max-left"
+                  onclick="toggleLayout('left')"
+                  title="Maximize bookmarks"
+                  aria-label="Maximize bookmarks"
+                >
                   <i class="ti ti-arrows-maximize"></i>
                 </button>
-                <button class="btn-action btn-def-left" onclick="toggleLayout('default')" title="Default View" style="background: var(--brand-main); color: var(--navy);" aria-label="Default View">
+                <button
+                  class="btn-action icon-only btn-def-left"
+                  onclick="toggleLayout('default')"
+                  title="Default view"
+                  aria-label="Default view"
+                >
                   <i class="ti ti-layout-columns"></i>
                 </button>
               </div>
-
+            </div>
           </div>
 
           <div class="card-grid list-view" id="current-deck"></div>
         </div>
 
+        <!-- ── DATABASE ── -->
         <div class="panel-col">
           <div class="section-header">
-            <div style="display: flex; align-items: center; gap: 12px">
-              <div>
-                <h3 style="color: var(--text-bright)">
-                  <i class="ti ti-database"></i> Database
-                </h3>
-                <span class="result-count" style="font-size: 15px; color: var(--text-dim); margin-top: 4px; display: block;">
-                <b id="cardCount" style="color: var(--text-bright); font-size: 18px">Loading...</b> cards loaded
-
-              </div>
+            <div class="title-group">
+              <h3><i class="ti ti-database"></i> Database</h3>
+              <span class="result-count" aria-live="polite">
+                <b id="cardCount">…</b> cards
+              </span>
             </div>
 
             <div class="header-actions">
               <select
                 id="set-select"
-                style="
-                  background: var(--navy-3);
-                  color: var(--text-bright);
-                  border: 1px solid var(--border-dim);
-                  padding: 8px 14px;
-                  border-radius: 6px;
-                  font-family: &quot;nunito&quot;, sans-serif;
-                  font-size: 14px;
-                  font-weight: 600;
-                  outline: none;
-                  cursor: pointer;
-                "
+                class="select-control"
+                aria-label="Filter by card set"
               >
                 <option value="all">All Sets</option>
                 <option value="hBP01">hBP01</option>
@@ -106,49 +104,38 @@
                 <option value="hSD">hSD (Starter Decks)</option>
               </select>
 
-              <div
-                style="
-                  display: flex;
-                  gap: 4px;
-                  background: var(--navy-3);
-                  padding: 4px;
-                  border-radius: 6px;
-                  border: 1px solid var(--border-dim);
-                "
-              >
-              <button class="btn-action btn-max-right" onclick="toggleLayout('right')" title="Maximize Database">
-                <i class="ti ti-arrows-maximize"></i>
-              </button>
-              <button class="btn-action btn-def-right" onclick="toggleLayout('default')" title="Default View" style="background: var(--brand-main); color: var(--navy);">
-                <i class="ti ti-layout-columns"></i>
-              </button>
+              <div class="segmented" role="group" aria-label="Database layout">
+                <button
+                  class="btn-action icon-only btn-max-right"
+                  onclick="toggleLayout('right')"
+                  title="Maximize database"
+                  aria-label="Maximize database"
+                >
+                  <i class="ti ti-arrows-maximize"></i>
+                </button>
+                <button
+                  class="btn-action icon-only btn-def-right"
+                  onclick="toggleLayout('default')"
+                  title="Default view"
+                  aria-label="Default view"
+                >
+                  <i class="ti ti-layout-columns"></i>
+                </button>
                 <button
                   id="btn-grid-view"
+                  class="btn-action icon-only active"
                   onclick="setView('grid')"
-                  style="
-                    background: var(--brand-main);
-                    color: white;
-                    border: none;
-                    padding: 6px 10px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: 0.2s;
-                  "
+                  aria-label="Grid view"
+                  aria-pressed="true"
                 >
                   <i class="ti ti-layout-grid"></i>
                 </button>
                 <button
                   id="btn-list-view"
+                  class="btn-action icon-only"
                   onclick="setView('list')"
-                  style="
-                    background: transparent;
-                    color: var(--text-dim);
-                    border: none;
-                    padding: 6px 10px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: 0.2s;
-                  "
+                  aria-label="List view"
+                  aria-pressed="false"
                 >
                   <i class="ti ti-layout-list"></i>
                 </button>
@@ -156,18 +143,35 @@
             </div>
           </div>
 
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-              margin-bottom: 12px;
-            "
-          >
-            <div
-              class="filter-chips"
-              style="margin-bottom: 0; padding-bottom: 4px"
-            >
+          <div class="db-tools">
+            <div class="search-bar hide-on-mobile">
+              <i class="ti ti-search"></i>
+              <input
+                type="search"
+                id="search-db-input"
+                placeholder="Search name, ID, type, or #tag (e.g. #buzz)…"
+                aria-label="Search cards"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                enterkeyhint="search"
+              />
+            </div>
+            <div class="search-bar hide-on-desktop">
+              <i class="ti ti-search"></i>
+              <input
+                type="search"
+                id="search-db-input2"
+                placeholder="Search name, ID, type, or #tag (e.g. #buzz)…"
+                aria-label="Search cards"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                enterkeyhint="search"
+              />
+            </div>
+
+            <div class="filter-chips">
               <button class="chip active" onclick="setChipFilter('', this)">
                 All Cards
               </button>
@@ -197,24 +201,8 @@
               </button>
             </div>
 
-            <div
-              class="filter-chips"
-              style="margin-bottom: 0; padding-bottom: 4px"
-            >
-              <span
-                style="
-                  font-size: 11px;
-                  color: var(--brand-main);
-                  font-weight: 800;
-                  text-transform: uppercase;
-                  margin-right: 4px;
-                  letter-spacing: 0.1em;
-                  flex-shrink: 0;
-                "
-                >Premium:</span
-              >
-              <div>
-      </div>
+            <div class="filter-chips">
+              <span class="premium-label">Premium:</span>
               <button class="chip" onclick="setChipFilter('_SR', this)">
                 SR
               </button>
@@ -231,33 +219,23 @@
                 SEC
               </button>
             </div>
-                    <div class="search-bar hide-on-mobile">
-          <i class="ti ti-search"></i>
-          <input
-            type="search"
-            id="search-db-input"
-            placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
-          />
-        </div>
-                    <div class="search-bar hide-on-desktop">
-              <i class="ti ti-search"></i>
-              <input
-                type="search"
-                id="search-db-input2"
-                placeholder="Search name, ID, type, or #tag (e.g. #buzz)..."
-              />
-            </div>
           </div>
 
           <div class="card-grid" id="scanned-pool">
             <div id="db-loading-state" class="skeleton-grid">
               <!-- Generate 12 skeleton cards for visual placeholder -->
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
-              <div class="skeleton-card"></div><div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
             </div>
           </div>
         </div>
@@ -269,39 +247,127 @@
       class="about-overlay"
       onclick="closeAboutModal()"
     ></div>
-          <div id="about-modal" class="about-modal">
-            <div class="about-header">
+    <div id="about-modal" class="about-modal">
+      <div class="about-header">
         <h3>About hOCG DB</h3>
-        <button class="btn-close-modal" onclick="closeAboutModal()" aria-label="Close About">
+        <button
+          class="btn-close-modal"
+          onclick="closeAboutModal()"
+          aria-label="Close About"
+        >
           <i class="ti ti-x"></i>
         </button>
       </div>
       <div class="about-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <span class="app-version" style="background: var(--navy-4); color: var(--brand-main); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; border: 1px solid var(--border-mid); letter-spacing: 0.05em;"></span>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+          "
+        >
+          <span
+            class="app-version"
+            style="
+              background: var(--navy-4);
+              color: var(--brand-main);
+              padding: 4px 8px;
+              border-radius: 6px;
+              font-size: 12px;
+              font-weight: 800;
+              border: 1px solid var(--border-mid);
+              letter-spacing: 0.05em;
+            "
+          ></span>
         </div>
 
-        <h4 style="color: var(--brand-main); margin-bottom: 8px;">Credits</h4>
-        <p style="margin-bottom: 16px;">
-          <strong>Developed by:</strong> Siuspras<br>
-          <strong>Translations:</strong> ogbajoj <a href="https://docs.google.com/spreadsheets/d/1IdaueY-Jw8JXjYLOhA9hUd2w0VRBao9Z1URJwmCWJ64/edit?pli=1&gid=975361685#gid=975361685" target="_blank" aria-label="View Translation Sheet"><i class="ti ti-external-link"></i></a><br>
-          <strong>Images:</strong> <a href="https://hololive-official-cardgame.com/" target="_blank">hololive-official-cardgame</a>
+        <h4 style="color: var(--brand-main); margin-bottom: 8px">Credits</h4>
+        <p style="margin-bottom: 16px">
+          <strong>Developed by:</strong> Siuspras<br />
+          <strong>Translations:</strong> ogbajoj
+          <a
+            href="https://docs.google.com/spreadsheets/d/1IdaueY-Jw8JXjYLOhA9hUd2w0VRBao9Z1URJwmCWJ64/edit?pli=1&gid=975361685#gid=975361685"
+            target="_blank"
+            aria-label="View Translation Sheet"
+            ><i class="ti ti-external-link"></i></a
+          ><br />
+          <strong>Images:</strong>
+          <a href="https://hololive-official-cardgame.com/" target="_blank"
+            >hololive-official-cardgame</a
+          >
         </p>
 
-        <h4 style="color: var(--brand-main); margin-bottom: 8px;">Contact</h4>
-        <p style="margin-bottom: 16px; line-height: 1.8;">
-          <i class="ti ti-brand-discord" style="color: #5865f2; font-size: 16px"></i> Discord: <span style="color: var(--text-bright); font-weight: 600">Siuspras</span><br />
-          <i class="ti ti-mail" style="color: var(--danger); font-size: 16px"></i> Email: <a href="mailto:Holodecktcg@gmail.com" style="display: inline; border: none; margin: 0; font-weight: 600; color: var(--brand-main);">Holodecktcg@gmail.com</a>
+        <h4 style="color: var(--brand-main); margin-bottom: 8px">Contact</h4>
+        <p style="margin-bottom: 16px; line-height: 1.8">
+          <i
+            class="ti ti-brand-discord"
+            style="color: #5865f2; font-size: 16px"
+          ></i>
+          Discord:
+          <span style="color: var(--text-bright); font-weight: 600"
+            >Siuspras</span
+          ><br />
+          <i class="ti ti-mail" style="color: var(--danger); font-size: 16px"></i>
+          Email:
+          <a
+            href="mailto:Holodecktcg@gmail.com"
+            style="
+              display: inline;
+              border: none;
+              margin: 0;
+              font-weight: 600;
+              color: var(--brand-main);
+            "
+            >Holodecktcg@gmail.com</a
+          >
         </p>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; margin: 20px 0; background: rgba(0, 0, 0, 0.2); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-dim);">
-          <span style="font-weight: 700; color: var(--text-mid); font-size: 14px">Total Visitors</span>
-          <span id="visitor-count" style="font-weight: 800; color: var(--brand-main); font-size: 16px; background: var(--navy-4); padding: 2px 8px; border-radius: 4px; border: 0.5px solid var(--border-mid);">...</span>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            background: rgba(127, 127, 127, 0.1);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-dim);
+          "
+        >
+          <span
+            style="font-weight: 700; color: var(--text-mid); font-size: 14px"
+            >Total Visitors</span
+          >
+          <span
+            id="visitor-count"
+            style="
+              font-weight: 800;
+              color: var(--brand-main);
+              font-size: 16px;
+              background: var(--navy-4);
+              padding: 2px 8px;
+              border-radius: 4px;
+              border: 0.5px solid var(--border-mid);
+            "
+            >...</span
+          >
         </div>
 
         <!-- Muted Disclaimer -->
-        <p style="font-size: 11px; color: var(--text-dim); margin: 0; line-height: 1.4; padding-top: 12px; border-top: 1px solid var(--border-dim);">
-          This is an unofficial fan-made application. Not affiliated with or endorsed by COVER Corp. or Hololive Production. All intellectual property belongs to their respective owners.
+        <p
+          style="
+            font-size: 11px;
+            color: var(--text-dim);
+            margin: 0;
+            line-height: 1.4;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-dim);
+          "
+        >
+          This is an unofficial fan-made application. Not affiliated with or
+          endorsed by COVER Corp. or Hololive Production. All intellectual
+          property belongs to their respective owners.
         </p>
       </div>
     </div>

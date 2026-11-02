@@ -1436,16 +1436,29 @@
 
         // 3. Render Deck Area (Image or Code)
         if (activeTournament.winner.imageUrl) {
-          container.innerHTML = `
-        <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;">
-          <img src="${activeTournament.winner.imageUrl}" 
-               onclick="window.openDeckImage('${activeTournament.winner.imageUrl}')" 
-               style="max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;" 
-               onmouseover="this.style.transform='scale(1.02)'" 
-               onmouseout="this.style.transform='scale(1)'" 
-               alt="Winning Deck" 
-               title="Click to enlarge" />
-        </div>`;
+          const deckImgWrap = document.createElement("div");
+          deckImgWrap.style.cssText =
+            "background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;";
+          const deckImg = document.createElement("img");
+          deckImg.src = activeTournament.winner.imageUrl;
+          deckImg.alt = "Winning Deck";
+          deckImg.title = "Click to enlarge";
+          deckImg.style.cssText =
+            "max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;";
+          deckImg.onclick = () =>
+            window.openDeckImage(activeTournament.winner.imageUrl);
+          deckImg.onmouseover = () => (deckImg.style.transform = "scale(1.02)");
+          deckImg.onmouseout = () => (deckImg.style.transform = "scale(1)");
+          // Dead imgbb links used to leave an empty purple box behind.
+          deckImg.onerror = () => {
+            deckImgWrap.innerHTML = `
+          <i class="ti ti-photo-off" style="font-size: 40px; opacity: 0.5; margin-bottom: 10px; display: block; color: var(--text-dim);"></i>
+          <p style="margin: 0 0 8px; color: var(--text-dim); font-weight: 600;">Deck image unavailable for this match.</p>
+          <a href="${activeTournament.winner.imageUrl}" target="_blank" rel="noopener" style="color: var(--brand-main); font-size: 13px;">Open image link</a>`;
+          };
+          deckImgWrap.appendChild(deckImg);
+          container.innerHTML = "";
+          container.appendChild(deckImgWrap);
         } else if (activeTournament.winner.deckCode) {
           renderWinningDeck(activeTournament.winner.deckCode);
         } else {
