@@ -943,36 +943,63 @@
     <!-- ── FULLSCREEN IMAGE LIGHTBOX ── -->
     <div
       id="image-overlay"
-      class="about-overlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(5, 10, 20, 0.88);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 99999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+      "
       onclick="if (event.target === this) window.closeDeckImage();"
     >
       <div
         style="
           position: relative;
-          max-width: 95vw;
-          max-height: 95vh;
+          max-width: 92vw;
+          max-height: 92vh;
           display: flex;
-          flex-direction: column;
           align-items: center;
-          animation: popIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+          justify-content: center;
         "
       >
         <button
           onclick="window.closeDeckImage()"
           style="
             position: absolute;
-            top: -40px;
-            right: -10px;
-            background: transparent;
-            border: none;
-            color: var(--text-bright);
-            font-size: 32px;
+            top: -16px;
+            right: -16px;
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
             cursor: pointer;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
           "
-          onmouseover="this.style.color = 'var(--danger)'"
-          onmouseout="this.style.color = 'var(--text-bright)'"
+          onmouseover="
+            this.style.background = '#ff5252';
+            this.style.color = '#fff';
+          "
+          onmouseout="
+            this.style.background = '#1e293b';
+            this.style.color = '#ffffff';
+          "
         >
           <i class="ti ti-x"></i>
         </button>
@@ -980,13 +1007,18 @@
         <img
           id="lightbox-image"
           src=""
+          alt="Enlarged View"
           style="
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 8px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            max-width: 90vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
             object-fit: contain;
-            border: 1px solid var(--border-mid);
+            border-radius: 8px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            filter: none !important;
+            opacity: 1 !important;
           "
         />
       </div>
@@ -1674,7 +1706,7 @@
                 : "";
 
             return `
-      <div class="card-item fade-in" style="min-height: auto; aspect-ratio: 5/7;">
+      <div class="card-item fade-in" style="min-height: auto; aspect-ratio: 5/7; cursor: pointer;" onclick="window.openDeckImage('${imagePath}')">
           ${qtyBadge}
           <div class="card-face ${typeClass} grid-element">
               <img src="${imagePath}" loading="lazy" />
@@ -1948,15 +1980,17 @@
       initializeDatabase();
 
       window.openDeckImage = function (url) {
-        document.getElementById("lightbox-image").src = url;
-        document.getElementById("image-overlay").classList.add("open");
+        if (!url) return;
+        const overlay = document.getElementById("image-overlay");
+        const img = document.getElementById("lightbox-image");
+        img.src = url;
+        overlay.style.display = "flex";
       };
 
       window.closeDeckImage = function () {
-        document.getElementById("image-overlay").classList.remove("open");
-        setTimeout(() => {
-          document.getElementById("lightbox-image").src = "";
-        }, 300);
+        const overlay = document.getElementById("image-overlay");
+        overlay.style.display = "none";
+        document.getElementById("lightbox-image").src = "";
       };
     </script>
     <script src="js/version.js"></script>
