@@ -632,13 +632,13 @@
             "
           ></textarea>
 
-          <!-- DECK IMAGE UPLOAD -->
-          <!-- UPLOAD IMAGE -->
+          <!-- DECK PHOTOS (4 UPLOADS) -->
+          <!-- 1ST WINNER DECK PHOTO -->
           <div
             style="
               display: flex;
-              gap: 12px;
-              align-items: center;
+              flex-direction: column;
+              gap: 6px;
               background: var(--navy-3);
               padding: 8px;
               border: 1px solid var(--border-dim);
@@ -647,14 +647,94 @@
           >
             <span
               style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >Deck Image:</span
+              >1st Winner Deck Image:</span
             >
             <input
               type="file"
-              id="add-deck-image"
+              id="add-first-winner-deck"
               accept="image/*"
               style="color: var(--text-bright); font-size: 14px; outline: none"
             />
+            <div id="add-first-winner-deck-preview" style="display: none"></div>
+          </div>
+
+          <!-- 2ND WINNER DECK PHOTO -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >2nd Winner Deck Image:</span
+            >
+            <input
+              type="file"
+              id="add-second-winner-deck"
+              accept="image/*"
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div id="add-second-winner-deck-preview" style="display: none"></div>
+          </div>
+
+          <!-- 3RD WINNER DECK PHOTO -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >3rd Winner Deck Image:</span
+            >
+            <input
+              type="file"
+              id="add-third-winner-deck"
+              accept="image/*"
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div id="add-third-winner-deck-preview" style="display: none"></div>
+          </div>
+
+          <!-- COMMEMORATE PHOTOS -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >Commemorate Photos (multiple allowed):</span
+            >
+            <input
+              type="file"
+              id="add-commemorate-photos"
+              accept="image/*"
+              multiple
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div
+              id="add-commemorate-photos-preview"
+              style="display: flex; flex-wrap: wrap; gap: 8px"
+            ></div>
           </div>
 
           <div
@@ -876,11 +956,13 @@
             "
           ></textarea>
 
+          <!-- DECK PHOTOS (4 UPLOADS) -->
+          <!-- 1ST WINNER DECK PHOTO -->
           <div
             style="
               display: flex;
-              gap: 12px;
-              align-items: center;
+              flex-direction: column;
+              gap: 6px;
               background: var(--navy-3);
               padding: 8px;
               border: 1px solid var(--border-dim);
@@ -889,15 +971,96 @@
           >
             <span
               style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >Deck Image:</span
+              >1st Winner Deck Image:</span
             >
             <input
               type="file"
-              id="edit-deck-image"
+              id="edit-first-winner-deck"
               accept="image/*"
               style="color: var(--text-bright); font-size: 14px; outline: none"
             />
+            <div id="edit-first-winner-deck-preview" style="display: none"></div>
           </div>
+
+          <!-- 2ND WINNER DECK PHOTO -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >2nd Winner Deck Image:</span
+            >
+            <input
+              type="file"
+              id="edit-second-winner-deck"
+              accept="image/*"
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div id="edit-second-winner-deck-preview" style="display: none"></div>
+          </div>
+
+          <!-- 3RD WINNER DECK PHOTO -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >3rd Winner Deck Image:</span
+            >
+            <input
+              type="file"
+              id="edit-third-winner-deck"
+              accept="image/*"
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div id="edit-third-winner-deck-preview" style="display: none"></div>
+          </div>
+
+          <!-- COMMEMORATE PHOTOS -->
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              background: var(--navy-3);
+              padding: 8px;
+              border: 1px solid var(--border-dim);
+              border-radius: 4px;
+            "
+          >
+            <span
+              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
+              >Commemorate Photos (multiple allowed):</span
+            >
+            <input
+              type="file"
+              id="edit-commemorate-photos"
+              accept="image/*"
+              multiple
+              style="color: var(--text-bright); font-size: 14px; outline: none"
+            />
+            <div
+              id="edit-commemorate-photos-preview"
+              style="display: flex; flex-wrap: wrap; gap: 8px"
+            ></div>
+          </div>
+
 
           <div
             style="
@@ -1149,6 +1312,258 @@
           throw new Error(data.error?.message || "Cloudinary upload failed");
         return data.secure_url;
       }
+
+      // ── DECK / COMMEMORATE PHOTO INPUT CONTROLLERS ──
+      // Owned selection state per photo input: a plain file input cannot
+      // preview images, support per-file removal, or remember an existing
+      // Cloudinary URL across an edit. ids follow "<mode>-<fieldId>(-preview)".
+      const DECK_PHOTO_FIELD_IDS = [
+        "first-winner-deck",
+        "second-winner-deck",
+        "third-winner-deck",
+        "commemorate-photos",
+      ];
+
+      const deckPhotoControllers = {};
+
+      function createDeckPhotoController(mode, fieldId, multiple) {
+        const input = document.getElementById(`${mode}-${fieldId}`);
+        const preview = document.getElementById(
+          `${mode}-${fieldId}-preview`,
+        );
+        if (!input || !preview) return null;
+
+        const showPreview = () => (preview.style.display = "flex");
+        const hidePreview = () => {
+          preview.innerHTML = "";
+          preview.style.display = "none";
+        };
+
+        const makeThumb = (src) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = "Photo preview";
+          img.style.cssText =
+            "height: 64px; width: auto; max-width: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-dim); cursor: pointer;";
+          img.onclick = () => window.openDeckImage(src);
+          return img;
+        };
+
+        const makeSmallButton = (label, onClick) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.style.cssText =
+            "background: var(--navy-2); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; padding: 4px 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'nunito', sans-serif;";
+          btn.onclick = onClick;
+          return btn;
+        };
+
+        const makeCaption = (text, color) => {
+          const el = document.createElement("span");
+          el.textContent = text;
+          el.style.cssText = `color: ${
+            color || "var(--text-dim)"
+          }; font-size: 12px; font-weight: 700; align-self: center;`;
+          return el;
+        };
+
+        const ctrl = {
+          mode,
+          fieldId,
+          multiple,
+          // Single deck fields (edit mode): "empty" (nothing yet), "existing"
+          // (URL on record, no new file), "new" (replacing), "removed".
+          state: "empty",
+          files: [], // newly picked File objects awaiting upload
+          existingUrl: null, // URL currently on record (edit mode)
+          listItems: [], // commemorative (edit mode): working copy of URLs
+        };
+
+        // ADD MODE — render plain file previews.
+        ctrl.renderAdd = function () {
+          hidePreview();
+          if (ctrl.files.length === 0) return;
+          showPreview();
+          ctrl.files.forEach((file, idx) => {
+            const thumb = makeThumb(URL.createObjectURL(file));
+            const name = makeCaption(file.name);
+            const remove = makeSmallButton("✕", () => {
+              ctrl.files.splice(idx, 1);
+              ctrl.renderAdd();
+            });
+            preview.appendChild(thumb);
+            preview.appendChild(name);
+            preview.appendChild(remove);
+          });
+        };
+
+        // EDIT MODE (single deck field) — show current photo, or a preview of
+        // the replacement file. Replace = pick file; Remove = clear field.
+        ctrl.renderEdit = function () {
+          hidePreview();
+
+          if (ctrl.multiple) {
+            // Commemorative: current URLs + pending new files, each removable.
+            if (ctrl.listItems.length === 0 && ctrl.files.length === 0) return;
+            showPreview();
+            const originals = Array.isArray(ctrl.originalList)
+              ? ctrl.originalList
+              : [];
+            ctrl.listItems.forEach((url, idx) => {
+              const thumb = makeThumb(url);
+              if (!originals.includes(url))
+                thumb.style.border = "2px solid var(--brand-main)";
+              const caption = makeCaption(`Current #${idx + 1}`);
+              const remove = makeSmallButton("✕", () => {
+                ctrl.listItems.splice(idx, 1);
+                ctrl.renderEdit();
+              });
+              preview.appendChild(thumb);
+              preview.appendChild(caption);
+              preview.appendChild(remove);
+            });
+            ctrl.files.forEach((file, idx) => {
+              const thumb = makeThumb(URL.createObjectURL(file));
+              thumb.style.border = "2px solid var(--holo-gold)";
+              const caption = makeCaption(
+                `New #${idx + 1}`,
+                "var(--holo-gold)",
+              );
+              const remove = makeSmallButton("✕", () => {
+                ctrl.files.splice(idx, 1);
+                ctrl.renderEdit();
+              });
+              preview.appendChild(thumb);
+              preview.appendChild(caption);
+              preview.appendChild(remove);
+            });
+            return;
+          }
+
+          // Single deck field states: "empty" | "existing" | "new" | "removed".
+          if (ctrl.state === "new" && !ctrl.files[0]) {
+            // File selection was canceled; fall back to what's on record.
+            ctrl.state = ctrl.existingUrl ? "existing" : "empty";
+          }
+          let photoUrl = null;
+          if (ctrl.state === "new") photoUrl = URL.createObjectURL(ctrl.files[0]);
+          else if (ctrl.state === "existing")
+            photoUrl = ctrl.existingUrl;
+          if (!photoUrl) return;
+          showPreview();
+
+          const thumb = makeThumb(photoUrl);
+          preview.appendChild(thumb);
+          preview.appendChild(
+            makeCaption(
+              ctrl.state === "new"
+                ? "New photo (replaces current)"
+                : "Current photo",
+              ctrl.state === "new" ? "var(--holo-gold)" : undefined,
+            ),
+          );
+          if (ctrl.state === "new" && ctrl.existingUrl) {
+            preview.appendChild(
+              makeSmallButton("Keep current", () => {
+                ctrl.state = "existing";
+                ctrl.files = [];
+                ctrl.renderEdit();
+              }),
+            );
+          }
+          preview.appendChild(
+            makeSmallButton(ctrl.state === "new" ? "✕" : "Remove", () => {
+              if (ctrl.state === "new") {
+                ctrl.state = "existing";
+                ctrl.files = [];
+              } else {
+                ctrl.state = "removed";
+              }
+              ctrl.renderEdit();
+            }),
+          );
+        };
+
+        // Clear everything (add mode reset).
+        ctrl.resetAdd = function () {
+          ctrl.files = [];
+          input.value = "";
+          hidePreview();
+        };
+
+        // Seed an edit controller from the document on record.
+        ctrl.resetEdit = function (existingUrl, existingList) {
+          ctrl.files = [];
+          input.value = "";
+          if (multiple) {
+            ctrl.listItems = (existingList || []).filter(Boolean);
+            ctrl.originalList = ctrl.listItems.slice();
+          } else {
+            ctrl.existingUrl = existingUrl || null;
+            ctrl.state = existingUrl ? "existing" : "empty";
+          }
+          ctrl.renderEdit();
+        };
+
+        input.addEventListener("change", () => {
+          if (multiple) ctrl.files.push(...Array.from(input.files || []));
+          else ctrl.files = Array.from(input.files || []);
+          input.value = "";
+          if (mode === "edit") {
+            if (ctrl.files.length > 0) ctrl.state = "new";
+            if (multiple) ctrl.state = "list";
+            ctrl.renderEdit();
+          } else {
+            ctrl.renderAdd();
+          }
+        });
+
+        return ctrl;
+      }
+
+      function wireDeckPhotoControllers() {
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const multiple = fieldId === "commemorate-photos";
+          const add = createDeckPhotoController("add", fieldId, multiple);
+          const edit = createDeckPhotoController("edit", fieldId, multiple);
+          if (add) deckPhotoControllers[`add-${fieldId}`] = add;
+          if (edit) deckPhotoControllers[`edit-${fieldId}`] = edit;
+        });
+      }
+
+      function resetAddDeckPhotoControllers() {
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const ctrl = deckPhotoControllers[`add-${fieldId}`];
+          if (ctrl) ctrl.resetAdd();
+        });
+      }
+
+      function resetEditDeckPhotoControllers() {
+        const photos = getDeckPhotos(activeTournament);
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const ctrl = deckPhotoControllers[`edit-${fieldId}`];
+          if (ctrl) ctrl.resetEdit(photos[fieldId], photos.commemorative);
+        });
+      }
+
+      // Photo fields resolved for a tournament document, with the legacy
+      // `winner.imageUrl` mapped to the 1st Winner Deck (lazy migration).
+      function getDeckPhotos(tournament) {
+        const winner = tournament?.winner || {};
+        const commemorative = Array.isArray(tournament?.commemorativePhotos)
+          ? tournament.commemorativePhotos.filter(Boolean)
+          : [];
+        return {
+          "first-winner-deck":
+            winner.firstWinnerDeck || winner.imageUrl || null,
+          "second-winner-deck": winner.secondWinnerDeck || null,
+          "third-winner-deck": winner.thirdWinnerDeck || null,
+          "commemorate-photos": null,
+          commemorative,
+        };
+      }
+
 
       const csvFilesToLoad = [
         "data/hBP01.csv",
@@ -1489,38 +1904,8 @@
         const container = document.getElementById("winning-deck-container");
         container.innerHTML = "";
 
-        if (activeTournament.winner.imageUrl) {
-          const deckImgWrap = document.createElement("div");
-          deckImgWrap.style.cssText =
-            "background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;";
-          const deckImg = document.createElement("img");
-          deckImg.src = activeTournament.winner.imageUrl;
-          deckImg.alt = "Winning Deck";
-          deckImg.title = "Click to enlarge";
-          deckImg.style.cssText =
-            "max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;";
-          deckImg.onclick = () =>
-            window.openDeckImage(activeTournament.winner.imageUrl);
-          deckImg.onmouseover = () => (deckImg.style.transform = "scale(1.02)");
-          deckImg.onmouseout = () => (deckImg.style.transform = "scale(1)");
-          deckImg.onerror = () => {
-            deckImgWrap.innerHTML = `
-          <i class="ti ti-photo-off" style="font-size: 40px; opacity: 0.5; margin-bottom: 10px; display: block; color: var(--text-dim);"></i>
-          <p style="margin: 0 0 8px; color: var(--text-dim); font-weight: 600;">Deck image unavailable for this match.</p>
-          <a href="${activeTournament.winner.imageUrl}" target="_blank" rel="noopener" style="color: var(--brand-main); font-size: 13px;">Open image link</a>`;
-          };
-          deckImgWrap.appendChild(deckImg);
-          container.innerHTML = "";
-          container.appendChild(deckImgWrap);
-        } else if (activeTournament.winner.deckCode) {
-          renderWinningDeck(activeTournament.winner.deckCode);
-        } else {
-          container.innerHTML = `
-        <div style="background: rgba(0,0,0,0.2); border: 1px dashed var(--border-dim); border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--text-dim); margin-bottom: 24px;">
-          <i class="ti ti-cards" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
-          No deck list or image available for this match.
-        </div>`;
-        }
+        renderWinnerDeckPhotos(container);
+        renderCommemorativePhotos(container);
 
         if (
           activeTournament.winner.youtubeLink ||
@@ -1682,6 +2067,106 @@
         });
       }
 
+      // ── PHOTO RENDER HELPERS (detail panel) ──
+      // Renders the labeled deck photo sections (1st / 2nd / 3rd Winner Deck).
+      // Only sections with a photo appear; falls back to the deck code, then
+      // to the empty-state message. Missing images hide their section.
+      function renderWinnerDeckPhotos(container) {
+        const photos = getDeckPhotos(activeTournament);
+        const labeledPhotos = [
+          ["1st Winner Deck", photos["first-winner-deck"]],
+          ["2nd Winner Deck", photos["second-winner-deck"]],
+          ["3rd Winner Deck", photos["third-winner-deck"]],
+        ].filter(([, url]) => url);
+
+        if (labeledPhotos.length > 0) {
+          labeledPhotos.forEach(([label, url]) => {
+            container.appendChild(createDeckPhotoSection(label, url));
+          });
+        } else if (activeTournament.winner.deckCode) {
+          renderWinningDeck(activeTournament.winner.deckCode);
+        } else {
+          container.innerHTML = `
+        <div style="background: rgba(0,0,0,0.2); border: 1px dashed var(--border-dim); border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--text-dim); margin-bottom: 24px;">
+          <i class="ti ti-cards" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+          No deck list or image available for this match.
+        </div>`;
+        }
+      };
+
+      // Commemorate photo grid; hidden entirely when the event has none.
+      function renderCommemorativePhotos(container) {
+        const photos = getDeckPhotos(activeTournament).commemorative;
+        if (photos.length === 0) return;
+
+        const section = document.createElement("div");
+        section.style.cssText =
+          "background: var(--navy-3); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 20px; margin-bottom: 40px;";
+        const header = document.createElement("div");
+        header.style.cssText =
+          "padding: 12px 16px; border-bottom: 1px solid var(--border-dim); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--brand-main);";
+        header.innerHTML = `<i class="ti ti-camera" style="font-size: 18px;"></i> Commemorate Photos (${photos.length})`;
+        const grid = document.createElement("div");
+        grid.style.cssText =
+          "display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; padding: 16px; background: rgba(0,0,0,0.1);";
+        photos.forEach((url) => {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "Commemorative Photo";
+          img.loading = "lazy";
+          img.title = "Click to enlarge";
+          img.style.cssText =
+            "width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-dim); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s;";
+          img.onclick = () => window.openDeckImage(url);
+          img.onmouseover = () => (img.style.transform = "scale(1.02)");
+          img.onmouseout = () => (img.style.transform = "scale(1)");
+          img.onerror = () => img.remove(); // broken links disappear silently
+          grid.appendChild(img);
+        });
+        section.appendChild(header);
+        section.appendChild(grid);
+        container.appendChild(section);
+      };
+
+      function createDeckPhotoSection(label, url) {
+        const wrap = document.createElement("div");
+        wrap.style.cssText =
+          "background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;";
+        const labelEl = document.createElement("div");
+        labelEl.style.cssText =
+          "color: var(--brand-main); font-size: 14px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;";
+        labelEl.textContent = label;
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = label;
+        img.title = "Click to enlarge";
+        img.loading = "lazy";
+        img.style.cssText =
+          "max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;";
+        img.onclick = () => window.openDeckImage(url);
+        img.onmouseover = () => (img.style.transform = "scale(1.02)");
+        img.onmouseout = () => (img.style.transform = "scale(1)");
+        img.onerror = () => {
+          img.remove(); // escape the URL by building the fallback with DOM APIs
+          const note = document.createElement("p");
+          note.style.cssText =
+            "margin: 0 0 8px; color: var(--text-dim); font-weight: 600;";
+          note.textContent = "Image unavailable for this section.";
+          const link = document.createElement("a");
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.style.cssText =
+            "color: var(--brand-main); font-size: 13px;";
+          link.textContent = "Open image link";
+          wrap.appendChild(note);
+          wrap.appendChild(link);
+        };
+        wrap.appendChild(labelEl);
+        wrap.appendChild(img);
+        return wrap;
+      }
+
       function renderWinningDeck(base64Code) {
         const container = document.getElementById("winning-deck-container");
         container.innerHTML = "";
@@ -1800,7 +2285,8 @@
           activeTournament.metaBreakdown || "";
         document.getElementById("edit-deck-code").value =
           activeTournament.winner?.deckCode || "";
-        document.getElementById("edit-deck-image").value = "";
+
+        resetEditDeckPhotoControllers();
 
         document.getElementById("update-modal").classList.add("open");
       };
@@ -1845,20 +2331,12 @@
             .getElementById("edit-deck-code")
             .value.trim();
 
-          const fileInput = document.getElementById("edit-deck-image");
-          const file = fileInput.files[0];
-
-          let imageUrl = activeTournament.winner?.imageUrl || null;
-
-          if (file) {
-            saveBtn.innerHTML =
-              "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
-            imageUrl = await compressAndUploadToCloudinary(file);
-          }
-
           const tournamentRef = doc(db, "tournaments", activeTournament.id);
 
-          await updateDoc(tournamentRef, {
+          // Per-photo diffing: a field is only written when it was replaced
+          // (new file uploaded) or removed; untouched photos keep their DB
+          // value and are omitted from the update entirely.
+          const updates = {
             eventName: newEventName,
             date: newDate,
             location: newLocation,
@@ -1870,8 +2348,61 @@
             "winner.youtubeLink": newYoutube,
             "winner.comments": newComments,
             "winner.deckCode": newDeckCode || null,
-            "winner.imageUrl": imageUrl,
-          });
+          };
+
+          const winnerOnRecord = activeTournament.winner || {};
+          const legacyImageUrl = winnerOnRecord.imageUrl || null;
+          const photoKeys = [
+            ["first-winner-deck", "firstWinnerDeck"],
+            ["second-winner-deck", "secondWinnerDeck"],
+            ["third-winner-deck", "thirdWinnerDeck"],
+          ];
+          for (const [ctrlSuffix, dbKey] of photoKeys) {
+            const ctrl = deckPhotoControllers[`edit-${ctrlSuffix}`];
+            const existing =
+              dbKey === "firstWinnerDeck"
+                ? winnerOnRecord.firstWinnerDeck || legacyImageUrl
+                : winnerOnRecord[dbKey] || null;
+
+            if (ctrl.state === "new" && ctrl.files[0]) {
+              saveBtn.innerHTML =
+                "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+              updates[`winner.${dbKey}`] = await compressAndUploadToCloudinary(
+                ctrl.files[0],
+              );
+            } else if (ctrl.state === "removed" && existing) {
+              updates[`winner.${dbKey}`] = null;
+            }
+            // "existing" / "empty" → omit, keeping the value already stored.
+          }
+
+          // The legacy field is superseded once the user explicitly changes the
+          // 1st deck photo; drop it so the fallback read cannot resurrect it.
+          if (
+            legacyImageUrl &&
+            "winner.firstWinnerDeck" in updates
+          ) {
+            updates["winner.imageUrl"] = null;
+          }
+
+          // Commemorative: keep working-list order, append newly picked files.
+          const commemorativeCtrl =
+            deckPhotoControllers["edit-commemorate-photos"];
+          const originalList = Array.isArray(commemorativeCtrl.originalList)
+            ? commemorativeCtrl.originalList
+            : [];
+          if (
+            commemorativeCtrl.listItems.length !== originalList.length ||
+            commemorativeCtrl.listItems.some((u, i) => u !== originalList[i]) ||
+            commemorativeCtrl.files.length > 0
+          ) {
+            const finalList = commemorativeCtrl.listItems.slice();
+            for (const photoFile of commemorativeCtrl.files)
+              finalList.push(await compressAndUploadToCloudinary(photoFile));
+            updates.commemorativePhotos = finalList;
+          }
+
+          await updateDoc(tournamentRef, updates);
 
           alert("Tournament updated successfully!");
           document.getElementById("update-modal").classList.remove("open");
@@ -1913,12 +2444,19 @@
           .value.trim();
         const themeColor = document.getElementById("add-theme-color").value;
 
-        const fileInput = document.getElementById("add-deck-image");
-        const file = fileInput.files[0];
+        const firstDeckCtrl = deckPhotoControllers["add-first-winner-deck"];
+        const secondDeckCtrl = deckPhotoControllers["add-second-winner-deck"];
+        const thirdDeckCtrl = deckPhotoControllers["add-third-winner-deck"];
+        const commemorateCtrl =
+          deckPhotoControllers["add-commemorate-photos"];
+        const deckFile =
+          firstDeckCtrl.files[0] ||
+          secondDeckCtrl.files[0] ||
+          thirdDeckCtrl.files[0];
 
-        if (!eventName || !winnerName || (!file && !deckCode)) {
+        if (!eventName || !winnerName || (!deckFile && !deckCode)) {
           alert(
-            "Please fill in the Event Name, Winner Name, and provide EITHER a Deck Image or a Deck Code!",
+            "Please fill in the Event Name, Winner Name, and provide EITHER a Winner Deck Image or a Deck Code!",
           );
           return;
         }
@@ -1929,12 +2467,27 @@
 
         try {
           let imageUrl = null;
+          let secondImageUrl = null;
+          let thirdImageUrl = null;
+          const commemorateUrls = [];
 
-          if (file) {
-            saveButton.innerHTML =
-              "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
-            imageUrl = await compressAndUploadToCloudinary(file);
-          }
+          saveButton.innerHTML =
+            "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+
+          if (firstDeckCtrl.files[0])
+            imageUrl = await compressAndUploadToCloudinary(
+              firstDeckCtrl.files[0],
+            );
+          if (secondDeckCtrl.files[0])
+            secondImageUrl = await compressAndUploadToCloudinary(
+              secondDeckCtrl.files[0],
+            );
+          if (thirdDeckCtrl.files[0])
+            thirdImageUrl = await compressAndUploadToCloudinary(
+              thirdDeckCtrl.files[0],
+            );
+          for (const photoFile of commemorateCtrl.files)
+            commemorateUrls.push(await compressAndUploadToCloudinary(photoFile));
 
           saveButton.innerHTML =
             "Saving to Database... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
@@ -1950,8 +2503,11 @@
               name: winnerName,
               deckName: deckName,
               deckCode: deckCode || null,
-              imageUrl: imageUrl,
+              firstWinnerDeck: imageUrl,
+              secondWinnerDeck: secondImageUrl,
+              thirdWinnerDeck: thirdImageUrl,
             },
+            commemorativePhotos: commemorateUrls,
           };
 
           await addDoc(collection(db, "tournaments"), newEvent);
@@ -1970,7 +2526,7 @@
           document.getElementById("add-deck-code").value = "";
           document.getElementById("add-meta-breakdown").value = "";
           document.getElementById("add-theme-color").value = "blue";
-          fileInput.value = "";
+          resetAddDeckPhotoControllers();
         } catch (error) {
           console.error("Error writing document: ", error);
           alert("Failed to save tournament. " + error.message);
@@ -1981,6 +2537,7 @@
       };
 
       initializeDatabase();
+      wireDeckPhotoControllers();
 
       window.openDeckImage = function (url) {
         if (!url) return;

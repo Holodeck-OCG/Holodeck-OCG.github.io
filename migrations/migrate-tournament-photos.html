@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tournament Photos Migration</title>
+    <!--
+      ONE-OFF MIGRATION: winner.imageUrl → winner.firstWinnerDeck
+
+      Background: tournaments.html previously stored the event photo in
+      `winner.imageUrl` (a Cloudinary URL). The new schema splits it into:
+        - winner.firstWinnerDeck   (1st Winner Deck photo, string or null)
+        - winner.secondWinnerDeck  (2nd Winner Deck photo, string or null)
+        - winner.thirdWinnerDeck   (3rd Winner Deck photo, string or null)
+        - commemorativePhotos      (array of URL strings, may be empty)
+
+      What this script does (safe, idempotent):
+        1. Reads every document in the `tournaments` collection.
+        2. Copies winner.imageUrl → winner.firstWinnerDeck (only if that field
+           is missing), and initializes second/third/commemorativePhotos.
+        3. Keeps the legacy winner.imageUrl value in place (data preservation;
+           the page's fallback read takes precedence of the new field first).
+        4. Skips documents that are already migrated, so re-running is safe.
+
+      The page keeps a runtime fallback (old events display correctly even
+      without running this), so this script is for full migration/cleanup.
+
+      Usage: host it at the site root (e.g. https://<site>/migrations/...)
+      or open it locally, sign in with the admin account, then click Run.
+    -->
+    <style>
+      body {
+        background: #0a111e;
+        color: #f1f5f9;
+        font-family: "Nunito", sans-serif;
+        max-width: 640px;
+        margin: 48px auto;
+        padding: 0 16px;
+      }
+      h1 {
+        color: #41c3e3;
+        font-size: 20px;
+      }
+      #log {
+        background: #060b14;
+        border: 1px solid #26344a;
+        border-radius: 8px;
+        padding: 12px;
+        min-height: 120px;
+        font-family: monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      button {
+        background: #41c3e3;
+        color: #0a111e;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      input {
+        background: #131c2e;
+        color: #f1f5f9;
+        border: 1px solid #26344a;
+        border-radius: 4px;
+        padding: 8px;
+        width: 100%;
+        margin-bottom: 8px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><i>⚠</i> Tournament Photos Migration (one-off)</h1>
+    <p>
+      Copies <code>winner.imageUrl</code> into <code>winner.firstWinnerDeck</code>
+      and initializes <code>winner.secondWinnerDeck</code>,
+      <code>winner.thirdWinnerDeck</code> and <code>commemorativePhotos</code>.
+      The legacy <code>winner.imageUrl</code> value is preserved. Already-migrated
+      documents are skipped, so this can be run more than once safely.
+    </p>
+    <input type="email" id="email" placeholder="Admin Email" />
+    <input type="password" id="password" placeholder="Admin Password" />
+    <button id="run-btn" onclick="window.runMigration()">Run Migration</button>
+    <div id="log" style="margin-top: 16px"></div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCAIHsG9fB7dRih74FgPv805Lud2q0BfGE",
+        authDomain: "holoocg-ef4bf.firebaseapp.com",
+        projectId: "holoocg-ef4bf",
+        storageBucket: "holoocg-ef4bf.firebasestorage.app",
+        messagingSenderId: "942377973020",
+        appId: "1:942377973020:web:3e26c80a1e67ce97a9b6d9",
+        measurementId: "G-ER0KDYMX7M",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      const log = (msg) => {
+        const el = document.getElementById("log");
+        el.textContent += msg + "\n";
+        el.scrollTop = el.scrollHeight;
+      };
+
+      function buildMigrationUpdate(data) {
+        const winner = data.winner || {};
+        const update = {};
+        let needsMigration = false;
+
+        // Only write fields that don't exist yet; never clobber real values.
+        if (!("firstWinnerDeck" in winner)) {
+          update["winner.firstWinnerDeck"] = winner.imageUrl || null;
+          needsMigration = true;
+        }
+        if (!("secondWinnerDeck" in winner)) {
+          update["winner.secondWinnerDeck"] = null;
+          needsMigration = true;
+        }
+        if (!("thirdWinnerDeck" in winner)) {
+          update["winner.thirdWinnerDeck"] = null;
+          needsMigration = true;
+        }
+        if (!Array.isArray(data.commemorativePhotos)) {
+          update.commemorativePhotos = [];
+          needsMigration = true;
+        }
+
+        return needsMigration ? update : null;
+      }
+
+      window.runMigration = async function () {
+        const runBtn = document.getElementById("run-btn");
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          log("⚠ Enter the admin email and password first.");
+          return;
+        }
+
+        runBtn.disabled = true;
+        runBtn.textContent = "Running...";
+
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          log("✔ Signed in as " + email);
+
+          const snapshot = await getDocs(collection(db, "tournaments"));
+          let migrated = 0;
+          let skipped = 0;
+
+          for (const docSnap of snapshot.docs) {
+            const update = buildMigrationUpdate(docSnap.data());
+            if (!update) {
+              skipped++;
+              log(`· ${docSnap.id}: already migrated (legacy imageUrl preserved), skipped.`);
+              continue;
+            }
+            await updateDoc(doc(db, "tournaments", docSnap.id), update);
+            migrated++;
+            log(`✔ ${docSnap.id}: migrated.`);
+          }
+
+          log(
+            `Done. Migrated ${migrated} document(s), skipped ${skipped} already-migrated. ` +
+              "Legacy winner.imageUrl values were kept; clear them manually in the " +
+              "Firebase console if you want a fully clean schema.",
+          );
+        } catch (error) {
+          console.error(error);
+          log(
+            "✖ Migration failed: " +
+              (error.message || "Access Denied: Incorrect email or password."),
+          );
+        } finally {
+          runBtn.disabled = false;
+          runBtn.textContent = "Run Migration";
+        }
+      };
+    </script>
+  </body>
+</html>
