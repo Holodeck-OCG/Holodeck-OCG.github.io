@@ -12,6 +12,8 @@
         - winner.firstWinnerDeck   (1st Winner Deck photo, string or null)
         - winner.secondWinnerDeck  (2nd Winner Deck photo, string or null)
         - winner.thirdWinnerDeck   (3rd Winner Deck photo, string or null)
+        - winner.secondWinnerName  (2nd winner nick, string or null; optional)
+        - winner.thirdWinnerName   (3rd winner nick, string or null; optional)
         - commemorativePhotos      (array of URL strings, may be empty)
 
       What this script does (safe, idempotent):
@@ -82,7 +84,10 @@
     <p>
       Copies <code>winner.imageUrl</code> into <code>winner.firstWinnerDeck</code>
       and initializes <code>winner.secondWinnerDeck</code>,
-      <code>winner.thirdWinnerDeck</code> and <code>commemorativePhotos</code>.
+      <code>winner.thirdWinnerDeck</code>,
+      <code>winner.secondWinnerName</code>,
+      <code>winner.thirdWinnerName</code> and
+      <code>commemorativePhotos</code>.
       The legacy <code>winner.imageUrl</code> value is preserved. Already-migrated
       documents are skipped, so this can be run more than once safely.
     </p>
@@ -141,6 +146,14 @@
         }
         if (!("thirdWinnerDeck" in winner)) {
           update["winner.thirdWinnerDeck"] = null;
+          needsMigration = true;
+        }
+        if (!("secondWinnerName" in winner)) {
+          update["winner.secondWinnerName"] = null;
+          needsMigration = true;
+        }
+        if (!("thirdWinnerName" in winner)) {
+          update["winner.thirdWinnerName"] = null;
           needsMigration = true;
         }
         if (!Array.isArray(data.commemorativePhotos)) {

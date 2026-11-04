@@ -675,6 +675,18 @@
               >2nd Winner Deck Image:</span
             >
             <input
+              type="text"
+              id="add-second-winner-name"
+              placeholder="2nd Winner Nick (optional)"
+              style="
+                padding: 8px;
+                background: var(--navy-3);
+                color: var(--text-bright);
+                border: 1px solid var(--border-dim);
+                border-radius: 4px;
+              "
+            />
+            <input
               type="file"
               id="add-second-winner-deck"
               accept="image/*"
@@ -699,6 +711,18 @@
               style="color: var(--text-mid); font-size: 14px; font-weight: 700"
               >3rd Winner Deck Image:</span
             >
+            <input
+              type="text"
+              id="add-third-winner-name"
+              placeholder="3rd Winner Nick (optional)"
+              style="
+                padding: 8px;
+                background: var(--navy-3);
+                color: var(--text-bright);
+                border: 1px solid var(--border-dim);
+                border-radius: 4px;
+              "
+            />
             <input
               type="file"
               id="add-third-winner-deck"
@@ -999,6 +1023,18 @@
               >2nd Winner Deck Image:</span
             >
             <input
+              type="text"
+              id="edit-second-winner-name"
+              placeholder="2nd Winner Nick (optional)"
+              style="
+                padding: 8px;
+                background: var(--navy-3);
+                color: var(--text-bright);
+                border: 1px solid var(--border-dim);
+                border-radius: 4px;
+              "
+            />
+            <input
               type="file"
               id="edit-second-winner-deck"
               accept="image/*"
@@ -1023,6 +1059,18 @@
               style="color: var(--text-mid); font-size: 14px; font-weight: 700"
               >3rd Winner Deck Image:</span
             >
+            <input
+              type="text"
+              id="edit-third-winner-name"
+              placeholder="3rd Winner Nick (optional)"
+              style="
+                padding: 8px;
+                background: var(--navy-3);
+                color: var(--text-bright);
+                border: 1px solid var(--border-dim);
+                border-radius: 4px;
+              "
+            />
             <input
               type="file"
               id="edit-third-winner-deck"
@@ -2073,15 +2121,20 @@
       // to the empty-state message. Missing images hide their section.
       function renderWinnerDeckPhotos(container) {
         const photos = getDeckPhotos(activeTournament);
+        const winner = activeTournament.winner || {};
         const labeledPhotos = [
-          ["1st Winner Deck", photos["first-winner-deck"]],
-          ["2nd Winner Deck", photos["second-winner-deck"]],
-          ["3rd Winner Deck", photos["third-winner-deck"]],
-        ].filter(([, url]) => url);
+          // The champion's nick is already displayed in the hero, so the 1st
+          // section needs no extra caption.
+          { label: "1st Winner Deck", url: photos["first-winner-deck"], nick: null },
+          { label: "2nd Winner Deck", url: photos["second-winner-deck"], nick: winner.secondWinnerName },
+          { label: "3rd Winner Deck", url: photos["third-winner-deck"], nick: winner.thirdWinnerName },
+        ].filter((entry) => entry.url || entry.nick);
 
         if (labeledPhotos.length > 0) {
-          labeledPhotos.forEach(([label, url]) => {
-            container.appendChild(createDeckPhotoSection(label, url));
+          labeledPhotos.forEach((entry) => {
+            container.appendChild(
+              createDeckPhotoSection(entry.label, entry.url, entry.nick),
+            );
           });
         } else if (activeTournament.winner.deckCode) {
           renderWinningDeck(activeTournament.winner.deckCode);
@@ -2128,7 +2181,7 @@
         container.appendChild(section);
       };
 
-      function createDeckPhotoSection(label, url) {
+      function createDeckPhotoSection(label, url, nick) {
         const wrap = document.createElement("div");
         wrap.style.cssText =
           "background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;";
@@ -2136,6 +2189,26 @@
         labelEl.style.cssText =
           "color: var(--brand-main); font-size: 14px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;";
         labelEl.textContent = label;
+        wrap.appendChild(labelEl);
+
+        if (nick) {
+          const nickEl = document.createElement("div");
+          nickEl.style.cssText =
+            "color: var(--text-bright); font-size: 15px; font-weight: 700; margin-bottom: 10px;";
+          nickEl.innerHTML = `<i class="ti ti-user" style="color: var(--holo-gold);"></i> ${escapeHTML(nick)}`;
+          wrap.appendChild(nickEl);
+        }
+
+        if (!url) {
+          // Nick recorded but photo not uploaded — show an explicit placeholder.
+          const empty = document.createElement("div");
+          empty.style.cssText =
+            "border: 1px dashed var(--border-dim); border-radius: 8px; padding: 32px 12px; color: var(--text-dim); font-size: 14px; font-weight: 600;";
+          empty.textContent = "Winner deck photo not uploaded yet.";
+          wrap.appendChild(empty);
+          return wrap;
+        }
+
         const img = document.createElement("img");
         img.src = url;
         img.alt = label;
@@ -2273,6 +2346,10 @@
           activeTournament.players || "";
         document.getElementById("edit-winner-name").value =
           activeTournament.winner?.name || "";
+        document.getElementById("edit-second-winner-name").value =
+          activeTournament.winner?.secondWinnerName || "";
+        document.getElementById("edit-third-winner-name").value =
+          activeTournament.winner?.thirdWinnerName || "";
         document.getElementById("edit-deck-name").value =
           activeTournament.winner?.deckName || "";
         document.getElementById("edit-theme-color").value =
@@ -2314,6 +2391,12 @@
           const newWinnerName = document
             .getElementById("edit-winner-name")
             .value.trim();
+          const newSecondWinnerName = document
+            .getElementById("edit-second-winner-name")
+            .value.trim();
+          const newThirdWinnerName = document
+            .getElementById("edit-third-winner-name")
+            .value.trim();
           const newDeckName = document
             .getElementById("edit-deck-name")
             .value.trim();
@@ -2345,6 +2428,8 @@
             metaBreakdown: newMeta,
             "winner.name": newWinnerName,
             "winner.deckName": newDeckName,
+            "winner.secondWinnerName": newSecondWinnerName || null,
+            "winner.thirdWinnerName": newThirdWinnerName || null,
             "winner.youtubeLink": newYoutube,
             "winner.comments": newComments,
             "winner.deckCode": newDeckCode || null,
@@ -2438,6 +2523,12 @@
         const winnerName = document.getElementById("add-winner-name").value;
         const players = document.getElementById("add-players").value || 0;
         const deckName = document.getElementById("add-deck-name").value;
+        const secondWinnerName = document
+          .getElementById("add-second-winner-name")
+          .value.trim();
+        const thirdWinnerName = document
+          .getElementById("add-third-winner-name")
+          .value.trim();
         const deckCode = document.getElementById("add-deck-code").value.trim();
         const metaBreakdown = document
           .getElementById("add-meta-breakdown")
@@ -2502,6 +2593,8 @@
             winner: {
               name: winnerName,
               deckName: deckName,
+              secondWinnerName: secondWinnerName || null,
+              thirdWinnerName: thirdWinnerName || null,
               deckCode: deckCode || null,
               firstWinnerDeck: imageUrl,
               secondWinnerDeck: secondImageUrl,
