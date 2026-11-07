@@ -64,9 +64,7 @@
               >
               <button
                 class="btn-action"
-                onclick="
-                  document.getElementById('admin-modal').classList.add('open')
-                "
+                onclick="window.openAddModal()"
                 style="
                   background: var(--brand-main);
                   color: var(--navy);
@@ -2317,24 +2315,42 @@
         }
       }
 
+      // ── SHARED ADMIN SIGN-IN GATE ──
+      // Credentials are asked lazily (button click / submit time) instead of at
+      // page load; the Firebase session persists afterwards, so later calls
+      // with an already-signed-in user are a no-op.
+      window.ensureAdminLogin = async function (promptMessage) {
+        if (auth.currentUser) return true;
+
+        const email = prompt(promptMessage);
+        if (!email) return false;
+
+        const password = prompt("Admin Password:");
+        if (!password) return false;
+
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+          console.error("Auth error:", error);
+          alert("Access Denied: Incorrect email or password.");
+          return false;
+        }
+        return true;
+      };
+
+      // Add flow: log in FIRST (same as the edit flow), then open the form.
+      window.openAddModal = async function () {
+        if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
+          return;
+        document.getElementById("admin-modal").classList.add("open");
+      };
+
       window.openUpdateModal = async function () {
         document.getElementById("update-modal").classList.add("open");
         if (!activeTournament) return alert("No tournament selected!");
 
-        if (!auth.currentUser) {
-          const email = prompt("Admin Email required to edit:");
-          if (!email) return;
-
-          const password = prompt("Admin Password:");
-          if (!password) return;
-
-          try {
-            await signInWithEmailAndPassword(auth, email, password);
-          } catch (error) {
-            console.error("Auth error:", error);
-            return alert("Access Denied: Incorrect email or password.");
-          }
-        }
+        if (!(await window.ensureAdminLogin("Admin Email required to edit:")))
+          return;
 
         document.getElementById("edit-event-name").value =
           activeTournament.eventName || "";
@@ -2504,18 +2520,8 @@
 
       window.generateTournament = async function () {
         document.getElementById("admin-modal").classList.remove("open");
-        if (!auth.currentUser) {
-          const email = prompt("Admin Email required to add an event:");
-          if (!email) return;
-          const password = prompt("Admin Password:");
-          if (!password) return;
-          try {
-            await signInWithEmailAndPassword(auth, email, password);
-          } catch (error) {
-            console.error("Auth error:", error);
-            return alert("Access Denied: Incorrect email or password.");
-          }
-        }
+        if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
+          return;
         const eventName = document.getElementById("add-event-name").value;
         const date = document.getElementById("add-date").value;
         const location =
