@@ -155,20 +155,8 @@ const synergyDictionary = {
 function getSynergyTerms(query) {
   const lowerQuery = query.toLowerCase().trim();
 
-  // 0. Check for an EXACT match first
-  if (synergyDictionary[lowerQuery]) {
-    return synergyDictionary[lowerQuery];
-  }
-
-  // 1. Check if they searched a group (like "myth")
-  for (const member in synergyDictionary) {
-    if (member.includes(lowerQuery) || lowerQuery.includes(member)) {
-      return synergyDictionary[member];
-    }
-  }
-
-  // 2. NICKNAME MAP: Translates common short names
-const nicknameMap = {
+  // 1. Check exact Nicknames
+  const nicknameMap = {
     ina: ["ina'nis", "ina's"],
     calli: ["calliope", "calli's"],
     bae: ["baelz", "bae's"],
@@ -185,6 +173,12 @@ const nicknameMap = {
     return nicknameMap[lowerQuery];
   }
 
+  // 2. Check exact matches in Synergy Dictionary
+  if (synergyDictionary[lowerQuery]) {
+    return synergyDictionary[lowerQuery];
+  }
+
+  // 3. If no exact match is found, just return the word itself normally!
   return [lowerQuery];
 }
 
@@ -827,6 +821,7 @@ function renderCardPool(searchQuery = "") {
         : "";
     const skillSafe = card.skills_text ? card.skills_text.toLowerCase() : "";
     const bloomSafe = card.bloom_level ? card.bloom_level.toLowerCase() : "";
+    
 
     const isAltArt = card.card_id.includes("_");
     const searchWordsUpper = searchQuery.toUpperCase().trim().split(/\s+/);
@@ -839,6 +834,17 @@ function renderCardPool(searchQuery = "") {
     if (isAltArt && !isSearchingPremium) return false;
 
     if (queryWords.length === 0 || queryWords[0] === "") return true;
+
+    // Prioritize exact multi-word phrase matches in the card name (e.g. "bloom stage")
+    const fullPhrase = searchQuery.toLowerCase().trim();
+    if (fullPhrase.includes(" ") && !Object.keys(synergyDictionary).includes(fullPhrase)) {
+      if (nameSafe.includes(fullPhrase)) return true;
+      // Optional: If at least one card in the pool has this exact phrase in its name, hide cards that don't
+      const hasDirectNameMatch = masterCardPool.some(c => 
+        c.card_name && c.card_name.toLowerCase().includes(fullPhrase)
+      );
+      if (hasDirectNameMatch) return false;
+    }
 
     // The card must match EVERY word you typed
     return queryWords.every((word) => {
