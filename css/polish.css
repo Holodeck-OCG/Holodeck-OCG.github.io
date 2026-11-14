@@ -250,4 +250,5 @@
 }
 #navbar-placeholder {
   view-transition-name: main-navbar;
+  z-index: 1000;
 }
