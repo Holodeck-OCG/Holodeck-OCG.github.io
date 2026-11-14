@@ -1,0 +1,253 @@
+/* =========================================================
+   POLISH.CSS — small animation layer on top of the theme
+   - page-curl between tabs (cross-document View Transitions)
+   - card holo sweep + cursor-following foil glare
+   - staggered card entrance
+   - magnetic tilt (vars set by js/polish.js)
+   - chip pop, panel rise, logo glow
+   Only transform/opacity are animated; everything stops for
+   prefers-reduced-motion.
+   ========================================================= */
+
+:root {
+  --polish-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ── Page curl between tabs (cross-document View Transitions) ──
+   Old page folds away from its left edge; new page settles in.
+   Chromium / recent Safari only — others just navigate. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  transform-origin: left center;
+  animation: page-curl 400ms ease-in both;
+  box-shadow: 16px 0 32px rgba(0, 0, 0, 0.3);
+}
+::view-transition-new(root) {
+  animation: page-settle 400ms ease-out both;
+}
+@keyframes page-curl {
+  to {
+    transform: perspective(1600px) rotateY(-90deg);
+    opacity: 0.7;
+  }
+}
+@keyframes page-settle {
+  from {
+    transform: scale(1.02);
+  }
+}
+
+/* ── 1. Panels rise in on first paint ── */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.main-panel > .panel-col {
+  animation: panel-in 0.45s var(--polish-ease) backwards;
+}
+.main-panel > .panel-col:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+/* ── 2. Staggered card entrance (JS adds .fade-in in batches) ── */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.card-item.fade-in {
+  animation: card-in 0.36s var(--polish-ease) backwards;
+}
+.card-item.fade-in:nth-child(2) {
+  animation-delay: 25ms;
+}
+.card-item.fade-in:nth-child(3) {
+  animation-delay: 50ms;
+}
+.card-item.fade-in:nth-child(4) {
+  animation-delay: 75ms;
+}
+.card-item.fade-in:nth-child(5) {
+  animation-delay: 100ms;
+}
+.card-item.fade-in:nth-child(6) {
+  animation-delay: 125ms;
+}
+.card-item.fade-in:nth-child(7) {
+  animation-delay: 150ms;
+}
+.card-item.fade-in:nth-child(8) {
+  animation-delay: 175ms;
+}
+
+/* ── 3. Holographic sweep across the card art ── */
+.card-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.6) 48%,
+    rgba(0, 229, 255, 0.35) 52%,
+    transparent 60%
+  );
+  transform: translateX(-120%);
+}
+/* Cursor-following foil glare (vars set by js/polish.js) */
+.card-face::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(255, 255, 255, 0.45),
+    rgba(0, 229, 255, 0.22) 30%,
+    transparent 62%
+  );
+  transition: opacity 0.18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-item:hover .card-face::before,
+  .card-item:focus-visible .card-face::before {
+    opacity: 0.75;
+  }
+}
+
+@keyframes card-shine {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-item:hover .card-face::after,
+  .card-item:focus-visible .card-face::after {
+    animation: card-shine 0.8s var(--polish-ease) both;
+  }
+}
+/* tap feedback on phones/tablets */
+.card-item:active .card-face::after {
+  animation: card-shine 0.6s var(--polish-ease) both;
+}
+.card-item:active {
+  transform: scale(0.99);
+}
+
+/* ── 4. Magnetic tilt (only when the pointer is precise) ── */
+@media (hover: hover) and (pointer: fine) {
+  .card-item.fade-in {
+    transition: opacity 0.3s var(--polish-ease),
+      transform 0.14s var(--polish-ease), border-color 0.18s var(--polish-ease),
+      box-shadow 0.18s var(--polish-ease), background-color 0.18s var(--polish-ease);
+  }
+  .card-item.fade-in:hover,
+  .card-item.fade-in:focus-visible {
+    transform: perspective(900px) translateY(-3px) rotateX(var(--rx, 0deg))
+      rotateY(var(--ry, 0deg));
+  }
+}
+
+/* ── 5. Little bits of tactile feedback ── */
+@keyframes press-pop {
+  0% {
+    transform: scale(0.94);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.chip.active,
+.tab.active {
+  animation: press-pop 0.26s var(--polish-ease);
+}
+.tab:active {
+  transform: scale(0.96);
+}
+
+.search-bar {
+  transition: border-color 0.18s var(--polish-ease),
+    box-shadow 0.18s var(--polish-ease);
+}
+.search-bar:focus-within {
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.16);
+}
+
+@keyframes logo-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 11px var(--brand-main));
+  }
+}
+.logo-icon {
+  animation: logo-glow 7s ease-in-out infinite;
+}
+
+/* ── 6. Respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .main-panel > .panel-col,
+  .card-item.fade-in,
+  .chip.active,
+  .tab.active,
+  .logo-icon,
+  .card-item .card-face::after,
+  .card-item:hover .card-face::after,
+  .card-item:focus-visible .card-face::after,
+  .card-item:active .card-face::after {
+    animation: none !important;
+  }
+  .card-item.fade-in {
+    opacity: 1;
+    transform: none;
+  }
+  .card-item:hover,
+  .card-item:focus-visible,
+  .card-item:active,
+  .card-item.fade-in:hover,
+  .card-item.fade-in:focus-visible {
+    transform: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+/* ── 7. Premium alt-art snake ring ──
+   Pages ship a blanket "kill every animation" rule for reduced-motion
+   users, which also froze the rotating border on alt-art cards. The
+   ring is a tiny, slow gradient sweep and is the one effect that
+   should always turn, so re-enable it with enough weight to beat
+   those rules regardless of the motion preference. */
+.premium-alt-art::after {
+  animation: spinSnake 3s linear infinite !important;
+}
+#navbar-placeholder {
+  view-transition-name: main-navbar;
+}
