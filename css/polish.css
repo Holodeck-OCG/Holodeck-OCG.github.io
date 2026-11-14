@@ -249,6 +249,10 @@
   animation: spinSnake 3s linear infinite !important;
 }
 #navbar-placeholder {
-  view-transition-name: main-navbar;
-  z-index: 1000;
+  position: relative;
+  z-index: 100;
+}
+
+#navbar-placeholder .topbar {
+  padding: 0 clamp(12px, 2vw, 24px);
 }
