@@ -187,6 +187,9 @@
 .tab:active {
   transform: scale(0.96);
 }
+.chip.active {
+  animation: press-pop 0.26s var(--polish-ease);
+}
 
 .search-bar {
   transition: border-color 0.18s var(--polish-ease),
@@ -251,8 +254,97 @@
 #navbar-placeholder {
   position: relative;
   z-index: 100;
+  min-height: 72px;
+  view-transition-name: main-navbar;
 }
 
 #navbar-placeholder .topbar {
   padding: 0 clamp(12px, 2vw, 24px);
+}
+@media (max-width: 1024px) {
+  #navbar-placeholder {
+    min-height: 64px; /* Matches your mobile/tablet navbar height */
+  }
+}
+
+::view-transition-old(main-navbar),
+::view-transition-new(main-navbar) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+#navbar-placeholder {
+  view-transition-name: main-navbar;
+}
+
+::view-transition-group(main-navbar) {
+  animation: none;
+}
+
+::view-transition-old(main-navbar) {
+  display: none;
+}
+
+::view-transition-new(main-navbar) {
+  animation: none;
+  opacity: 1;
+}
+
+/* Prevents an open dropdown from ghosting in the pinned navbar snapshot */
+html:active-view-transition #navbar-placeholder .dropdown-menu {
+  display: none !important;
+}
+/* ── Directional Tab Swap (Left/Right Slide + Fade) ── */
+.body-wrapper,
+main {
+  transition:
+    opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Outgoing: slide left when moving to a right-hand tab, or slide right when moving back */
+body.tab-leave-next .body-wrapper,
+body.tab-leave-next main {
+  opacity: 0;
+  transform: translateX(-18px);
+  pointer-events: none;
+}
+
+body.tab-leave-prev .body-wrapper,
+body.tab-leave-prev main {
+  opacity: 0;
+  transform: translateX(18px);
+  pointer-events: none;
+}
+
+/* Incoming: enter from the opposite side to complete the glide */
+body.tab-enter-next .body-wrapper,
+body.tab-enter-next main {
+  animation: slide-in-from-right 230ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+body.tab-enter-prev .body-wrapper,
+body.tab-enter-prev main {
+  animation: slide-in-from-left 230ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes slide-in-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

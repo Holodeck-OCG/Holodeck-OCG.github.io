@@ -547,3 +547,46 @@ document.addEventListener("click", (event) => {
     }
   }
 });
+function initNavbar(html) {
+  const placeholder = document.getElementById("navbar-placeholder");
+  if (!placeholder) return;
+  placeholder.innerHTML = html;
+
+  // Remove ALL hardcoded 'active' classes so nothing is stuck
+  placeholder.querySelectorAll(".active").forEach((el) => {
+    el.classList.remove("active");
+  });
+
+  // Highlight the current tab or parent dropdown
+  const currentUrl = window.location.href.split("?")[0].split("#")[0];
+  placeholder.querySelectorAll("a").forEach((link) => {
+    const linkUrl = link.href.split("?")[0].split("#")[0];
+    if (linkUrl === currentUrl) {
+      if (link.classList.contains("tab")) {
+        link.classList.add("active");
+      } else if (link.classList.contains("dropdown-item")) {
+        const dropdown = link.closest(".dropdown");
+        const parentTab = dropdown?.querySelector(".tab");
+        if (parentTab) parentTab.classList.add("active");
+      }
+    }
+  });
+}
+
+// 1. Render immediately from sessionStorage if available (eliminates the blink)
+const cachedNavbar = sessionStorage.getItem("holodeck_navbar_html");
+if (cachedNavbar) {
+  initNavbar(cachedNavbar);
+}
+
+// 2. Fetch fresh copy in background and update cache
+fetch("navbar.html")
+  .then((response) => response.text())
+  .then((data) => {
+    sessionStorage.setItem("holodeck_navbar_html", data);
+    if (data !== cachedNavbar) {
+      initNavbar(data);
+    }
+  })
+  .catch((error) => console.error("Error loading navbar:", error));
+  
