@@ -484,43 +484,6 @@ if (clearBtn) {
 }
 // main.js
 
-fetch("navbar.html")
-  .then((response) => response.text())
-  .then((data) => {
-    // 1. Inject the navbar
-    document.getElementById("navbar-placeholder").innerHTML = data;
-
-    // 2. Remove ALL hardcoded 'active' classes so nothing is stuck
-    document.querySelectorAll("#navbar-placeholder .active").forEach((el) => {
-      el.classList.remove("active");
-    });
-
-    // 3. Get the exact full URL from your browser
-    const currentUrl = window.location.href.split("?")[0].split("#")[0];
-
-    // 4. Loop through EVERY link in the navbar to find the match
-    const allLinks = document.querySelectorAll("#navbar-placeholder a");
-    allLinks.forEach((link) => {
-      const linkUrl = link.href.split("?")[0].split("#")[0];
-
-      if (linkUrl === currentUrl) {
-        // A. If it's a main tab, highlight it
-        if (link.classList.contains("tab")) {
-          link.classList.add("active");
-        }
-        // B. If it's a dropdown item (like Quiz), highlight its parent tab ("Games")
-        else if (link.classList.contains("dropdown-item")) {
-          const dropdown = link.closest(".dropdown");
-          if (dropdown) {
-            const parentTab = dropdown.querySelector(".tab");
-            if (parentTab) parentTab.classList.add("active");
-          }
-        }
-      }
-    });
-  })
-  .catch((error) => console.error("Error loading navbar:", error));
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const currentTheme = localStorage.getItem('theme');
@@ -571,6 +534,18 @@ function initNavbar(html) {
       }
     }
   });
+
+  // Initialize mobile drawer after navbar is injected
+  const drawerToggle = document.getElementById('mobile-drawer-toggle');
+  if (drawerToggle) {
+    drawerToggle.addEventListener('click', openMobileDrawer);
+  }
+  // Close on escape
+  document.addEventListener('keydown', handleDrawerKeydown);
+  // Dropdown toggles in drawer
+  document.querySelectorAll('.mobile-drawer-nav .dropdown').forEach(dd => {
+    dd.addEventListener('click', handleDrawerDropdown);
+  });
 }
 
 // 1. Render immediately from sessionStorage if available (eliminates the blink)
@@ -589,6 +564,43 @@ fetch("navbar.html")
     }
   })
   .catch((error) => console.error("Error loading navbar:", error));
+
+// Mobile drawer functions (global for onclick handlers)
+function openMobileDrawer() {
+  const overlay = document.getElementById("mobile-drawer-overlay");
+  const drawer = document.getElementById("mobile-drawer");
+  const toggle = document.getElementById("mobile-drawer-toggle");
+  if (overlay && drawer && toggle) {
+    overlay.classList.add("open");
+    drawer.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function closeMobileDrawer() {
+  const overlay = document.getElementById("mobile-drawer-overlay");
+  const drawer = document.getElementById("mobile-drawer");
+  const toggle = document.getElementById("mobile-drawer-toggle");
+  if (overlay && drawer && toggle) {
+    overlay.classList.remove("open");
+    drawer.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+}
+
+function handleDrawerKeydown(e) {
+  if (e.key === 'Escape') closeMobileDrawer();
+}
+
+function handleDrawerDropdown(e) {
+  if (e.target.closest('.dropdown-item')) return;
+  this.classList.toggle('open');
+}
+
+window.openMobileDrawer = openMobileDrawer;
+window.closeMobileDrawer = closeMobileDrawer;
 
 // GoatCounter: only load on real http(s) sites, so local file:// previews
 // don't produce a failed script request.

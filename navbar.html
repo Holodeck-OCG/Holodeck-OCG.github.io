@@ -54,6 +54,7 @@
       <button
         class="burger-btn"
         id="mobile-drawer-toggle"
+        onclick="openMobileDrawer()"
         aria-label="Open menu"
         aria-expanded="false"
         aria-controls="mobile-drawer"
@@ -164,48 +165,4 @@
     </button>
   </nav>
 </aside>
-
-<script>
-  // Mobile drawer functions
-  function openMobileDrawer() {
-    const overlay = document.getElementById('mobile-drawer-overlay');
-    const drawer = document.getElementById('mobile-drawer');
-    const toggle = document.getElementById('mobile-drawer-toggle');
-    if (overlay && drawer && toggle) {
-      overlay.classList.add('open');
-      drawer.classList.add('open');
-      toggle.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-  function closeMobileDrawer() {
-    const overlay = document.getElementById('mobile-drawer-overlay');
-    const drawer = document.getElementById('mobile-drawer');
-    const toggle = document.getElementById('mobile-drawer-toggle');
-    if (overlay && drawer && toggle) {
-      overlay.classList.remove('open');
-      drawer.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    }
-  }
-  // Initialize toggle
-  document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('mobile-drawer-toggle');
-    if (toggle) {
-      toggle.addEventListener('click', openMobileDrawer);
-    }
-    // Close on escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMobileDrawer();
-    });
-    // Dropdown toggles in drawer
-    document.querySelectorAll('.mobile-drawer-nav .dropdown').forEach(dd => {
-      dd.addEventListener('click', (e) => {
-        if (e.target.closest('.dropdown-item')) return;
-        dd.classList.toggle('open');
-      });
-    });
-  });
-</script>
 
