@@ -9,6 +9,8 @@ body { background: var(--navy); color: var(--text-bright); font-family: 'nunito'
             background: var(--navy-3); color: var(--text-bright); border: 1px solid var(--border-dim); 
             border-radius: 8px; font-weight: 800; padding: 0.8rem 1.5rem; cursor: pointer; 
             transition: all 0.2s ease; font-family: inherit; font-size: 1rem; text-transform: uppercase; 
+            min-height: 48px;
+            min-width: 48px;
         }
         .btn-export:hover { background: var(--brand-hover); border-color: var(--brand-hover); color: #ffffff;}
         
@@ -22,7 +24,10 @@ body { background: var(--navy); color: var(--text-bright); font-family: 'nunito'
 
         .btn-choice {
             background: var(--navy-2); color: var(--text-bright); border: 1px solid var(--border-dim);
-            padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit;
+            padding: 12px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit;
+            min-height: 48px;
+            min-width: 48px;
+            font-size: 16px; /* Prevents iOS zoom on focus */
         }
         .btn-choice:hover { background: var(--brand-main); color: var(--navy); }
         .btn-choice.correct { background: var(--holo-teal); border-color: var(--holo-teal); color: #fff; }

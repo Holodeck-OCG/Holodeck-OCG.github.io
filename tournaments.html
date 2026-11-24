@@ -25,11 +25,38 @@
   </head>
   <body>
     <div id="navbar-placeholder"></div>
+    
+    <!-- Mobile Filter Toggle (hidden on desktop) -->
+    <button class="filter-toggle-chip hide-on-desktop" onclick="toggleMobileFilters()" id="mobile-filter-toggle" style="
+      position: fixed;
+      top: 80px;
+      right: 16px;
+      z-index: 100;
+      background: var(--navy-3);
+      border: 1px solid var(--border-dim);
+      border-radius: 20px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-bright);
+      font-family: nunito, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    ">
+      <i class="ti ti-filter"></i>
+      <span>Filters</span>
+      <i class="ti ti-chevron-down" id="filter-chevron" style="transition: transform 0.2s;"></i>
+    </button>
+
     <div class="body-wrapper">
       <main class="main-panel">
         <!-- LEFT SIDEBAR: Search & Scrollable List -->
         <div
-          class="panel-col"
+          class="panel-col sidebar-panel"
+          id="sidebar-panel"
           style="
             background: var(--navy-2);
             border-radius: 8px;
@@ -72,7 +99,7 @@
                   background: var(--brand-main);
                   color: var(--navy);
                   padding: 6px 12px;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                 "
                 title="Add Tournament"
               >
@@ -88,14 +115,14 @@
                 onkeyup="window.filterTournaments()"
                 placeholder="Event Name..."
                 style="
-                  padding: 8px;
+                  padding: 12px 16px;
                   background: var(--navy-2);
                   color: var(--text-bright);
                   border: 1px solid var(--border-dim);
                   border-radius: 6px;
                   outline: none;
                   font-family: &quot;nunito&quot;, sans-serif;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                   width: 30%;
                 "
               />
@@ -106,14 +133,14 @@
                 onkeyup="window.filterTournaments()"
                 placeholder="Location..."
                 style="
-                  padding: 8px;
+                  padding: 12px 16px;
                   background: var(--navy-2);
                   color: var(--text-bright);
                   border: 1px solid var(--border-dim);
                   border-radius: 6px;
                   outline: none;
                   font-family: &quot;nunito&quot;, sans-serif;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                   width: 30%;
                 "
               />
@@ -124,14 +151,14 @@
                 onkeyup="window.filterTournaments()"
                 placeholder="Winner Name..."
                 style="
-                  padding: 8px;
+                  padding: 12px 16px;
                   background: var(--navy-2);
                   color: var(--text-bright);
                   border: 1px solid var(--border-dim);
                   border-radius: 6px;
                   outline: none;
                   font-family: &quot;nunito&quot;, sans-serif;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                   width: 30%;
                 "
               />
@@ -142,14 +169,14 @@
                 onkeyup="window.filterTournaments()"
                 placeholder="Deck / Oshi..."
                 style="
-                  padding: 8px;
+                  padding: 12px 16px;
                   background: var(--navy-2);
                   color: var(--text-bright);
                   border: 1px solid var(--border-dim);
                   border-radius: 6px;
                   outline: none;
                   font-family: &quot;nunito&quot;, sans-serif;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                   width: 30%;
                 "
               />
@@ -161,14 +188,14 @@
                   onchange="window.filterTournaments()"
                   style="
                     flex: 1;
-                    padding: 8px;
+                    padding: 12px 16px;
                     background: var(--navy-2);
                     color: var(--text-bright);
                     border: 1px solid var(--border-dim);
                     border-radius: 6px;
                     outline: none;
                     font-family: &quot;nunito&quot;, sans-serif;
-                    font-size: 13px;
+                    font-size: 16px; min-height: 48px;
                     width: 30%;
                   "
                 />
@@ -180,13 +207,13 @@
                   background: rgba(255, 82, 82, 0.1);
                   border: 1px solid var(--danger);
                   color: var(--danger);
-                  padding: 8px 12px;
+                  padding: 12px 16px; min-height: 48px;
                   border-radius: 6px;
                   cursor: pointer;
                   transition: 0.2s;
                   font-family: &quot;nunito&quot;, sans-serif;
                   font-weight: 700;
-                  font-size: 13px;
+                  font-size: 16px; min-height: 48px;
                 "
                 onmouseover="this.style.background = 'rgba(255,82,82,0.2)'"
                 onmouseout="this.style.background = 'rgba(255,82,82,0.1)'"
@@ -311,7 +338,7 @@
                 <span
                   style="
                     color: var(--text-mid);
-                    font-size: 13px;
+                    font-size: 16px; min-height: 48px;
                     font-weight: 700;
                     text-transform: uppercase;
                     letter-spacing: 0.05em;
@@ -520,7 +547,7 @@
               placeholder="Event Name (e.g. Weekly #3 + place)"
               style="
                 flex: 2;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -532,7 +559,7 @@
               id="add-date"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -549,7 +576,7 @@
               placeholder="Location/Venue (e.g. Local Game Store)"
               style="
                 flex: 2;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -562,7 +589,7 @@
               placeholder="Players"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -579,7 +606,7 @@
               placeholder="Winner Name"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -592,7 +619,7 @@
               placeholder="Oshi Name"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -602,7 +629,7 @@
             <select
               id="add-theme-color"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -624,7 +651,7 @@
             placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')"
             rows="3"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -641,7 +668,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -666,7 +693,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -680,7 +707,7 @@
               id="add-second-winner-name"
               placeholder="2nd Winner Nick (optional)"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -703,7 +730,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -717,7 +744,7 @@
               id="add-third-winner-name"
               placeholder="3rd Winner Nick (optional)"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -740,7 +767,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -779,7 +806,7 @@
             placeholder="Paste Base64 Deck Code Here..."
             rows="3"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -844,7 +871,7 @@
               placeholder="Event Name (e.g. Weekly #3 + place)"
               style="
                 flex: 2;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -856,7 +883,7 @@
               id="edit-date"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -872,7 +899,7 @@
               placeholder="Location/Venue (e.g. Local Game Store)"
               style="
                 flex: 2;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -885,7 +912,7 @@
               placeholder="Players"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -901,7 +928,7 @@
               placeholder="Winner Name"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -914,7 +941,7 @@
               placeholder="Oshi Name"
               style="
                 flex: 1;
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -924,7 +951,7 @@
             <select
               id="edit-theme-color"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -946,7 +973,7 @@
             id="edit-youtube-link"
             placeholder="YouTube Match Link URL"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -958,7 +985,7 @@
             placeholder="Match history, player notes, or deck performance..."
             rows="3"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -972,7 +999,7 @@
             placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')"
             rows="3"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -989,7 +1016,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -1014,7 +1041,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -1028,7 +1055,7 @@
               id="edit-second-winner-name"
               placeholder="2nd Winner Nick (optional)"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -1051,7 +1078,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -1065,7 +1092,7 @@
               id="edit-third-winner-name"
               placeholder="3rd Winner Nick (optional)"
               style="
-                padding: 8px;
+                padding: 12px 16px;
                 background: var(--navy-3);
                 color: var(--text-bright);
                 border: 1px solid var(--border-dim);
@@ -1088,7 +1115,7 @@
               flex-direction: column;
               gap: 6px;
               background: var(--navy-3);
-              padding: 8px;
+              padding: 12px 16px;
               border: 1px solid var(--border-dim);
               border-radius: 4px;
             "
@@ -1127,7 +1154,7 @@
             placeholder="Paste Base64 Deck Code Here..."
             rows="3"
             style="
-              padding: 8px;
+              padding: 12px 16px;
               background: var(--navy-3);
               color: var(--text-bright);
               border: 1px solid var(--border-dim);
@@ -1240,5 +1267,18 @@
     </div>
     <script src="js/version.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      function toggleMobileFilters() {
+        const panel = document.getElementById('sidebar-panel');
+        const toggle = document.getElementById('mobile-filter-toggle');
+        const chevron = document.getElementById('filter-chevron');
+        if (panel && toggle && chevron) {
+          const isOpen = panel.classList.toggle('open');
+          toggle.classList.toggle('active', isOpen);
+          chevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+          toggle.setAttribute('aria-expanded', isOpen);
+        }
+      }
+    </script>
   </body>
 </html>

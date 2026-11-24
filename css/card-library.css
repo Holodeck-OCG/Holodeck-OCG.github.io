@@ -16,7 +16,8 @@ html,
         border: 0.5px solid var(--border-dim);
         border-radius: 6px;
         padding: 0 16px;
-        height: 42px;
+        height: 48px;
+        min-height: 48px;
         width: 100%;
         max-width: 500px;
         transition: 0.2s;
@@ -611,7 +612,7 @@ html,
   }
 
   .btn-action {
-    min-height: 44px;
+    min-height: 48px;
   }
 
   #navbar-placeholder .topbar {
@@ -639,5 +640,20 @@ html,
 
   .search-bar {
     height: 50px;
+  }
+}
+
+/* Narrow phones - 1 column grid */
+@media (max-width: 480px) {
+  .main-wrapper {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .panel {
+    padding: 12px;
+  }
+  
+  .body-wrapper {
+    padding: 8px 8px calc(20px + env(safe-area-inset-bottom));
   }
 }

@@ -518,6 +518,23 @@
       }
 
       async function fetchTournaments() {
+        const CACHE_KEY = "holodeck_tournaments_cache";
+        const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+        // Check local cache first for instant render
+        try {
+          const cached = localStorage.getItem(CACHE_KEY);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < CACHE_TTL && Array.isArray(parsed.data)) {
+              tournamentHistory = parsed.data;
+              selectInitialTournament();
+            }
+          }
+        } catch (e) {
+          console.warn("Local storage cache read failed:", e);
+        }
+
         try {
           const q = query(
             collection(db, "tournaments"),
@@ -530,10 +547,18 @@
             tournamentHistory.push({ id: doc.id, ...doc.data() });
           });
 
+          // Save to local cache
+          try {
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ timestamp: Date.now(), data: tournamentHistory })
+            );
+          } catch (e) {
+            console.warn("Local storage cache write failed:", e);
+          }
+
           if (tournamentHistory.length > 0) {
-            activeTournament = tournamentHistory[0];
-            window.renderTournamentList();
-            window.renderTournamentData();
+            selectInitialTournament();
           } else {
             document.getElementById("champ-name").innerText =
               "No Tournaments Found";
@@ -545,19 +570,37 @@
           }
         } catch (error) {
           console.error("Firebase Error: ", error);
-          document.getElementById("champ-name").innerText = "Connection Error";
-          document.getElementById("champ-deck-name").innerText =
-            "Check your Firebase Rules";
-          document.getElementById("event-meta").innerHTML = "";
-          document.getElementById("winning-deck-container").innerHTML =
-            `<div class="empty-state" style="color: var(--danger);">Failed to load data. Please ensure your Firestore Database is created and your Rules are set to <b>allow read, write: if true;</b></div>`;
+          if (tournamentHistory.length === 0) {
+            document.getElementById("champ-name").innerText = "Connection Error";
+            document.getElementById("champ-deck-name").innerText =
+              "Check your Firebase Rules";
+            document.getElementById("event-meta").innerHTML = "";
+            document.getElementById("winning-deck-container").innerHTML =
+              `<div class="empty-state" style="color: var(--danger);">Failed to load data. Please ensure your Firestore Database is created and your Rules are set to <b>allow read, write: if true;</b></div>`;
+          }
         }
+      }
+
+      function selectInitialTournament() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlTourneyId = urlParams.get("id");
+        if (urlTourneyId) {
+          const found = tournamentHistory.find((t) => t.id === urlTourneyId);
+          if (found) {
+            activeTournament = found;
+          } else {
+            activeTournament = tournamentHistory[0];
+          }
+        } else {
+          activeTournament = tournamentHistory[0];
+        }
+        window.renderTournamentList();
+        window.renderTournamentData();
       }
 
       window.renderTournamentList = function (filters = {}) {
         const listContainer = document.getElementById("tournament-list");
         if (!listContainer) return;
-        listContainer.innerHTML = "";
 
         const filtered = tournamentHistory.filter((event) => {
           const eName = (event.eventName || "").toLowerCase();
@@ -579,6 +622,8 @@
           listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 14px;">No matches found matching criteria.</div>`;
           return;
         }
+
+        const fragment = document.createDocumentFragment();
 
         filtered.forEach((event) => {
           const isActive = activeTournament && activeTournament.id === event.id;
@@ -604,36 +649,42 @@
           <span>${escapeHTML(event.date)}</span>
         </div>
       `;
-          listContainer.appendChild(div);
+          fragment.appendChild(div);
         });
+
+        listContainer.replaceChildren(fragment);
       };
 
+      let filterDebounceTimer = null;
       window.filterTournaments = function () {
-        const fEvent = document.getElementById("filter-event")
-          ? document.getElementById("filter-event").value.toLowerCase()
-          : "";
-        const fLocation = document.getElementById("filter-location")
-          ? document.getElementById("filter-location").value.toLowerCase()
-          : "";
-        const fWinner = document.getElementById("filter-winner")
-          ? document.getElementById("filter-winner").value.toLowerCase()
-          : "";
-        const fDeck = document.getElementById("filter-deck")
-          ? document.getElementById("filter-deck").value.toLowerCase()
-          : "";
-        const fDate = document.getElementById("filter-date")
-          ? document.getElementById("filter-date").value
-          : "";
+        if (filterDebounceTimer) clearTimeout(filterDebounceTimer);
+        filterDebounceTimer = setTimeout(() => {
+          const fEvent = document.getElementById("filter-event")
+            ? document.getElementById("filter-event").value.toLowerCase()
+            : "";
+          const fLocation = document.getElementById("filter-location")
+            ? document.getElementById("filter-location").value.toLowerCase()
+            : "";
+          const fWinner = document.getElementById("filter-winner")
+            ? document.getElementById("filter-winner").value.toLowerCase()
+            : "";
+          const fDeck = document.getElementById("filter-deck")
+            ? document.getElementById("filter-deck").value.toLowerCase()
+            : "";
+          const fDate = document.getElementById("filter-date")
+            ? document.getElementById("filter-date").value
+            : "";
 
-        const filters = {
-          event: fEvent,
-          location: fLocation,
-          winner: fWinner,
-          deck: fDeck,
-          date: fDate,
-        };
+          const filters = {
+            event: fEvent,
+            location: fLocation,
+            winner: fWinner,
+            deck: fDeck,
+            date: fDate,
+          };
 
-        window.renderTournamentList(filters);
+          window.renderTournamentList(filters);
+        }, 150);
       };
 
       window.clearFilters = function () {
@@ -650,13 +701,29 @@
         window.filterTournaments();
       };
 
-      window.changeTournament = function (eventId) {
+      window.changeTournament = function (eventId, updateUrl = true) {
         activeTournament = tournamentHistory.find((t) => t.id === eventId);
         if (activeTournament) {
-          window.filterTournaments();
+          if (updateUrl && history.pushState) {
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set("id", eventId);
+            history.pushState({ id: eventId }, "", newUrl);
+          }
+          window.renderTournamentList();
           window.renderTournamentData();
         }
       };
+
+      // Listen for browser back/forward navigation
+      window.addEventListener("popstate", (e) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tourneyId = urlParams.get("id");
+        if (tourneyId) {
+          window.changeTournament(tourneyId, false);
+        } else if (tournamentHistory.length > 0) {
+          window.changeTournament(tournamentHistory[0].id, false);
+        }
+      });
 
       window.renderTournamentData = function () {
         const rightPanel =

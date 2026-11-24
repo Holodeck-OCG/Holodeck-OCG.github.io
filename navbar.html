@@ -53,14 +53,15 @@
 
       <button
         class="burger-btn"
-        onclick="
-          document.getElementById('mobile-tabs').classList.toggle('open')
-        "
+        id="mobile-drawer-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-drawer"
       >
         <i class="ti ti-menu-2"></i>
       </button>
     </div>
-    <nav class="tabs" id="mobile-tabs">
+    <nav class="tabs hide-on-mobile" id="desktop-tabs">
       <a href="index.html" class="tab">
         <span class="tab-title">Modern Library</span>
       </a>
@@ -82,19 +83,6 @@
       <a href="tournaments.html" class="tab">
         <span class="tab-title">Winning Decks</span>
       </a>
-      <button id="theme-toggle" class="theme-toggle-btn">
-        <span class="toggle-track hide-on-desktop">
-          <span class="toggle-thumb">
-            <i id="theme-icon" class="ti ti-moon-stars"></i>
-          </span>
-        </span>
-      </button>
-      <button
-        class="btn-about-header hide-on-desktop"
-        onclick="openAboutModal()"
-      >
-        <i class="ti ti-info-circle"></i> About
-      </button>
     </nav>
   </div>
   <div class="topbar-right hide-on-mobile">
@@ -110,4 +98,114 @@
     </button>
   </div>
 </header>
+
+<!-- Mobile Drawer (Off-canvas navigation) -->
+<div class="mobile-drawer-overlay" id="mobile-drawer-overlay" onclick="closeMobileDrawer()"></div>
+<aside class="mobile-drawer" id="mobile-drawer" role="navigation" aria-label="Main navigation">
+  <div class="mobile-drawer-header">
+    <a href="index.html" class="brand-logo">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 64 64"
+        width="32"
+        height="32"
+        class="logo-icon"
+      >
+        <g transform="rotate(12 32 32)">
+          <rect x="14" y="8" width="36" height="48" rx="4" fill="#FFFFFF" stroke="#41C3E3" stroke-width="3" />
+          <path d="M15.5 9.5 h 33 a 2.5 2.5 0 0 1 2.5 2.5 v 24 L 15.5 16 z" fill="#41C3E3" />
+          <polygon points="26,22 42,32 26,42" fill="#FFFFFF" stroke="#41C3E3" stroke-width="2" stroke-linejoin="round" />
+        </g>
+      </svg>
+      <span class="brand-text" style="font-size: 20px;">
+        <span style="color: var(--text-bright)">Holo</span
+        ><span class="text-cyan">Deck</span>
+      </span>
+    </a>
+    <button class="mobile-drawer-close" onclick="closeMobileDrawer()" aria-label="Close menu">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+  <nav class="mobile-drawer-nav">
+    <a href="index.html" class="tab" onclick="closeMobileDrawer()">
+      <i class="ti ti-layout-grid" style="margin-right: 10px;"></i>
+      <span>Modern Library</span>
+    </a>
+    <a href="deckbuilder.html" class="tab" onclick="closeMobileDrawer()">
+      <i class="ti ti-cards" style="margin-right: 10px;"></i>
+      <span>Deck Builder</span>
+    </a>
+    <div class="tab dropdown">
+      <span class="tab-title" style="display: flex; align-items: center; gap: 4px; width: 100%; justify-content: space-between;">
+        <span>
+          <i class="ti ti-controller" style="margin-right: 10px;"></i>
+          Games
+        </span>
+        <i class="ti ti-chevron-down" style="font-size: 14px"></i>
+      </span>
+      <div class="dropdown-content">
+        <a href="quiz.html" class="dropdown-item" onclick="closeMobileDrawer()">Endless Minigames</a>
+        <a href="daily.html" class="dropdown-item" onclick="closeMobileDrawer()">Daily Gauntlet</a>
+      </div>
+    </div>
+    <a href="tournaments.html" class="tab" onclick="closeMobileDrawer()">
+      <i class="ti ti-trophy" style="margin-right: 10px;"></i>
+      <span>Winning Decks</span>
+    </a>
+    <button id="theme-toggle" class="theme-toggle-btn" style="margin-top: 8px;">
+      <span class="toggle-track">
+        <span class="toggle-thumb">
+          <i id="theme-icon" class="ti ti-moon-stars"></i>
+        </span>
+      </span>
+    </button>
+    <button class="btn-about-header" onclick="openAboutModal(); closeMobileDrawer()">
+      <i class="ti ti-info-circle"></i> About
+    </button>
+  </nav>
+</aside>
+
+<script>
+  // Mobile drawer functions
+  function openMobileDrawer() {
+    const overlay = document.getElementById('mobile-drawer-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    const toggle = document.getElementById('mobile-drawer-toggle');
+    if (overlay && drawer && toggle) {
+      overlay.classList.add('open');
+      drawer.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  function closeMobileDrawer() {
+    const overlay = document.getElementById('mobile-drawer-overlay');
+    const drawer = document.getElementById('mobile-drawer');
+    const toggle = document.getElementById('mobile-drawer-toggle');
+    if (overlay && drawer && toggle) {
+      overlay.classList.remove('open');
+      drawer.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+  }
+  // Initialize toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('mobile-drawer-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', openMobileDrawer);
+    }
+    // Close on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileDrawer();
+    });
+    // Dropdown toggles in drawer
+    document.querySelectorAll('.mobile-drawer-nav .dropdown').forEach(dd => {
+      dd.addEventListener('click', (e) => {
+        if (e.target.closest('.dropdown-item')) return;
+        dd.classList.toggle('open');
+      });
+    });
+  });
+</script>
 

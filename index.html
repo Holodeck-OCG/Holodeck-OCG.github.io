@@ -387,5 +387,41 @@
     <script src="js/index.js"></script>
     <script src="js/version.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      // Keyboard-aware bottom sheet
+      (function() {
+        const sheet = document.getElementById('mobile-bottom-sheet');
+        if (!sheet) return;
+        
+        let focusedInput = null;
+        
+        document.addEventListener('focusin', (e) => {
+          const target = e.target;
+          if (target.matches('input, textarea, select')) {
+            focusedInput = target;
+            // Small delay to let viewport adjust
+            setTimeout(() => {
+              sheet.classList.add('keyboard-open');
+            }, 50);
+          }
+        });
+        
+        document.addEventListener('focusout', (e) => {
+          if (focusedInput === e.target) {
+            focusedInput = null;
+            sheet.classList.remove('keyboard-open');
+          }
+        });
+        
+        // Also handle virtual keyboard API if available
+        if ('virtualKeyboard' in navigator) {
+          navigator.virtualKeyboard.addEventListener('geometrychange', () => {
+            if (focusedInput) {
+              sheet.classList.add('keyboard-open');
+            }
+          });
+        }
+      })();
+    </script>
   </body>
 </html>

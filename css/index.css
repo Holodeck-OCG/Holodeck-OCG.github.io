@@ -339,8 +339,9 @@ select {
 
 .chip {
   flex: 0 0 auto;
-  min-height: 38px;
-  padding: 0 14px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
   border: 1px solid var(--border-dim);
   border-radius: 999px;
   background: var(--control-bg);
@@ -350,6 +351,9 @@ select {
   white-space: nowrap;
   cursor: pointer;
   touch-action: manipulation;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     background-color 0.18s var(--ease),
     border-color 0.18s var(--ease),
@@ -1041,12 +1045,15 @@ html[data-theme="dark"] .tl-hp {
   display: flex;
   flex-direction: column;
   max-height: min(88dvh, 760px);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 0);
   border-top: 1px solid var(--border-mid);
   border-radius: 24px 24px 0 0;
   background: var(--navy-2);
   box-shadow: 0 -14px 44px rgba(0, 0, 0, 0.4);
-  transition: bottom 0.34s var(--ease);
+  transition: bottom 0.34s var(--ease), padding-bottom 0.2s ease;
+}
+.bottom-sheet.keyboard-open {
+  padding-bottom: max(env(safe-area-inset-bottom, 0), env(keyboard-inset-height, 0));
 }
 
 .bottom-sheet.open {
@@ -1310,23 +1317,23 @@ html[data-theme="dark"] .tl-hp {
   }
 
   .btn-action {
-    min-height: 42px;
+    min-height: 48px;
   }
 
   .chip {
-    min-height: 42px;
+    min-height: 44px;
     font-size: 14px;
   }
 
   .segmented .btn-action {
-    min-width: 40px;
-    min-height: 38px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .select-control {
     flex: 1 1 auto;
     min-width: 0;
-    min-height: 42px;
+    min-height: 48px;
   }
 
   .search-bar {
@@ -1394,6 +1401,21 @@ html[data-theme="dark"] .tl-hp {
   .card-grid.list-view .btn-alt-toggle {
     top: 50%;
     right: 92px;
+  }
+}
+
+/* ── 18. NARROW PHONES (≤480px) — 1-column card grid ── */
+@media (max-width: 480px) {
+  .card-grid:not(.list-view) {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .main-panel {
+    padding: 8px 8px calc(20px + env(safe-area-inset-bottom));
+  }
+  
+  .panel-col {
+    padding: 10px 10px 4px;
   }
 }
 
