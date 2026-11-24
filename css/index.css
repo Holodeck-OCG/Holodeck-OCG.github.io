@@ -1404,16 +1404,52 @@ html[data-theme="dark"] .tl-hp {
   }
 }
 
-/* ── 18. NARROW PHONES (≤480px) — 1-column card grid ── */
+/* ── 18. NARROW PHONES (≤480px) — compact multi-column card grid ── */
 @media (max-width: 480px) {
   .card-grid:not(.list-view) {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px;
   }
-  
+
+  .card-grid:not(.list-view) .card-item {
+    border-radius: 10px;
+  }
+
+  .card-grid:not(.list-view) .card-meta {
+    padding: 6px 7px 7px;
+    gap: 1px;
+  }
+
+  .card-grid:not(.list-view) .card-name-jp {
+    font-size: 11px;
+  }
+
+  .card-grid:not(.list-view) .card-id {
+    font-size: 9px;
+  }
+
+  .card-grid:not(.list-view) .card-badges {
+    margin-top: 3px;
+    gap: 2px;
+  }
+
+  .card-grid:not(.list-view) .badge {
+    font-size: 8px;
+    padding: 1px 4px;
+  }
+
+  .card-grid:not(.list-view) .face-label {
+    font-size: 8px;
+  }
+
+  .card-grid:not(.list-view) .card-face i {
+    font-size: 20px;
+  }
+
   .main-panel {
     padding: 8px 8px calc(20px + env(safe-area-inset-bottom));
   }
-  
+
   .panel-col {
     padding: 10px 10px 4px;
   }
