@@ -1281,31 +1281,11 @@ window.handleAddClick = function (cardId) {
 initializeDatabase();
 renderDeck();
 
-/* ── VISITOR COUNTER ── */
-async function updateVisitorCounter() {
+/* ── VISITOR COUNTER (counterapi.dev retired — endpoint returns 410) ── */
+function updateVisitorCounter() {
   const counterEl = document.getElementById("visitor-count");
-  if (!counterEl) return;
-
-  try {
-    const response = await fetch(
-      "https://api.counterapi.dev/v1/hocg_db_siuspras/visits_2/up",
-    );
-    if (response.ok) {
-      const data = await response.json();
-      let count = data.count;
-      let displayStr =
-        count < 10
-          ? count.toString()
-          : (
-              Math.floor(count / Math.pow(10, Math.floor(Math.log10(count)))) *
-              Math.pow(10, Math.floor(Math.log10(count)))
-            ).toLocaleString() + "+";
-      counterEl.innerText = displayStr;
-    } else {
-      counterEl.parentElement.style.display = "none"; // Hide row if fails
-    }
-  } catch (error) {
-    counterEl.parentElement.style.display = "none"; // Hide row if fails
+  if (counterEl?.parentElement) {
+    counterEl.parentElement.style.display = "none";
   }
 }
 

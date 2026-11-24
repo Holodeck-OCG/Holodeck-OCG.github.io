@@ -1,0 +1,1405 @@
+/**
+ * tournaments - Page-specific logic (extracted from original inline script)
+ * Maintains full original functionality
+ */
+
+
+
+// ===== BLOCK 1 =====
+
+      window.openAboutModal = function () {
+        document.getElementById("about-modal").classList.add("open");
+        document.getElementById("about-overlay").classList.add("open");
+        document.getElementById("edit-meta-breakdown").value =
+          activeTournament.metaBreakdown || "";
+      };
+      window.closeAboutModal = function () {
+        document.getElementById("about-modal").classList.remove("open");
+        document.getElementById("about-overlay").classList.remove("open");
+      };
+      /* ΓöÇΓöÇ VISITOR COUNTER ΓöÇΓöÇ */
+      // counterapi.dev retired this counter (HTTP 410) — hide the row, no request.
+      function updateVisitorCounter() {
+        const counterEl = document.getElementById("visitor-count");
+        if (counterEl?.parentElement) {
+          counterEl.parentElement.style.display = "none";
+        }
+      }
+
+      updateVisitorCounter();
+    
+
+// ===== BLOCK 2 =====
+
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        addDoc,
+        orderBy,
+        query,
+        doc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+      import {
+        getStorage,
+        ref,
+        uploadBytes,
+        getDownloadURL,
+      } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCAIHsG9fB7dRih74FgPv805Lud2q0BfGE",
+        authDomain: "holoocg-ef4bf.firebaseapp.com",
+        projectId: "holoocg-ef4bf",
+        storageBucket: "holoocg-ef4bf.firebasestorage.app",
+        messagingSenderId: "942377973020",
+        appId: "1:942377973020:web:3e26c80a1e67ce97a9b6d9",
+        measurementId: "G-ER0KDYMX7M",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
+      const auth = getAuth(app);
+
+      // ΓöÇΓöÇ CLOUDINARY + WEBP COMPRESSION HELPER ΓöÇΓöÇ
+      async function compressAndUploadToCloudinary(file) {
+        const CLOUD_NAME = "btkyve5m";
+        const UPLOAD_PRESET = "a7mvclsr";
+
+        // 1. In-browser WebP Compression
+        const webpBlob = await new Promise((resolve) => {
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const maxDim = 1600;
+            const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob((blob) => resolve(blob), "image/webp", 0.8);
+          };
+        });
+
+        // 2. Direct Cloudinary Upload
+        const formData = new FormData();
+        formData.append("file", webpBlob, "deck.webp");
+        formData.append("upload_preset", UPLOAD_PRESET);
+
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        const data = await res.json();
+        if (!data.secure_url)
+          throw new Error(data.error?.message || "Cloudinary upload failed");
+        return data.secure_url;
+      }
+
+      // ΓöÇΓöÇ DECK / COMMEMORATE PHOTO INPUT CONTROLLERS ΓöÇΓöÇ
+      // Owned selection state per photo input: a plain file input cannot
+      // preview images, support per-file removal, or remember an existing
+      // Cloudinary URL across an edit. ids follow "<mode>-<fieldId>(-preview)".
+      const DECK_PHOTO_FIELD_IDS = [
+        "first-winner-deck",
+        "second-winner-deck",
+        "third-winner-deck",
+        "commemorate-photos",
+      ];
+
+      const deckPhotoControllers = {};
+
+      function createDeckPhotoController(mode, fieldId, multiple) {
+        const input = document.getElementById(`${mode}-${fieldId}`);
+        const preview = document.getElementById(
+          `${mode}-${fieldId}-preview`,
+        );
+        if (!input || !preview) return null;
+
+        const showPreview = () => (preview.style.display = "flex");
+        const hidePreview = () => {
+          preview.innerHTML = "";
+          preview.style.display = "none";
+        };
+
+        const makeThumb = (src) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = "Photo preview";
+          img.style.cssText =
+            "height: 64px; width: auto; max-width: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-dim); cursor: pointer;";
+          img.onclick = () => window.openDeckImage(src);
+          return img;
+        };
+
+        const makeSmallButton = (label, onClick) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.style.cssText =
+            "background: var(--navy-2); color: var(--text-bright); border: 1px solid var(--border-dim); border-radius: 4px; padding: 4px 8px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'nunito', sans-serif;";
+          btn.onclick = onClick;
+          return btn;
+        };
+
+        const makeCaption = (text, color) => {
+          const el = document.createElement("span");
+          el.textContent = text;
+          el.style.cssText = `color: ${
+            color || "var(--text-dim)"
+          }; font-size: 12px; font-weight: 700; align-self: center;`;
+          return el;
+        };
+
+        const ctrl = {
+          mode,
+          fieldId,
+          multiple,
+          // Single deck fields (edit mode): "empty" (nothing yet), "existing"
+          // (URL on record, no new file), "new" (replacing), "removed".
+          state: "empty",
+          files: [], // newly picked File objects awaiting upload
+          existingUrl: null, // URL currently on record (edit mode)
+          listItems: [], // commemorative (edit mode): working copy of URLs
+        };
+
+        // ADD MODE ΓÇö render plain file previews.
+        ctrl.renderAdd = function () {
+          hidePreview();
+          if (ctrl.files.length === 0) return;
+          showPreview();
+          ctrl.files.forEach((file, idx) => {
+            const thumb = makeThumb(URL.createObjectURL(file));
+            const name = makeCaption(file.name);
+            const remove = makeSmallButton("Γ£ò", () => {
+              ctrl.files.splice(idx, 1);
+              ctrl.renderAdd();
+            });
+            preview.appendChild(thumb);
+            preview.appendChild(name);
+            preview.appendChild(remove);
+          });
+        };
+
+        // EDIT MODE (single deck field) ΓÇö show current photo, or a preview of
+        // the replacement file. Replace = pick file; Remove = clear field.
+        ctrl.renderEdit = function () {
+          hidePreview();
+
+          if (ctrl.multiple) {
+            // Commemorative: current URLs + pending new files, each removable.
+            if (ctrl.listItems.length === 0 && ctrl.files.length === 0) return;
+            showPreview();
+            const originals = Array.isArray(ctrl.originalList)
+              ? ctrl.originalList
+              : [];
+            ctrl.listItems.forEach((url, idx) => {
+              const thumb = makeThumb(url);
+              if (!originals.includes(url))
+                thumb.style.border = "2px solid var(--brand-main)";
+              const caption = makeCaption(`Current #${idx + 1}`);
+              const remove = makeSmallButton("Γ£ò", () => {
+                ctrl.listItems.splice(idx, 1);
+                ctrl.renderEdit();
+              });
+              preview.appendChild(thumb);
+              preview.appendChild(caption);
+              preview.appendChild(remove);
+            });
+            ctrl.files.forEach((file, idx) => {
+              const thumb = makeThumb(URL.createObjectURL(file));
+              thumb.style.border = "2px solid var(--holo-gold)";
+              const caption = makeCaption(
+                `New #${idx + 1}`,
+                "var(--holo-gold)",
+              );
+              const remove = makeSmallButton("Γ£ò", () => {
+                ctrl.files.splice(idx, 1);
+                ctrl.renderEdit();
+              });
+              preview.appendChild(thumb);
+              preview.appendChild(caption);
+              preview.appendChild(remove);
+            });
+            return;
+          }
+
+          // Single deck field states: "empty" | "existing" | "new" | "removed".
+          if (ctrl.state === "new" && !ctrl.files[0]) {
+            // File selection was canceled; fall back to what's on record.
+            ctrl.state = ctrl.existingUrl ? "existing" : "empty";
+          }
+          let photoUrl = null;
+          if (ctrl.state === "new") photoUrl = URL.createObjectURL(ctrl.files[0]);
+          else if (ctrl.state === "existing")
+            photoUrl = ctrl.existingUrl;
+          if (!photoUrl) return;
+          showPreview();
+
+          const thumb = makeThumb(photoUrl);
+          preview.appendChild(thumb);
+          preview.appendChild(
+            makeCaption(
+              ctrl.state === "new"
+                ? "New photo (replaces current)"
+                : "Current photo",
+              ctrl.state === "new" ? "var(--holo-gold)" : undefined,
+            ),
+          );
+          if (ctrl.state === "new" && ctrl.existingUrl) {
+            preview.appendChild(
+              makeSmallButton("Keep current", () => {
+                ctrl.state = "existing";
+                ctrl.files = [];
+                ctrl.renderEdit();
+              }),
+            );
+          }
+          preview.appendChild(
+            makeSmallButton(ctrl.state === "new" ? "Γ£ò" : "Remove", () => {
+              if (ctrl.state === "new") {
+                ctrl.state = "existing";
+                ctrl.files = [];
+              } else {
+                ctrl.state = "removed";
+              }
+              ctrl.renderEdit();
+            }),
+          );
+        };
+
+        // Clear everything (add mode reset).
+        ctrl.resetAdd = function () {
+          ctrl.files = [];
+          input.value = "";
+          hidePreview();
+        };
+
+        // Seed an edit controller from the document on record.
+        ctrl.resetEdit = function (existingUrl, existingList) {
+          ctrl.files = [];
+          input.value = "";
+          if (multiple) {
+            ctrl.listItems = (existingList || []).filter(Boolean);
+            ctrl.originalList = ctrl.listItems.slice();
+          } else {
+            ctrl.existingUrl = existingUrl || null;
+            ctrl.state = existingUrl ? "existing" : "empty";
+          }
+          ctrl.renderEdit();
+        };
+
+        input.addEventListener("change", () => {
+          if (multiple) ctrl.files.push(...Array.from(input.files || []));
+          else ctrl.files = Array.from(input.files || []);
+          input.value = "";
+          if (mode === "edit") {
+            if (ctrl.files.length > 0) ctrl.state = "new";
+            if (multiple) ctrl.state = "list";
+            ctrl.renderEdit();
+          } else {
+            ctrl.renderAdd();
+          }
+        });
+
+        return ctrl;
+      }
+
+      function wireDeckPhotoControllers() {
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const multiple = fieldId === "commemorate-photos";
+          const add = createDeckPhotoController("add", fieldId, multiple);
+          const edit = createDeckPhotoController("edit", fieldId, multiple);
+          if (add) deckPhotoControllers[`add-${fieldId}`] = add;
+          if (edit) deckPhotoControllers[`edit-${fieldId}`] = edit;
+        });
+      }
+
+      function resetAddDeckPhotoControllers() {
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const ctrl = deckPhotoControllers[`add-${fieldId}`];
+          if (ctrl) ctrl.resetAdd();
+        });
+      }
+
+      function resetEditDeckPhotoControllers() {
+        const photos = getDeckPhotos(activeTournament);
+        DECK_PHOTO_FIELD_IDS.forEach((fieldId) => {
+          const ctrl = deckPhotoControllers[`edit-${fieldId}`];
+          if (ctrl) ctrl.resetEdit(photos[fieldId], photos.commemorative);
+        });
+      }
+
+      // Photo fields resolved for a tournament document, with the legacy
+      // `winner.imageUrl` mapped to the 1st Winner Deck (lazy migration).
+      function getDeckPhotos(tournament) {
+        const winner = tournament?.winner || {};
+        const commemorative = Array.isArray(tournament?.commemorativePhotos)
+          ? tournament.commemorativePhotos.filter(Boolean)
+          : [];
+        return {
+          "first-winner-deck":
+            winner.firstWinnerDeck || winner.imageUrl || null,
+          "second-winner-deck": winner.secondWinnerDeck || null,
+          "third-winner-deck": winner.thirdWinnerDeck || null,
+          "commemorate-photos": null,
+          commemorative,
+        };
+      }
+
+
+      const csvFilesToLoad = [
+        "data/hBP01.csv",
+        "data/hBP02.csv",
+        "data/hBP03.csv",
+        "data/hBP04.csv",
+        "data/hBP05.csv",
+        "data/hBP06.csv",
+        "data/hBP07.csv",
+        "data/hBP08.csv",
+        "data/hBP09.csv",
+        "data/hEB01.csv",
+        "data/hSD.csv",
+      ];
+      let masterCardPool = [];
+      let tournamentHistory = [];
+      let activeTournament = null;
+
+      function parseCSV(text) {
+        let result = [],
+          row = [],
+          inQuotes = false,
+          val = "";
+        for (let i = 0; i < text.length; i++) {
+          let char = text[i];
+          if (inQuotes) {
+            if (char === '"') {
+              if (i + 1 < text.length && text[i + 1] === '"') {
+                val += '"';
+                i++;
+              } else {
+                inQuotes = false;
+              }
+            } else {
+              val += char;
+            }
+          } else {
+            if (char === '"') {
+              inQuotes = true;
+            } else if (char === ",") {
+              row.push(val.trim());
+              val = "";
+            } else if (char === "\n" || char === "\r") {
+              row.push(val.trim());
+              result.push(row);
+              row = [];
+              val = "";
+              if (char === "\r" && i + 1 < text.length && text[i + 1] === "\n")
+                i++;
+            } else {
+              val += char;
+            }
+          }
+        }
+        if (val !== "" || row.length > 0) {
+          row.push(val.trim());
+          result.push(row);
+        }
+        return result;
+      }
+
+      async function initializeDatabase() {
+        let combinedDatabase = [];
+        let seenIds = new Set();
+
+        for (const fileName of csvFilesToLoad) {
+          try {
+            const response = await fetch(fileName);
+            if (!response.ok) continue;
+            const text = await response.text();
+            if (
+              text.trim().toLowerCase().startsWith("<!doctype html") ||
+              text.trim().toLowerCase().startsWith("<html")
+            )
+              continue;
+
+            const rows = parseCSV(text);
+            if (rows.length < 2) continue;
+
+            const headers = rows[0].map((h) =>
+              h.replace(/"/g, "").trim().toLowerCase(),
+            );
+            let typeIdx = 3,
+              hpIdx = 6,
+              tagsIdx = -1,
+              textIdx = 8;
+            for (let i = 0; i < headers.length; i++) {
+              if (headers[i].includes("type")) typeIdx = i;
+              if (headers[i].includes("life") || headers[i].includes("hp"))
+                hpIdx = i;
+              if (headers[i].includes("tag")) tagsIdx = i;
+              if (headers[i].includes("text")) textIdx = i;
+            }
+
+            for (let i = 1; i < rows.length; i++) {
+              const cols = rows[i];
+              if (cols.length < 3) continue;
+
+              const setCode = cols[0];
+              const nameRaw = cols[1];
+              if (
+                !setCode ||
+                !nameRaw ||
+                setCode.toLowerCase().includes("setcode")
+              )
+                continue;
+
+              const finalCardId = setCode.trim();
+              if (seenIds.has(finalCardId)) continue;
+              seenIds.add(finalCardId);
+
+              let cardName = nameRaw;
+              const match = nameRaw.match(/\((.*?)\)/);
+              if (match) cardName = match[1].trim();
+
+              const typeRaw = cols[typeIdx] || "";
+              let cardType = "Unknown",
+                bloomLevel = null;
+
+              if (typeRaw.toLowerCase().includes("holomem")) {
+                if (typeRaw.includes("Oshi")) cardType = "Oshi";
+                else {
+                  cardType = "Holomem";
+                  if (typeRaw.includes("Debut")) bloomLevel = "Debut";
+                  if (typeRaw.includes("1st")) bloomLevel = "1st";
+                  if (typeRaw.includes("2nd")) bloomLevel = "2nd";
+                  if (typeRaw.includes("Spot")) bloomLevel = "Spot";
+                }
+              } else if (typeRaw.includes("Support")) cardType = "Support";
+              else if (typeRaw.includes("Cheer")) cardType = "Cheer";
+
+              const hpRaw = cols[hpIdx];
+              let hp = hpRaw ? parseInt(hpRaw.replace(/,/g, "")) : null;
+              let rawSkills = cols[textIdx] || "None";
+              let rawTags = tagsIdx !== -1 ? cols[tagsIdx] || "" : "";
+              let finalSkillsText = rawTags
+                ? `${rawTags} | ${rawSkills}`
+                : rawSkills;
+
+              combinedDatabase.push({
+                card_name: cardName,
+                card_type: cardType,
+                bloom_level: bloomLevel,
+                card_id: finalCardId,
+                hp: isNaN(hp) ? null : hp,
+                skills_text: finalSkillsText,
+                thumbnail: null,
+                raw_type: typeRaw.toLowerCase(),
+              });
+            }
+          } catch (error) {}
+        }
+
+        masterCardPool = combinedDatabase;
+        masterCardPool.sort((a, b) => a.card_id.localeCompare(b.card_id));
+        await fetchTournaments();
+      }
+
+      async function fetchTournaments() {
+        try {
+          const q = query(
+            collection(db, "tournaments"),
+            orderBy("date", "desc"),
+          );
+          const querySnapshot = await getDocs(q);
+
+          tournamentHistory = [];
+          querySnapshot.forEach((doc) => {
+            tournamentHistory.push({ id: doc.id, ...doc.data() });
+          });
+
+          if (tournamentHistory.length > 0) {
+            activeTournament = tournamentHistory[0];
+            window.renderTournamentList();
+            window.renderTournamentData();
+          } else {
+            document.getElementById("champ-name").innerText =
+              "No Tournaments Found";
+            document.getElementById("champ-deck-name").innerText =
+              "Database is empty.";
+            document.getElementById("event-meta").innerHTML = "";
+            document.getElementById("winning-deck-container").innerHTML =
+              `<div class="empty-state">Your Firebase database is connected, but it has no data. Click "Add Event" to save your first tournament!</div>`;
+          }
+        } catch (error) {
+          console.error("Firebase Error: ", error);
+          document.getElementById("champ-name").innerText = "Connection Error";
+          document.getElementById("champ-deck-name").innerText =
+            "Check your Firebase Rules";
+          document.getElementById("event-meta").innerHTML = "";
+          document.getElementById("winning-deck-container").innerHTML =
+            `<div class="empty-state" style="color: var(--danger);">Failed to load data. Please ensure your Firestore Database is created and your Rules are set to <b>allow read, write: if true;</b></div>`;
+        }
+      }
+
+      window.renderTournamentList = function (filters = {}) {
+        const listContainer = document.getElementById("tournament-list");
+        if (!listContainer) return;
+        listContainer.innerHTML = "";
+
+        const filtered = tournamentHistory.filter((event) => {
+          const eName = (event.eventName || "").toLowerCase();
+          const wName = (event.winner?.name || "").toLowerCase();
+          const loc = (event.location || "").toLowerCase();
+          const dName = (event.winner?.deckName || "").toLowerCase();
+          const eDate = event.date || "";
+
+          if (filters.event && !eName.includes(filters.event)) return false;
+          if (filters.location && !loc.includes(filters.location)) return false;
+          if (filters.winner && !wName.includes(filters.winner)) return false;
+          if (filters.deck && !dName.includes(filters.deck)) return false;
+          if (filters.date && eDate !== filters.date) return false;
+
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 14px;">No matches found matching criteria.</div>`;
+          return;
+        }
+
+        filtered.forEach((event) => {
+          const isActive = activeTournament && activeTournament.id === event.id;
+          const bgClass = isActive
+            ? "background: rgba(65, 195, 227, 0.15); border-left: 4px solid var(--brand-main);"
+            : "background: transparent; border-left: 4px solid transparent;";
+
+          const div = document.createElement("div");
+          div.style = `padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border-dim); transition: 0.2s; ${bgClass}`;
+          div.onmouseover = () => {
+            if (!isActive) div.style.background = "rgba(255,255,255,0.05)";
+          };
+          div.onmouseout = () => {
+            if (!isActive) div.style.background = "transparent";
+          };
+
+          div.onclick = () => window.changeTournament(event.id);
+
+          div.innerHTML = `
+        <div style="font-size: 15px; font-weight: 800; color: ${isActive ? "var(--brand-main)" : "var(--text-bright)"}; margin-bottom: 4px;">${escapeHTML(event.eventName)}</div>
+        <div style="font-size: 12px; color: var(--text-dim); display: flex; justify-content: space-between;">
+          <span><i class="ti ti-trophy"></i> ${escapeHTML(event.winner.name)}</span>
+          <span>${escapeHTML(event.date)}</span>
+        </div>
+      `;
+          listContainer.appendChild(div);
+        });
+      };
+
+      window.filterTournaments = function () {
+        const fEvent = document.getElementById("filter-event")
+          ? document.getElementById("filter-event").value.toLowerCase()
+          : "";
+        const fLocation = document.getElementById("filter-location")
+          ? document.getElementById("filter-location").value.toLowerCase()
+          : "";
+        const fWinner = document.getElementById("filter-winner")
+          ? document.getElementById("filter-winner").value.toLowerCase()
+          : "";
+        const fDeck = document.getElementById("filter-deck")
+          ? document.getElementById("filter-deck").value.toLowerCase()
+          : "";
+        const fDate = document.getElementById("filter-date")
+          ? document.getElementById("filter-date").value
+          : "";
+
+        const filters = {
+          event: fEvent,
+          location: fLocation,
+          winner: fWinner,
+          deck: fDeck,
+          date: fDate,
+        };
+
+        window.renderTournamentList(filters);
+      };
+
+      window.clearFilters = function () {
+        if (document.getElementById("filter-event"))
+          document.getElementById("filter-event").value = "";
+        if (document.getElementById("filter-location"))
+          document.getElementById("filter-location").value = "";
+        if (document.getElementById("filter-winner"))
+          document.getElementById("filter-winner").value = "";
+        if (document.getElementById("filter-deck"))
+          document.getElementById("filter-deck").value = "";
+        if (document.getElementById("filter-date"))
+          document.getElementById("filter-date").value = "";
+        window.filterTournaments();
+      };
+
+      window.changeTournament = function (eventId) {
+        activeTournament = tournamentHistory.find((t) => t.id === eventId);
+        if (activeTournament) {
+          window.filterTournaments();
+          window.renderTournamentData();
+        }
+      };
+
+      window.renderTournamentData = function () {
+        const rightPanel =
+          document.getElementById("tournament-hero").parentElement;
+
+        rightPanel.style.removeProperty("--brand-main");
+        rightPanel.style.removeProperty("--navy");
+        rightPanel.style.removeProperty("--navy-2");
+        rightPanel.style.removeProperty("--navy-3");
+        rightPanel.style.removeProperty("--border-dim");
+        rightPanel.style.removeProperty("--border-mid");
+
+        const themeColor = activeTournament.themeColor || "blue";
+        rightPanel.setAttribute("data-deck", themeColor);
+
+        document.getElementById("champ-name").innerHTML =
+          `<i class="ti ti-trophy" style="color: var(--holo-gold); font-size: 36px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));"></i> ${escapeHTML(activeTournament.winner.name)}`;
+        document.getElementById("champ-deck-name").innerText =
+          activeTournament.winner.deckName || "Unknown Deck";
+
+        let metaHtml = `
+      <span style="background: var(--navy-4); color: var(--text-bright); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-dim); display: flex; align-items: center; gap: 6px;">
+        <i class="ti ti-calendar" style="color: var(--brand-main);"></i> ${escapeHTML(activeTournament.date)}
+      </span>
+    `;
+        if (activeTournament.location) {
+          metaHtml += `
+      <span style="background: rgba(65, 195, 227, 0.1); color: var(--brand-main); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(65, 195, 227, 0.2); display: flex; align-items: center; gap: 6px;">
+        <i class="ti ti-map-pin"></i> ${escapeHTML(activeTournament.location)}
+      </span>`;
+        }
+        if (activeTournament.players) {
+          metaHtml += `
+      <span style="background: rgba(255, 94, 153, 0.1); color: var(--brand-pink); font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 94, 153, 0.2); display: flex; align-items: center; gap: 6px;">
+        <i class="ti ti-users"></i> ${Number(activeTournament.players)} Players
+      </span>`;
+        }
+        document.getElementById("event-meta").innerHTML = metaHtml;
+
+        const container = document.getElementById("winning-deck-container");
+        container.innerHTML = "";
+
+        renderWinnerDeckPhotos(container);
+        renderCommemorativePhotos(container);
+
+        if (
+          activeTournament.winner.youtubeLink ||
+          activeTournament.winner.comments
+        ) {
+          let footerHtml = `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; padding-top: 24px; border-top: 1px dashed var(--border-dim); padding-bottom: 40px;">`;
+
+          if (activeTournament.winner.youtubeLink) {
+            const ytUrl = escapeHTML(activeTournament.winner.youtubeLink);
+            const ytRegex =
+              /(?:v=|v\/|vi\/|youtu\.be\/|\/v\/|embed\/)([a-zA-Z0-9_-]{11})/;
+            const match = ytUrl.match(ytRegex);
+            const ytId = match ? match[1] : null;
+
+            let videoContent = "";
+            if (ytId) {
+              videoContent = `
+             <a href="${ytUrl}" target="_blank" style="display: block; width: 100%; position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-dim); box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s; text-decoration: none;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" style="width: 100%; display: block;" alt="YouTube Match" />
+               <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); transition: background 0.2s;">
+                 <div style="background: #ff0000; padding: 10px 20px; border-radius: 6px; color: white; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                   <i class="ti ti-player-play-filled"></i> PLAY VIDEO
+                 </div>
+               </div>
+             </a>`;
+            } else {
+              videoContent = `<a href="${ytUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,0,0,0.15); color: #ff5252; border: 1px solid rgba(255,0,0,0.3); padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 800;"><i class="ti ti-external-link"></i> Open External Video Link</a>`;
+            }
+
+            footerHtml += `
+          <div style="background: var(--navy-3); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+             <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-dim); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--text-bright);">
+               <i class="ti ti-brand-youtube" style="color: #ff0000; font-size: 18px;"></i> VOD / Replay
+             </div>
+             <div style="padding: 16px; flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.1);">
+                ${videoContent}
+             </div>
+          </div>`;
+          }
+
+          if (activeTournament.winner.comments) {
+            footerHtml += `
+          <div style="background: var(--navy-3); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+             <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-dim); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--brand-main);">
+               <i class="ti ti-message-2" style="font-size: 18px;"></i> Match Notes
+             </div>
+             <div style="padding: 16px; flex: 1; color: var(--text-bright); font-size: 15px; line-height: 1.7; white-space: pre-wrap; background: rgba(0,0,0,0.1);">${escapeHTML(activeTournament.winner.comments)}</div>
+          </div>`;
+          }
+
+          footerHtml += `</div>`;
+          container.insertAdjacentHTML("beforeend", footerHtml);
+        }
+
+        if (activeTournament.metaBreakdown) {
+          const metaLines = activeTournament.metaBreakdown
+            .split("\n")
+            .map((l) => l.trim())
+            .filter((l) => l);
+          let labels = [];
+          let data = [];
+
+          metaLines.forEach((line) => {
+            let parts = line.split(/[:,-]/);
+            let name = parts[0].trim();
+            let count = parts.length > 1 ? parseInt(parts[1].trim()) || 1 : 1;
+
+            let existingIdx = labels.indexOf(name);
+            if (existingIdx >= 0) {
+              data[existingIdx] += count;
+            } else {
+              labels.push(name);
+              data.push(count);
+            }
+          });
+
+          if (labels.length > 0) {
+            const chartHtml = `
+          <div style="background: var(--navy-3); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 20px; margin-bottom: 40px;">
+             <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-dim); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--brand-main);">
+               <i class="ti ti-chart-pie" style="font-size: 18px;"></i> Oshi Population
+             </div>
+             <div style="padding: 24px; display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: center; background: rgba(0,0,0,0.1);">
+                <div style="width: 100%; max-width: 600px; min-height: 350px; position: relative;">
+                  <canvas id="metaPieChart"></canvas>
+                </div>
+             </div>
+          </div>`;
+            container.insertAdjacentHTML("beforeend", chartHtml);
+
+            const ctx = document
+              .getElementById("metaPieChart")
+              .getContext("2d");
+            if (window.metaChartInstance) window.metaChartInstance.destroy();
+
+            const solidColors = [
+              "#41c3e3",
+              "#ff5e99",
+              "#1d9e75",
+              "#ef9f27",
+              "#ba7517",
+              "#9b59b6",
+              "#e74c3c",
+              "#f1c40f",
+            ];
+            const sliceColors = labels.map(
+              (_, i) => solidColors[i % solidColors.length],
+            );
+
+            window.metaChartInstance = new Chart(ctx, {
+              type: "pie",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    data: data,
+                    backgroundColor: sliceColors,
+                    borderWidth: 2,
+                    borderColor: "#1a2636",
+                    hoverOffset: 12,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "right",
+                    labels: {
+                      color: "#f8fafc",
+                      font: { family: "Nunito", size: 14, weight: "bold" },
+                      padding: 16,
+                    },
+                  },
+                  tooltip: {
+                    titleFont: { size: 16, family: "Nunito" },
+                    bodyFont: { size: 14, family: "Nunito" },
+                    padding: 12,
+                  },
+                },
+              },
+            });
+          }
+        }
+      };
+
+      function escapeHTML(str) {
+        if (!str) return "";
+        return String(str).replace(/[&<>'"]/g, (match) => {
+          const escapeMap = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "'": "&#39;",
+            '"': "&quot;",
+          };
+          return escapeMap[match];
+        });
+      }
+
+      // ΓöÇΓöÇ PHOTO RENDER HELPERS (detail panel) ΓöÇΓöÇ
+      // Renders the labeled deck photo sections (1st / 2nd / 3rd Winner Deck).
+      // Only sections with a photo appear; falls back to the deck code, then
+      // to the empty-state message. Missing images hide their section.
+      function renderWinnerDeckPhotos(container) {
+        const photos = getDeckPhotos(activeTournament);
+        const winner = activeTournament.winner || {};
+        const labeledPhotos = [
+          // The champion's nick is already displayed in the hero, so the 1st
+          // section needs no extra caption.
+          { label: "1st Winner Deck", url: photos["first-winner-deck"], nick: null },
+          { label: "2nd Winner Deck", url: photos["second-winner-deck"], nick: winner.secondWinnerName },
+          { label: "3rd Winner Deck", url: photos["third-winner-deck"], nick: winner.thirdWinnerName },
+        ].filter((entry) => entry.url || entry.nick);
+
+        if (labeledPhotos.length > 0) {
+          labeledPhotos.forEach((entry) => {
+            container.appendChild(
+              createDeckPhotoSection(entry.label, entry.url, entry.nick),
+            );
+          });
+        } else if (activeTournament.winner.deckCode) {
+          renderWinningDeck(activeTournament.winner.deckCode);
+        } else {
+          container.innerHTML = `
+        <div style="background: rgba(0,0,0,0.2); border: 1px dashed var(--border-dim); border-radius: 12px; padding: 40px 20px; text-align: center; color: var(--text-dim); margin-bottom: 24px;">
+          <i class="ti ti-cards" style="font-size: 48px; opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+          No deck list or image available for this match.
+        </div>`;
+        }
+      };
+
+      // Commemorate photo grid; hidden entirely when the event has none.
+      function renderCommemorativePhotos(container) {
+        const photos = getDeckPhotos(activeTournament).commemorative;
+        if (photos.length === 0) return;
+
+        const section = document.createElement("div");
+        section.style.cssText =
+          "background: var(--navy-3); border: 1px solid var(--border-dim); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 20px; margin-bottom: 40px;";
+        const header = document.createElement("div");
+        header.style.cssText =
+          "padding: 12px 16px; border-bottom: 1px solid var(--border-dim); background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--brand-main);";
+        header.innerHTML = `<i class="ti ti-camera" style="font-size: 18px;"></i> Commemorate Photos (${photos.length})`;
+        const grid = document.createElement("div");
+        grid.style.cssText =
+          "display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; padding: 16px; background: rgba(0,0,0,0.1);";
+        photos.forEach((url) => {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "Commemorative Photo";
+          img.loading = "lazy";
+          img.title = "Click to enlarge";
+          img.style.cssText =
+            "width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-dim); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s;";
+          img.onclick = () => window.openDeckImage(url);
+          img.onmouseover = () => (img.style.transform = "scale(1.02)");
+          img.onmouseout = () => (img.style.transform = "scale(1)");
+          img.onerror = () => img.remove(); // broken links disappear silently
+          grid.appendChild(img);
+        });
+        section.appendChild(header);
+        section.appendChild(grid);
+        container.appendChild(section);
+      };
+
+      function createDeckPhotoSection(label, url, nick) {
+        const wrap = document.createElement("div");
+        wrap.style.cssText =
+          "background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 12px; padding: 16px; text-align: center; margin-bottom: 24px;";
+        const labelEl = document.createElement("div");
+        labelEl.style.cssText =
+          "color: var(--brand-main); font-size: 14px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.5px;";
+        labelEl.textContent = label;
+        wrap.appendChild(labelEl);
+
+        if (nick) {
+          const nickEl = document.createElement("div");
+          nickEl.style.cssText =
+            "color: var(--text-bright); font-size: 15px; font-weight: 700; margin-bottom: 10px;";
+          nickEl.innerHTML = `<i class="ti ti-user" style="color: var(--holo-gold);"></i> ${escapeHTML(nick)}`;
+          wrap.appendChild(nickEl);
+        }
+
+        if (!url) {
+          // Nick recorded but photo not uploaded ΓÇö show an explicit placeholder.
+          const empty = document.createElement("div");
+          empty.style.cssText =
+            "border: 1px dashed var(--border-dim); border-radius: 8px; padding: 32px 12px; color: var(--text-dim); font-size: 14px; font-weight: 600;";
+          empty.textContent = "Winner deck photo not uploaded yet.";
+          wrap.appendChild(empty);
+          return wrap;
+        }
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = label;
+        img.title = "Click to enlarge";
+        img.loading = "lazy";
+        img.style.cssText =
+          "max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;";
+        img.onclick = () => window.openDeckImage(url);
+        img.onmouseover = () => (img.style.transform = "scale(1.02)");
+        img.onmouseout = () => (img.style.transform = "scale(1)");
+        img.onerror = () => {
+          img.remove(); // escape the URL by building the fallback with DOM APIs
+          const note = document.createElement("p");
+          note.style.cssText =
+            "margin: 0 0 8px; color: var(--text-dim); font-weight: 600;";
+          note.textContent = "Image unavailable for this section.";
+          const link = document.createElement("a");
+          link.href = url;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.style.cssText =
+            "color: var(--brand-main); font-size: 13px;";
+          link.textContent = "Open image link";
+          wrap.appendChild(note);
+          wrap.appendChild(link);
+        };
+        wrap.appendChild(labelEl);
+        wrap.appendChild(img);
+        return wrap;
+      }
+
+      function renderWinningDeck(base64Code) {
+        const container = document.getElementById("winning-deck-container");
+        container.innerHTML = "";
+
+        try {
+          let decoded = atob(base64Code);
+          let parts = decoded.split("|");
+
+          const createCardHtml = (cardId, qty) => {
+            let card = masterCardPool.find((c) => c.card_id === cardId);
+            if (!card) return "";
+
+            const setPrefix = card.card_id.split("-")[0];
+            const imagePath = card.thumbnail
+              ? card.thumbnail
+              : `images/${setPrefix}/${card.card_id}.webp`;
+            let typeClass = "support";
+            if (card.card_type === "Oshi") typeClass = "oshi";
+            else if (card.card_type === "Holomem") typeClass = "member";
+            else if (card.card_type === "Cheer") typeClass = "cheer";
+
+            const qtyBadge =
+              qty > 1
+                ? `<div style="position: absolute; top: 8px; right: 8px; background: var(--brand-main); color: var(--navy); font-weight: 900; font-size: 16px; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">x${qty}</div>`
+                : "";
+
+            return `
+      <div class="card-item fade-in" style="min-height: auto; aspect-ratio: 5/7; cursor: pointer;" onclick="window.openDeckImage('${imagePath}')">
+          ${qtyBadge}
+          <div class="card-face ${typeClass} grid-element">
+              <img src="${imagePath}" loading="lazy" />
+              <span class="face-label">${card.card_type.toUpperCase()}</span>
+          </div>
+      </div>
+    `;
+          };
+
+          const buildSection = (title, color, rawString) => {
+            if (!rawString) return "";
+            let cardHtml = "";
+            let totalCount = 0;
+
+            rawString.split(",").forEach((pair) => {
+              let [id, qtyStr] = pair.split(":");
+              let qty = qtyStr ? parseInt(qtyStr) : 1;
+              if (id) {
+                cardHtml += createCardHtml(id, qty);
+                totalCount += qty;
+              }
+            });
+
+            return `
+      <div style="margin-bottom: 30px;">
+        <h4 style="color: ${color}; font-size: 18px; margin-bottom: 12px; border-bottom: 1px dashed var(--border-mid); padding-bottom: 6px;">
+          ${title} <span style="color: var(--text-dim); font-size: 14px;">(${totalCount})</span>
+        </h4>
+        <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; padding: 0;">
+          ${cardHtml}
+        </div>
+      </div>
+    `;
+          };
+
+          let finalHtml = "";
+          finalHtml += buildSection("Oshi", "var(--holo-gold)", parts[0]);
+          finalHtml += buildSection(
+            "Main Deck",
+            "var(--text-bright)",
+            parts[1],
+          );
+          finalHtml += buildSection("Cheer Deck", "var(--holo-rose)", parts[2]);
+          container.innerHTML = finalHtml;
+        } catch (e) {
+          container.innerHTML = `<div class="empty-state">Invalid deck code format or no deck selected.</div>`;
+        }
+      }
+
+      // ΓöÇΓöÇ SHARED ADMIN SIGN-IN GATE ΓöÇΓöÇ
+      // Credentials are asked lazily (button click / submit time) instead of at
+      // page load; the Firebase session persists afterwards, so later calls
+      // with an already-signed-in user are a no-op.
+      window.ensureAdminLogin = async function (promptMessage) {
+        if (auth.currentUser) return true;
+
+        const email = prompt(promptMessage);
+        if (!email) return false;
+
+        const password = prompt("Admin Password:");
+        if (!password) return false;
+
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+          console.error("Auth error:", error);
+          alert("Access Denied: Incorrect email or password.");
+          return false;
+        }
+        return true;
+      };
+
+      // Add flow: log in FIRST (same as the edit flow), then open the form.
+      window.openAddModal = async function () {
+        if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
+          return;
+        document.getElementById("admin-modal").classList.add("open");
+      };
+
+      window.openUpdateModal = async function () {
+        if (!activeTournament) return alert("No tournament selected!");
+
+        if (!(await window.ensureAdminLogin("Admin Email required to edit:")))
+          return;
+
+        document.getElementById("edit-event-name").value =
+          activeTournament.eventName || "";
+        document.getElementById("edit-date").value =
+          activeTournament.date || "";
+        document.getElementById("edit-location").value =
+          activeTournament.location || "";
+        document.getElementById("edit-players").value =
+          activeTournament.players || "";
+        document.getElementById("edit-winner-name").value =
+          activeTournament.winner?.name || "";
+        document.getElementById("edit-second-winner-name").value =
+          activeTournament.winner?.secondWinnerName || "";
+        document.getElementById("edit-third-winner-name").value =
+          activeTournament.winner?.thirdWinnerName || "";
+        document.getElementById("edit-deck-name").value =
+          activeTournament.winner?.deckName || "";
+        document.getElementById("edit-theme-color").value =
+          activeTournament.themeColor || "blue";
+        document.getElementById("edit-youtube-link").value =
+          activeTournament.winner?.youtubeLink || "";
+        document.getElementById("edit-comments").value =
+          activeTournament.winner?.comments || "";
+        document.getElementById("edit-meta-breakdown").value =
+          activeTournament.metaBreakdown || "";
+        document.getElementById("edit-deck-code").value =
+          activeTournament.winner?.deckCode || "";
+
+        resetEditDeckPhotoControllers();
+
+        document.getElementById("update-modal").classList.add("open");
+      };
+
+      window.saveTournamentUpdates = async function () {
+        document.getElementById("update-modal").classList.remove("open");
+
+        if (!activeTournament) return;
+
+        const saveBtn = document.getElementById("save-update-btn");
+        const originalBtnText = saveBtn.innerHTML;
+        saveBtn.innerHTML =
+          "Saving... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+        saveBtn.disabled = true;
+
+        try {
+          const newEventName = document
+            .getElementById("edit-event-name")
+            .value.trim();
+          const newDate = document.getElementById("edit-date").value;
+          const newLocation = document
+            .getElementById("edit-location")
+            .value.trim();
+          const newPlayers = document.getElementById("edit-players").value;
+          const newWinnerName = document
+            .getElementById("edit-winner-name")
+            .value.trim();
+          const newSecondWinnerName = document
+            .getElementById("edit-second-winner-name")
+            .value.trim();
+          const newThirdWinnerName = document
+            .getElementById("edit-third-winner-name")
+            .value.trim();
+          const newDeckName = document
+            .getElementById("edit-deck-name")
+            .value.trim();
+          const newTheme = document.getElementById("edit-theme-color").value;
+          const newYoutube = document
+            .getElementById("edit-youtube-link")
+            .value.trim();
+          const newComments = document
+            .getElementById("edit-comments")
+            .value.trim();
+          const newMeta = document
+            .getElementById("edit-meta-breakdown")
+            .value.trim();
+          const newDeckCode = document
+            .getElementById("edit-deck-code")
+            .value.trim();
+
+          const tournamentRef = doc(db, "tournaments", activeTournament.id);
+
+          // Per-photo diffing: a field is only written when it was replaced
+          // (new file uploaded) or removed; untouched photos keep their DB
+          // value and are omitted from the update entirely.
+          const updates = {
+            eventName: newEventName,
+            date: newDate,
+            location: newLocation,
+            players: parseInt(newPlayers) || 0,
+            themeColor: newTheme,
+            metaBreakdown: newMeta,
+            "winner.name": newWinnerName,
+            "winner.deckName": newDeckName,
+            "winner.secondWinnerName": newSecondWinnerName || null,
+            "winner.thirdWinnerName": newThirdWinnerName || null,
+            "winner.youtubeLink": newYoutube,
+            "winner.comments": newComments,
+            "winner.deckCode": newDeckCode || null,
+          };
+
+          const winnerOnRecord = activeTournament.winner || {};
+          const legacyImageUrl = winnerOnRecord.imageUrl || null;
+          const photoKeys = [
+            ["first-winner-deck", "firstWinnerDeck"],
+            ["second-winner-deck", "secondWinnerDeck"],
+            ["third-winner-deck", "thirdWinnerDeck"],
+          ];
+          for (const [ctrlSuffix, dbKey] of photoKeys) {
+            const ctrl = deckPhotoControllers[`edit-${ctrlSuffix}`];
+            const existing =
+              dbKey === "firstWinnerDeck"
+                ? winnerOnRecord.firstWinnerDeck || legacyImageUrl
+                : winnerOnRecord[dbKey] || null;
+
+            if (ctrl.state === "new" && ctrl.files[0]) {
+              saveBtn.innerHTML =
+                "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+              updates[`winner.${dbKey}`] = await compressAndUploadToCloudinary(
+                ctrl.files[0],
+              );
+            } else if (ctrl.state === "removed" && existing) {
+              updates[`winner.${dbKey}`] = null;
+            }
+            // "existing" / "empty" ΓåÆ omit, keeping the value already stored.
+          }
+
+          // The legacy field is superseded once the user explicitly changes the
+          // 1st deck photo; drop it so the fallback read cannot resurrect it.
+          if (
+            legacyImageUrl &&
+            "winner.firstWinnerDeck" in updates
+          ) {
+            updates["winner.imageUrl"] = null;
+          }
+
+          // Commemorative: keep working-list order, append newly picked files.
+          const commemorativeCtrl =
+            deckPhotoControllers["edit-commemorate-photos"];
+          const originalList = Array.isArray(commemorativeCtrl.originalList)
+            ? commemorativeCtrl.originalList
+            : [];
+          if (
+            commemorativeCtrl.listItems.length !== originalList.length ||
+            commemorativeCtrl.listItems.some((u, i) => u !== originalList[i]) ||
+            commemorativeCtrl.files.length > 0
+          ) {
+            const finalList = commemorativeCtrl.listItems.slice();
+            for (const photoFile of commemorativeCtrl.files)
+              finalList.push(await compressAndUploadToCloudinary(photoFile));
+            updates.commemorativePhotos = finalList;
+          }
+
+          await updateDoc(tournamentRef, updates);
+
+          alert("Tournament updated successfully!");
+          document.getElementById("update-modal").classList.remove("open");
+
+          await fetchTournaments();
+        } catch (error) {
+          console.error("Error updating document:", error);
+          alert("Failed to update: " + error.message);
+        } finally {
+          saveBtn.innerHTML = originalBtnText;
+          saveBtn.disabled = false;
+        }
+      };
+
+      window.generateTournament = async function () {
+        document.getElementById("admin-modal").classList.remove("open");
+        if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
+          return;
+        const eventName = document.getElementById("add-event-name").value;
+        const date = document.getElementById("add-date").value;
+        const location =
+          document.getElementById("add-location").value || "Unknown Location";
+        const winnerName = document.getElementById("add-winner-name").value;
+        const players = document.getElementById("add-players").value || 0;
+        const deckName = document.getElementById("add-deck-name").value;
+        const secondWinnerName = document
+          .getElementById("add-second-winner-name")
+          .value.trim();
+        const thirdWinnerName = document
+          .getElementById("add-third-winner-name")
+          .value.trim();
+        const deckCode = document.getElementById("add-deck-code").value.trim();
+        const metaBreakdown = document
+          .getElementById("add-meta-breakdown")
+          .value.trim();
+        const themeColor = document.getElementById("add-theme-color").value;
+
+        const firstDeckCtrl = deckPhotoControllers["add-first-winner-deck"];
+        const secondDeckCtrl = deckPhotoControllers["add-second-winner-deck"];
+        const thirdDeckCtrl = deckPhotoControllers["add-third-winner-deck"];
+        const commemorateCtrl =
+          deckPhotoControllers["add-commemorate-photos"];
+        const deckFile =
+          firstDeckCtrl.files[0] ||
+          secondDeckCtrl.files[0] ||
+          thirdDeckCtrl.files[0];
+
+        if (!eventName || !winnerName || (!deckFile && !deckCode)) {
+          alert(
+            "Please fill in the Event Name, Winner Name, and provide EITHER a Winner Deck Image or a Deck Code!",
+          );
+          return;
+        }
+
+        const saveButton = document.getElementById("save-tournament-btn");
+        const originalBtnText = saveButton.innerHTML;
+        saveButton.disabled = true;
+
+        try {
+          let imageUrl = null;
+          let secondImageUrl = null;
+          let thirdImageUrl = null;
+          const commemorateUrls = [];
+
+          saveButton.innerHTML =
+            "Compressing & Uploading... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+
+          if (firstDeckCtrl.files[0])
+            imageUrl = await compressAndUploadToCloudinary(
+              firstDeckCtrl.files[0],
+            );
+          if (secondDeckCtrl.files[0])
+            secondImageUrl = await compressAndUploadToCloudinary(
+              secondDeckCtrl.files[0],
+            );
+          if (thirdDeckCtrl.files[0])
+            thirdImageUrl = await compressAndUploadToCloudinary(
+              thirdDeckCtrl.files[0],
+            );
+          for (const photoFile of commemorateCtrl.files)
+            commemorateUrls.push(await compressAndUploadToCloudinary(photoFile));
+
+          saveButton.innerHTML =
+            "Saving to Database... <i class='ti ti-loader' style='animation: spin 1s linear infinite;'></i>";
+
+          const newEvent = {
+            eventName: eventName,
+            date: date,
+            location: location,
+            players: parseInt(players),
+            themeColor: themeColor,
+            metaBreakdown: metaBreakdown,
+            winner: {
+              name: winnerName,
+              deckName: deckName,
+              secondWinnerName: secondWinnerName || null,
+              thirdWinnerName: thirdWinnerName || null,
+              deckCode: deckCode || null,
+              firstWinnerDeck: imageUrl,
+              secondWinnerDeck: secondImageUrl,
+              thirdWinnerDeck: thirdImageUrl,
+            },
+            commemorativePhotos: commemorateUrls,
+          };
+
+          await addDoc(collection(db, "tournaments"), newEvent);
+          alert("Tournament saved securely!");
+
+          document.getElementById("admin-modal").classList.remove("open");
+
+          await fetchTournaments();
+
+          document.getElementById("add-event-name").value = "";
+          document.getElementById("add-date").value = "";
+          document.getElementById("add-location").value = "";
+          document.getElementById("add-winner-name").value = "";
+          document.getElementById("add-players").value = "";
+          document.getElementById("add-deck-name").value = "";
+          document.getElementById("add-deck-code").value = "";
+          document.getElementById("add-meta-breakdown").value = "";
+          document.getElementById("add-theme-color").value = "blue";
+          resetAddDeckPhotoControllers();
+        } catch (error) {
+          console.error("Error writing document: ", error);
+          alert("Failed to save tournament. " + error.message);
+        } finally {
+          saveButton.innerHTML = originalBtnText;
+          saveButton.disabled = false;
+        }
+      };
+
+      initializeDatabase();
+      wireDeckPhotoControllers();
+
+      window.openDeckImage = function (url) {
+        if (!url) return;
+        const overlay = document.getElementById("image-overlay");
+        const img = document.getElementById("lightbox-image");
+        img.src = url;
+        overlay.style.display = "flex";
+        // Stop the page behind the lightbox from scrolling on touch devices
+        document.body.style.overflow = "hidden";
+      };
+
+      window.closeDeckImage = function () {
+        const overlay = document.getElementById("image-overlay");
+        overlay.style.display = "none";
+        document.getElementById("lightbox-image").src = "";
+        document.body.style.overflow = "";
+      };
+    

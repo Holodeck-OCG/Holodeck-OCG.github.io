@@ -589,4 +589,14 @@ fetch("navbar.html")
     }
   })
   .catch((error) => console.error("Error loading navbar:", error));
-  
+
+// GoatCounter: only load on real http(s) sites, so local file:// previews
+// don't produce a failed script request.
+if (location.protocol === "http:" || location.protocol === "https:") {
+  const analyticsScript = document.createElement("script");
+  analyticsScript.async = true;
+  analyticsScript.src = "https://gc.zgo.at/count.js";
+  analyticsScript.dataset.goatcounter =
+    "https://swifterstar02.goatcounter.com/count";
+  document.head.appendChild(analyticsScript);
+}

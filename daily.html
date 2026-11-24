@@ -23,7 +23,7 @@
       <div class="holo-bg-glow glow-cyan"></div>
       <div class="holo-bg-glow glow-pink"></div>
   </div>
-  <div id="navbar-placeholder"><script src="js/navbar.js"></script></div>
+  <div id="navbar-placeholder"></div>
 
   <!-- ABOUT CREDITS MODAL -->
 <div id="about-overlay" class="about-overlay" onclick="closeAboutModal()"></div>
@@ -549,31 +549,11 @@
       document.getElementById("about-overlay").classList.remove("open");
     };
     /* ── VISITOR COUNTER ── */
-    async function updateVisitorCounter() {
+    // counterapi.dev retired this counter (HTTP 410) — hide the row, no request.
+    function updateVisitorCounter() {
       const counterEl = document.getElementById("visitor-count");
-      if (!counterEl) return;
-      
-      try {
-          const response = await fetch("https://api.counterapi.dev/v1/hocg_db_siuspras/visits_2/up");
-          if (response.ok) {
-              const data = await response.json();
-              let count = data.count;
-              let displayStr = "";
-              
-              if (count < 10) {
-                  displayStr = count.toString();
-              } else {
-                  const magnitude = Math.pow(10, Math.floor(Math.log10(count)));
-                  const rounded = Math.floor(count / magnitude) * magnitude;
-                  displayStr = rounded.toLocaleString() + "+";
-              }
-              
-              counterEl.innerText = displayStr;
-          } else {
-              counterEl.innerText = "Online";
-          }
-      } catch (error) {
-          counterEl.innerText = "1"; 
+      if (counterEl?.parentElement) {
+        counterEl.parentElement.style.display = "none";
       }
     }
 
@@ -782,8 +762,6 @@ window.submitGauntletScore = async function(score, timeNum, btnElement) {
         }
       });
     </script>
-    <script data-goatcounter="https://swifterstar02.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 </script>
 <script type="module">
   // Import the core Firebase App
