@@ -1,4 +1,9 @@
 body { background: var(--navy); color: var(--text-bright); font-family: 'nunito', sans-serif; z-index: 10; position: relative;}
+
+/* Touch target improvements */
+input, select, button {
+  min-height: 48px;
+}
         /* ── QUIZ STYLES ── */
         .panel { 
             background-color: color-mix(in srgb, var(--navy-3) 70%, transparent); border: 1px solid var(--border-dim); 
@@ -32,7 +37,7 @@ body { background: var(--navy); color: var(--text-bright); font-family: 'nunito'
         .btn-choice:hover { background: var(--brand-main); color: var(--navy); }
         .btn-choice.correct { background: var(--holo-teal); border-color: var(--holo-teal); color: #fff; }
         .btn-choice.wrong { background: var(--danger); border-color: var(--danger); color: #fff; }
-        .btn-about-header {
+        .btn-about-header{
             background: transparent; border: 1px solid var(--border-dim); color: var(--text-mid);
             padding: 8px 14px; border-radius: 6px; font-family: 'nunito', sans-serif; font-size: 14px; font-weight: 700;
             cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
@@ -94,4 +99,25 @@ body { background: var(--navy); color: var(--text-bright); font-family: 'nunito'
   @keyframes floatPink { 
       0% { transform: translate(0,0); } 
       100% { transform: translate(-8vw, -8vh); } 
+  }
+
+  /* About modal becomes a bottom sheet on phones/tablets */
+  @media (max-width: 1024px) {
+    .about-modal {
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: none;
+      max-height: 88dvh;
+      border-radius: 22px 22px 0 0;
+      transform: translateY(100%);
+      padding-bottom: env(safe-area-inset-bottom);
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .about-modal.open {
+      transform: translateY(0);
+    }
   }

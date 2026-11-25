@@ -809,7 +809,7 @@
                       </div>
                       <div class="list-info">
                           <div class="list-name">${level}${card.card_name}</div>
-                          <div class="list-sub">${type.toUpperCase()} ΓÇó ${card.card_id}</div>
+                          <div class="list-sub">${type.toUpperCase()} ${card.card_id}</div>
                       </div>
                       <div class="list-actions">
                           ${btnHtml}
@@ -1065,7 +1065,7 @@
                       </div>
                       <div class="list-info">
                           <div class="list-name">${level}${card.card_name}</div>
-                          <div class="list-sub">${type.toUpperCase()} ΓÇó ${card.card_id}</div>
+                          <div class="list-sub">${type.toUpperCase()} ${card.card_id}</div>
                       </div>
                       <div class="list-actions">
                           <i class="ti ti-plus accordion-icon"></i>
@@ -1319,7 +1319,7 @@
               </div>
               <div style="font-size: 10px; color: var(--text-dim); font-weight: 700; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
                   <span style="color: var(--text-mid);">${card.card_id}</span>
-                  <span style="font-size: 8px;">ΓÇó</span>
+                  <span style="font-size: 8px;">•</span>
                   <span style="color: ${typeColor};">${card.card_type.toUpperCase()}</span>
               </div>
           </div>

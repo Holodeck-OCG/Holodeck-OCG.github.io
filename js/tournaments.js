@@ -175,7 +175,7 @@
           listItems: [], // commemorative (edit mode): working copy of URLs
         };
 
-        // ADD MODE ΓÇö render plain file previews.
+        // ADD MODE — render plain file previews.
         ctrl.renderAdd = function () {
           hidePreview();
           if (ctrl.files.length === 0) return;
@@ -193,7 +193,7 @@
           });
         };
 
-        // EDIT MODE (single deck field) ΓÇö show current photo, or a preview of
+        // EDIT MODE (single deck field) — show current photo, or a preview of
         // the replacement file. Replace = pick file; Remove = clear field.
         ctrl.renderEdit = function () {
           hidePreview();
@@ -1014,7 +1014,7 @@
         }
 
         if (!url) {
-          // Nick recorded but photo not uploaded ΓÇö show an explicit placeholder.
+          // Nick recorded but photo not uploaded — show an explicit placeholder.
           const empty = document.createElement("div");
           empty.style.cssText =
             "border: 1px dashed var(--border-dim); border-radius: 8px; padding: 32px 12px; color: var(--text-dim); font-size: 14px; font-weight: 600;";

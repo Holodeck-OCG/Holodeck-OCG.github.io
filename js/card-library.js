@@ -610,7 +610,7 @@
           const isSaved = savedCardIds.has(card.card_id);
           const type = card.card_type || "Type";
           const level = card.bloom_level ? `[${card.bloom_level}] ` : "";
-          const id = card.card_id ? ` ΓÇó ${card.card_id}` : "";
+          const id = card.card_id ? ` ${card.card_id}` : "";
           const typeColor = getTypeColor(type);
 
           const setPrefix = card.card_id.split("-")[0];

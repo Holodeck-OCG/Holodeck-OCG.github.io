@@ -434,6 +434,26 @@ html,
           font-size: 12px;
         }
       }
+
+      /* About modal becomes a bottom sheet on phones */
+      @media (max-width: 1024px) {
+        .about-modal {
+          top: auto;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: none;
+          max-height: 88dvh;
+          border-radius: 22px 22px 0 0;
+          transform: translateY(100%);
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .about-modal.open {
+          transform: translateY(0);
+        }
+      }
       .btn-close-modal {
         background: transparent;
         border: none;
@@ -441,6 +461,12 @@ html,
         font-size: 20px;
         cursor: pointer;
         transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        min-width: 48px;
+        border-radius: 12px;
       }
       .btn-close-modal:hover {
         color: var(--danger);

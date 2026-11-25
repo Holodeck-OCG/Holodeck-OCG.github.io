@@ -303,11 +303,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  border-radius: 12px;
 }
 .btn-close-modal:hover {
   color: var(--danger);
   transform: scale(1.1);
 }
+
+/* Mobile touch targets - all interactive elements */
+@media (max-width: 1024px) {
+  button, .btn, .chip, .tab, .btn-action,
+  input[type="text"], input[type="search"], input[type="email"], input[type="password"], 
+  input[type="number"], input[type="date"], select, textarea {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent iOS zoom on focus */
+  }
+}
+
 .about-content {
   padding: 24px 20px;
   font-size: 15px;
@@ -387,11 +405,24 @@ body {
   .topbar-center { display: none; }
   .topbar-right { display: none !important; justify-content: center; width: 100%; order: 4; margin-top: 8px; }
   
-  .burger-btn { display: flex; align-items: center; background: transparent; color: var(--brand-main); border: 1px solid var(--border-dim); padding: 4px 8px; border-radius: 6px; font-size: 24px; cursor: pointer; }
+  .burger-btn { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    background: transparent; 
+    color: var(--brand-main); 
+    border: 1px solid var(--border-dim); 
+    padding: 0; 
+    width: 48px;
+    height: 48px;
+    border-radius: 12px; 
+    font-size: 24px; 
+    cursor: pointer; 
+  }
   
   .tabs { display: none !important; flex-direction: column; width: 100%; gap: 8px; padding: 10px 0; }
   .tabs.open { display: flex !important; }
-  .tab { width: 100%; justify-content: center; }
+  .tab:not(.mobile-drawer-nav .tab) { width: 100%; justify-content: center; }
 
   /* Mobile Dropdown Fix */
   .dropdown { flex-direction: column; }
@@ -471,6 +502,12 @@ body {
   justify-content: flex-start;
   padding: 14px 16px;
   border-radius: 12px;
+  color: var(--text-bright) !important;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 .mobile-drawer-nav .dropdown-content {
   position: static;
@@ -484,6 +521,12 @@ body {
 .mobile-drawer-nav .dropdown-item {
   padding: 12px 20px;
   text-align: left;
+  color: var(--text-bright) !important;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 [data-deck="red"] {
@@ -659,4 +702,53 @@ body.dark-mode .toggle-thumb {
 [data-theme="dark"] .toggle-thumb i,
 body.dark-mode .toggle-thumb i {
   color: #38bdf8; /* Moon icon color (cyan/light blue) */
+}
+
+/* ── SCROLL TO TOP BUTTON ── */
+.scroll-to-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border-mid);
+  background: var(--navy-2);
+  color: var(--brand-main);
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease),
+    background-color 0.18s var(--ease);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  touch-action: manipulation;
+}
+.scroll-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.scroll-to-top:hover {
+  background: var(--brand-main);
+  color: #fff;
+  border-color: var(--brand-main);
+}
+.scroll-to-top:active {
+  transform: translateY(0) scale(0.94);
+}
+@media (max-width: 1024px) {
+  .scroll-to-top {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
 }

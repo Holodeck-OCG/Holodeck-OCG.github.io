@@ -1281,6 +1281,38 @@
         .main-panel {
           padding-top: 16px !important;
         }
+
+        /* Modals become bottom sheets on mobile/tablet */
+        .about-modal,
+        #admin-modal .about-modal,
+        #update-modal .about-modal {
+          top: auto;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: none;
+          max-height: 88dvh;
+          border-radius: 22px 22px 0 0;
+          transform: translateY(100%);
+          padding-bottom: env(safe-area-inset-bottom);
+          transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .about-modal.open,
+        #admin-modal .about-modal.open,
+        #update-modal .about-modal.open {
+          transform: translateY(0);
+        }
+
+        /* Admin/Update modal inputs - prevent iOS zoom on focus */
+        #admin-modal input,
+        #admin-modal select,
+        #update-modal input,
+        #update-modal select {
+          font-size: 16px !important;
+          min-height: 48px !important;
+        }
       }
 
       /* Tournament list items - ensure touch targets */

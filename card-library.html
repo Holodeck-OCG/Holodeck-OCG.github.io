@@ -220,7 +220,51 @@
         </p>
       </div>
     </div>
+    <!-- Scroll to top button -->
+    <button
+      id="scroll-to-top"
+      class="scroll-to-top"
+      aria-label="Scroll to top"
+      title="Back to top"
+    >
+      <i class="ti ti-arrow-up"></i>
+    </button>
     <script src="js/version.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      (function() {
+        const btn = document.getElementById('scroll-to-top');
+        if (!btn) return;
+        const showAfter = 200;
+        const grids = () => Array.from(document.querySelectorAll('.card-grid, .card-list'));
+        function maxScroll() {
+          let m = 0;
+          grids().forEach(g => { if (g.scrollTop > m) m = g.scrollTop; });
+          // also check window scroll
+          if (window.scrollY > m) m = window.scrollY;
+          return m;
+        }
+        function onScroll() {
+          if (maxScroll() > showAfter) {
+            btn.classList.add('visible');
+          } else {
+            btn.classList.remove('visible');
+          }
+        }
+        grids().forEach(g => g.addEventListener('scroll', onScroll, { passive: true }));
+        window.addEventListener('scroll', onScroll, { passive: true });
+        const obs = new MutationObserver(() => {
+          grids().forEach(g => {
+            if (!g._sttBound) { g.addEventListener('scroll', onScroll, { passive: true }); g._sttBound = true; }
+          });
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+        onScroll();
+        btn.addEventListener('click', function() {
+          grids().forEach(g => g.scrollTo({ top: 0, behavior: 'smooth' }));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      })();
+    </script>
   </body>
 </html>

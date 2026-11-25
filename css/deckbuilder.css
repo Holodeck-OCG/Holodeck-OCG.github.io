@@ -968,6 +968,30 @@ html,
   }
 }
 
+/* About modal and other modals become bottom sheets on phones/tablets */
+@media (max-width: 1024px) {
+  .about-modal,
+  #visual-deck-modal,
+  #test-hand-modal {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    max-height: 88dvh;
+    border-radius: 22px 22px 0 0;
+    transform: translateY(100%);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .about-modal.open,
+  #visual-deck-modal.open,
+  #test-hand-modal.open {
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 700px) {
   .main-panel {
     gap: 12px;
