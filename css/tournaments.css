@@ -1232,6 +1232,78 @@
         }
       }
 
+      /* ── Admin/Add-Event form (cleaner layout) ── */
+      .admin-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .admin-form .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .admin-form .form-row.single {
+        grid-template-columns: 1fr;
+      }
+      .admin-form .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .admin-form .form-field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .admin-form input,
+      .admin-form select,
+      .admin-form textarea {
+        padding: 10px 12px;
+        background: var(--navy-3);
+        color: var(--text-bright);
+        border: 1px solid var(--border-dim);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 16px;
+        outline: none;
+        min-height: 44px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .admin-form textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      .admin-form .form-section {
+        background: var(--navy-3);
+        border: 1px solid var(--border-dim);
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .admin-form .form-section-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-mid);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .admin-form .form-section input[type="file"] {
+        border: none;
+        padding: 4px 0;
+        background: transparent;
+      }
+      @media (max-width: 600px) {
+        .admin-form .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
       /* Mobile Filter Toggle */
       .filter-toggle-chip {
         display: none;
@@ -1282,10 +1354,8 @@
           padding-top: 16px !important;
         }
 
-        /* Modals become bottom sheets on mobile/tablet */
-        .about-modal,
-        #admin-modal .about-modal,
-        #update-modal .about-modal {
+        /* About modal becomes a bottom sheet on mobile/tablet */
+        .about-modal {
           top: auto;
           bottom: 0;
           left: 0;
@@ -1299,10 +1369,29 @@
           transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .about-modal.open,
-        #admin-modal .about-modal.open,
-        #update-modal .about-modal.open {
-          transform: translateY(0);
+        .about-overlay.open .about-modal {
+          transform: translateY(0) !important;
+        }
+
+        /* Admin/Update modals stay centered dialogs (not bottom sheets) so
+           the virtual keyboard doesn't cover the form. */
+        #admin-modal .about-modal,
+        #update-modal .about-modal {
+          top: 50%;
+          bottom: auto;
+          left: 50%;
+          right: auto;
+          width: 90%;
+          max-width: 500px;
+          max-height: 70vh;
+          border-radius: 16px;
+          transform: translate(-50%, -50%) scale(0.95);
+          padding-bottom: 0;
+        }
+
+        #admin-modal.open .about-modal,
+        #update-modal.open .about-modal {
+          transform: translate(-50%, -50%) scale(1) !important;
         }
 
         /* Admin/Update modal inputs - prevent iOS zoom on focus */
@@ -1324,27 +1413,7 @@
       #tournament-list > div > div {
         width: 100%;
       }
-      .about-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        z-index: 2000;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-
-      .about-overlay.open {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
+      /* .about-overlay / .about-modal base styles live in component.css */
       .about-modal {
         background: var(--navy-2);
         border: 1px solid var(--border-mid);

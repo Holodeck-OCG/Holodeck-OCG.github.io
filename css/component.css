@@ -216,6 +216,9 @@ body {
 .btn-about-header i { font-size: 16px; color: var(--brand-main); }
 
 /* ── MODALS & OVERLAYS ── */
+/* Hidden with display:none so a closed overlay can never sit invisible on
+   top of the page (which made the site unclickable) or fail to paint after
+   an interrupted opacity transition. */
 .about-overlay {
   position: fixed;
   top: 0;
@@ -226,21 +229,25 @@ body {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  display: none;
+}
+.about-overlay.open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .about-overlay.open .about-modal {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .about-modal {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -45%) scale(0.95);
-  background: var(--navy-2);
+  transform: translate(-50%, -50%) scale(0.95);
+  background: var(--navy-2, #0f1a2b);
   border: 1px solid var(--border-mid);
   border-radius: 16px;
   width: 90%;
@@ -248,16 +255,18 @@ body {
   max-height: 85vh;
   z-index: 2001;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 }
 .about-modal.open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%);
 }
 
 .about-header {

@@ -10,8 +10,6 @@
       window.openAboutModal = function () {
         document.getElementById("about-modal").classList.add("open");
         document.getElementById("about-overlay").classList.add("open");
-        document.getElementById("edit-meta-breakdown").value =
-          activeTournament.metaBreakdown || "";
       };
       window.closeAboutModal = function () {
         document.getElementById("about-modal").classList.remove("open");
@@ -1206,7 +1204,10 @@
       window.openAddModal = async function () {
         if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
           return;
-        document.getElementById("admin-modal").classList.add("open");
+        const adminModal = document.getElementById("admin-modal");
+        adminModal.classList.add("open");
+        const adminInner = adminModal.querySelector(".about-modal");
+        if (adminInner) adminInner.classList.add("open");
       };
 
       window.openUpdateModal = async function () {
@@ -1244,11 +1245,14 @@
 
         resetEditDeckPhotoControllers();
 
-        document.getElementById("update-modal").classList.add("open");
+        const updateModal = document.getElementById("update-modal");
+        updateModal.classList.add("open");
+        const updateInner = updateModal.querySelector(".about-modal");
+        if (updateInner) updateInner.classList.add("open");
       };
 
       window.saveTournamentUpdates = async function () {
-        document.getElementById("update-modal").classList.remove("open");
+        (function(){var m=document.getElementById("update-modal");m.classList.remove("open");var i=m.querySelector(".about-modal");if(i)i.classList.remove("open");})();
 
         if (!activeTournament) return;
 
@@ -1369,7 +1373,7 @@
           await updateDoc(tournamentRef, updates);
 
           alert("Tournament updated successfully!");
-          document.getElementById("update-modal").classList.remove("open");
+          (function(){var m=document.getElementById("update-modal");m.classList.remove("open");var i=m.querySelector(".about-modal");if(i)i.classList.remove("open");})();
 
           await fetchTournaments();
         } catch (error) {
@@ -1382,7 +1386,7 @@
       };
 
       window.generateTournament = async function () {
-        document.getElementById("admin-modal").classList.remove("open");
+        (function(){var m=document.getElementById("admin-modal");m.classList.remove("open");var i=m.querySelector(".about-modal");if(i)i.classList.remove("open");})();
         if (!(await window.ensureAdminLogin("Admin Email required to add an event:")))
           return;
         const eventName = document.getElementById("add-event-name").value;
@@ -1475,7 +1479,7 @@
           await addDoc(collection(db, "tournaments"), newEvent);
           alert("Tournament saved securely!");
 
-          document.getElementById("admin-modal").classList.remove("open");
+          (function(){var m=document.getElementById("admin-modal");m.classList.remove("open");var i=m.querySelector(".about-modal");if(i)i.classList.remove("open");})();
 
           await fetchTournaments();
 

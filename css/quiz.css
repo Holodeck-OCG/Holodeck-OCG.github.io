@@ -118,6 +118,6 @@ input, select, button {
     }
 
     .about-modal.open {
-      transform: translateY(0);
+      transform: translateY(0) !important;
     }
   }

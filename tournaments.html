@@ -16,9 +16,9 @@
     />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/component.css" />
+    <link rel="stylesheet" href="css/component.css?v=4" />
     <link rel="stylesheet" href="css/theme.css" />
-    <link rel="stylesheet" href="css/tournaments.css" />
+    <link rel="stylesheet" href="css/tournaments.css?v=4" />
     <link rel="stylesheet" href="css/polish.css" />
     <script src="js/polish.js" defer></script>
     <script type="module" src="js/tournaments.js"></script>
@@ -514,7 +514,7 @@
     </div>
 
     <!-- ── ADMIN MODAL FOR ADDING TOURNAMENTS ── -->
-    <div id="admin-modal" class="about-overlay">
+    <div id="admin-modal" class="about-overlay" onclick="if (event.target === this) { this.classList.remove('open'); var i=this.querySelector('.about-modal'); if(i) i.classList.remove('open'); }">
       <div class="about-modal" style="max-width: 500px">
         <div class="about-header">
           <h3
@@ -530,290 +530,107 @@
           <button
             class="btn-close-modal"
             onclick="
-              document.getElementById('admin-modal').classList.remove('open')
+              (function(){var m=document.getElementById('admin-modal');m.classList.remove('open');var i=m.querySelector('.about-modal');if(i)i.classList.remove('open');})()
             "
           >
             ✕
           </button>
         </div>
-        <div
-          class="about-content"
-          style="display: flex; flex-direction: column; gap: 12px"
-        >
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="add-event-name"
-              placeholder="Event Name (e.g. Weekly #3 + place)"
-              style="
-                flex: 2;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="date"
-              id="add-date"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-          </div>
+        <div class="about-content">
+          <div class="admin-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label for="add-event-name">Event Name</label>
+                <input type="text" id="add-event-name" placeholder="Weekly #3 + place" />
+              </div>
+              <div class="form-field">
+                <label for="add-date">Date</label>
+                <input type="date" id="add-date" />
+              </div>
+            </div>
 
-          <!-- NEW ROW: Location and Players -->
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="add-location"
-              placeholder="Location/Venue (e.g. Local Game Store)"
-              style="
-                flex: 2;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="number"
-              id="add-players"
-              placeholder="Players"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-          </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="add-location">Location / Venue</label>
+                <input type="text" id="add-location" placeholder="Local Game Store" />
+              </div>
+              <div class="form-field">
+                <label for="add-players">Players</label>
+                <input type="number" id="add-players" placeholder="0" />
+              </div>
+            </div>
 
-          <!-- ROW: Winner Name and Deck Name -->
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="add-winner-name"
-              placeholder="Winner Name"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="text"
-              id="add-deck-name"
-              placeholder="Oshi Name"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <select
-              id="add-theme-color"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-                font-family: &quot;nunito&quot;, sans-serif;
-              "
-            >
-              <option value="blue">Blue</option>
-              <option value="red">Red</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              <option value="purple">Purple</option>
-              <option value="white">White</option>
-            </select>
-          </div>
-          <!-- META BREAKDOWN -->
-          <textarea
-            id="add-meta-breakdown"
-            placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')"
-            rows="3"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-              font-family: &quot;nunito&quot;, sans-serif;
-            "
-          ></textarea>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="add-winner-name">Winner Name</label>
+                <input type="text" id="add-winner-name" placeholder="Winner" />
+              </div>
+              <div class="form-field">
+                <label for="add-deck-name">Oshi Name</label>
+                <input type="text" id="add-deck-name" placeholder="Oshi" />
+              </div>
+              <div class="form-field">
+                <label for="add-theme-color">Theme Color</label>
+                <select id="add-theme-color">
+                  <option value="blue">Blue</option>
+                  <option value="red">Red</option>
+                  <option value="green">Green</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="purple">Purple</option>
+                  <option value="white">White</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="add-meta-breakdown">Meta Breakdown</label>
+              <textarea id="add-meta-breakdown" placeholder="List decks, e.g. 'Moona' per line or 'Moona: 5'"></textarea>
+            </div>
 
           <!-- DECK PHOTOS (4 UPLOADS) -->
-          <!-- 1ST WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >1st Winner Deck Image:</span
-            >
-            <input
-              type="file"
-              id="add-first-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
+          <!-- WINNER DECK PHOTOS -->
+          <div class="form-section">
+            <span class="form-section-title">1st Winner Deck Image</span>
+            <input type="file" id="add-first-winner-deck" accept="image/*" />
             <div id="add-first-winner-deck-preview" style="display: none"></div>
           </div>
 
-          <!-- 2ND WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >2nd Winner Deck Image:</span
-            >
-            <input
-              type="text"
-              id="add-second-winner-name"
-              placeholder="2nd Winner Nick (optional)"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="file"
-              id="add-second-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div id="add-second-winner-deck-preview" style="display: none"></div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="add-second-winner-name">2nd Winner Nick</label>
+              <input type="text" id="add-second-winner-name" placeholder="Optional" />
+            </div>
+            <div class="form-section" style="margin: 0;">
+              <span class="form-section-title">2nd Winner Deck Image</span>
+              <input type="file" id="add-second-winner-deck" accept="image/*" />
+              <div id="add-second-winner-deck-preview" style="display: none"></div>
+            </div>
           </div>
 
-          <!-- 3RD WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >3rd Winner Deck Image:</span
-            >
-            <input
-              type="text"
-              id="add-third-winner-name"
-              placeholder="3rd Winner Nick (optional)"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="file"
-              id="add-third-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div id="add-third-winner-deck-preview" style="display: none"></div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="add-third-winner-name">3rd Winner Nick</label>
+              <input type="text" id="add-third-winner-name" placeholder="Optional" />
+            </div>
+            <div class="form-section" style="margin: 0;">
+              <span class="form-section-title">3rd Winner Deck Image</span>
+              <input type="file" id="add-third-winner-deck" accept="image/*" />
+              <div id="add-third-winner-deck-preview" style="display: none"></div>
+            </div>
           </div>
 
-          <!-- COMMEMORATE PHOTOS -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >Commemorate Photos (multiple allowed):</span
-            >
-            <input
-              type="file"
-              id="add-commemorate-photos"
-              accept="image/*"
-              multiple
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div
-              id="add-commemorate-photos-preview"
-              style="display: flex; flex-wrap: wrap; gap: 8px"
-            ></div>
+          <div class="form-section">
+            <span class="form-section-title">Commemorate Photos (multiple)</span>
+            <input type="file" id="add-commemorate-photos" accept="image/*" multiple />
+            <div id="add-commemorate-photos-preview" style="display: flex; flex-wrap: wrap; gap: 8px"></div>
           </div>
 
-          <div
-            style="
-              text-align: center;
-              color: var(--text-dim);
-              font-size: 12px;
-              font-weight: 700;
-            "
-          >
-            — OR —
-          </div>
+          <div style="text-align: center; color: var(--text-dim); font-size: 12px; font-weight: 700;">— OR —</div>
 
-          <!-- PASTE CODE -->
-          <textarea
-            id="add-deck-code"
-            placeholder="Paste Base64 Deck Code Here..."
-            rows="3"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-              font-family: monospace;
-            "
-          ></textarea>
+          <div class="form-field">
+            <label for="add-deck-code">Paste Base64 Deck Code</label>
+            <textarea id="add-deck-code" placeholder="Paste code here..." rows="3" style="font-family: monospace;"></textarea>
+          </div>
 
           <button
             id="save-tournament-btn"
@@ -831,8 +648,9 @@
         </div>
       </div>
     </div>
+    </div>
     <!-- UPDATE TOURNAMENT MODAL -->
-    <div id="update-modal" class="about-overlay">
+    <div id="update-modal" class="about-overlay" onclick="if (event.target === this) { this.classList.remove('open'); var i=this.querySelector('.about-modal'); if(i) i.classList.remove('open'); }">
       <div class="about-modal" style="max-width: 500px">
         <div class="about-header">
           <h3
@@ -848,320 +666,116 @@
           <button
             class="btn-close-modal"
             onclick="
-              document.getElementById('update-modal').classList.remove('open')
+              (function(){var m=document.getElementById('update-modal');m.classList.remove('open');var i=m.querySelector('.about-modal');if(i)i.classList.remove('open');})()
             "
           >
             ✕
           </button>
         </div>
-        <div
-          class="about-content"
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 80vh;
-            overflow-y: auto;
-          "
-        >
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="edit-event-name"
-              placeholder="Event Name (e.g. Weekly #3 + place)"
-              style="
-                flex: 2;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="date"
-              id="edit-date"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-          </div>
+        <div class="about-content">
+          <div class="admin-form">
+            <div class="form-row">
+              <div class="form-field">
+                <label for="edit-event-name">Event Name</label>
+                <input type="text" id="edit-event-name" placeholder="Weekly #3 + place" />
+              </div>
+              <div class="form-field">
+                <label for="edit-date">Date</label>
+                <input type="date" id="edit-date" />
+              </div>
+            </div>
 
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="edit-location"
-              placeholder="Location/Venue (e.g. Local Game Store)"
-              style="
-                flex: 2;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="number"
-              id="edit-players"
-              placeholder="Players"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-          </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="edit-location">Location / Venue</label>
+                <input type="text" id="edit-location" placeholder="Local Game Store" />
+              </div>
+              <div class="form-field">
+                <label for="edit-players">Players</label>
+                <input type="number" id="edit-players" placeholder="0" />
+              </div>
+            </div>
 
-          <div style="display: flex; gap: 12px">
-            <input
-              type="text"
-              id="edit-winner-name"
-              placeholder="Winner Name"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="text"
-              id="edit-deck-name"
-              placeholder="Oshi Name"
-              style="
-                flex: 1;
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <select
-              id="edit-theme-color"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-                font-family: &quot;nunito&quot;, sans-serif;
-              "
-            >
-              <option value="blue">Blue</option>
-              <option value="red">Red</option>
-              <option value="green">Green</option>
-              <option value="yellow">Yellow</option>
-              <option value="purple">Purple</option>
-              <option value="white">White</option>
-            </select>
-          </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="edit-winner-name">Winner Name</label>
+                <input type="text" id="edit-winner-name" placeholder="Winner" />
+              </div>
+              <div class="form-field">
+                <label for="edit-deck-name">Oshi Name</label>
+                <input type="text" id="edit-deck-name" placeholder="Oshi" />
+              </div>
+              <div class="form-field">
+                <label for="edit-theme-color">Theme Color</label>
+                <select id="edit-theme-color">
+                  <option value="blue">Blue</option>
+                  <option value="red">Red</option>
+                  <option value="green">Green</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="purple">Purple</option>
+                  <option value="white">White</option>
+                </select>
+              </div>
+            </div>
 
-          <input
-            type="url"
-            id="edit-youtube-link"
-            placeholder="YouTube Match Link URL"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          />
-          <textarea
-            id="edit-comments"
-            placeholder="Match history, player notes, or deck performance..."
-            rows="3"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-              font-family: &quot;nunito&quot;, sans-serif;
-            "
-          ></textarea>
+            <div class="form-field">
+              <label for="edit-youtube-link">YouTube Match Link</label>
+              <input type="url" id="edit-youtube-link" placeholder="https://youtube.com/..." />
+            </div>
 
-          <textarea
-            id="edit-meta-breakdown"
-            placeholder="Meta Breakdown (List decks here, e.g. 'Moona' on each line, or 'Moona: 5')"
-            rows="3"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-              font-family: &quot;nunito&quot;, sans-serif;
-            "
-          ></textarea>
+            <div class="form-field">
+              <label for="edit-comments">Match Notes</label>
+              <textarea id="edit-comments" placeholder="Match history, player notes, or deck performance..."></textarea>
+            </div>
 
-          <!-- DECK PHOTOS (4 UPLOADS) -->
-          <!-- 1ST WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >1st Winner Deck Image:</span
-            >
-            <input
-              type="file"
-              id="edit-first-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
+            <div class="form-field">
+              <label for="edit-meta-breakdown">Meta Breakdown</label>
+              <textarea id="edit-meta-breakdown" placeholder="List decks, e.g. 'Moona' per line or 'Moona: 5'"></textarea>
+            </div>
+
+          <!-- WINNER DECK PHOTOS -->
+          <div class="form-section">
+            <span class="form-section-title">1st Winner Deck Image</span>
+            <input type="file" id="edit-first-winner-deck" accept="image/*" />
             <div id="edit-first-winner-deck-preview" style="display: none"></div>
           </div>
 
-          <!-- 2ND WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >2nd Winner Deck Image:</span
-            >
-            <input
-              type="text"
-              id="edit-second-winner-name"
-              placeholder="2nd Winner Nick (optional)"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="file"
-              id="edit-second-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div id="edit-second-winner-deck-preview" style="display: none"></div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="edit-second-winner-name">2nd Winner Nick</label>
+              <input type="text" id="edit-second-winner-name" placeholder="Optional" />
+            </div>
+            <div class="form-section" style="margin: 0;">
+              <span class="form-section-title">2nd Winner Deck Image</span>
+              <input type="file" id="edit-second-winner-deck" accept="image/*" />
+              <div id="edit-second-winner-deck-preview" style="display: none"></div>
+            </div>
           </div>
 
-          <!-- 3RD WINNER DECK PHOTO -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >3rd Winner Deck Image:</span
-            >
-            <input
-              type="text"
-              id="edit-third-winner-name"
-              placeholder="3rd Winner Nick (optional)"
-              style="
-                padding: 12px 16px;
-                background: var(--navy-3);
-                color: var(--text-bright);
-                border: 1px solid var(--border-dim);
-                border-radius: 4px;
-              "
-            />
-            <input
-              type="file"
-              id="edit-third-winner-deck"
-              accept="image/*"
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div id="edit-third-winner-deck-preview" style="display: none"></div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="edit-third-winner-name">3rd Winner Nick</label>
+              <input type="text" id="edit-third-winner-name" placeholder="Optional" />
+            </div>
+            <div class="form-section" style="margin: 0;">
+              <span class="form-section-title">3rd Winner Deck Image</span>
+              <input type="file" id="edit-third-winner-deck" accept="image/*" />
+              <div id="edit-third-winner-deck-preview" style="display: none"></div>
+            </div>
           </div>
 
-          <!-- COMMEMORATE PHOTOS -->
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 6px;
-              background: var(--navy-3);
-              padding: 12px 16px;
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-            "
-          >
-            <span
-              style="color: var(--text-mid); font-size: 14px; font-weight: 700"
-              >Commemorate Photos (multiple allowed):</span
-            >
-            <input
-              type="file"
-              id="edit-commemorate-photos"
-              accept="image/*"
-              multiple
-              style="color: var(--text-bright); font-size: 14px; outline: none"
-            />
-            <div
-              id="edit-commemorate-photos-preview"
-              style="display: flex; flex-wrap: wrap; gap: 8px"
-            ></div>
+          <div class="form-section">
+            <span class="form-section-title">Commemorate Photos (multiple)</span>
+            <input type="file" id="edit-commemorate-photos" accept="image/*" multiple />
+            <div id="edit-commemorate-photos-preview" style="display: flex; flex-wrap: wrap; gap: 8px"></div>
           </div>
 
+          <div style="text-align: center; color: var(--text-dim); font-size: 12px; font-weight: 700;">— OR —</div>
 
-          <div
-            style="
-              text-align: center;
-              color: var(--text-dim);
-              font-size: 12px;
-              font-weight: 700;
-            "
-          >
-            — OR —
+          <div class="form-field">
+            <label for="edit-deck-code">Paste Base64 Deck Code</label>
+            <textarea id="edit-deck-code" placeholder="Paste code here..." rows="3" style="font-family: monospace;"></textarea>
           </div>
-
-          <textarea
-            id="edit-deck-code"
-            placeholder="Paste Base64 Deck Code Here..."
-            rows="3"
-            style="
-              padding: 12px 16px;
-              background: var(--navy-3);
-              color: var(--text-bright);
-              border: 1px solid var(--border-dim);
-              border-radius: 4px;
-              font-family: monospace;
-            "
-          ></textarea>
 
           <button
             id="save-update-btn"
@@ -1178,6 +792,7 @@
           </button>
         </div>
       </div>
+    </div>
     </div>
     <!-- ── FULLSCREEN IMAGE LIGHTBOX ── -->
     <div
@@ -1279,6 +894,20 @@
           toggle.setAttribute('aria-expanded', isOpen);
         }
       }
+    </script>
+    <script>
+      // Scroll focused input into view inside modals (keyboard fix for tablet)
+      (function() {
+        document.addEventListener('focusin', function(e) {
+          const t = e.target;
+          if (!t || !t.matches('input, textarea, select')) return;
+          const modal = t.closest('.about-modal, .bottom-sheet');
+          if (!modal) return;
+          setTimeout(function() {
+            try { t.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (err) {}
+          }, 250);
+        });
+      })();
     </script>
   </body>
 </html>

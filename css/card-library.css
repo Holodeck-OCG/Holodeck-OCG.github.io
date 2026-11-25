@@ -451,7 +451,7 @@ html,
         }
 
         .about-modal.open {
-          transform: translateY(0);
+          transform: translateY(0) !important;
         }
       }
       .btn-close-modal {

@@ -988,7 +988,7 @@ html,
   .about-modal.open,
   #visual-deck-modal.open,
   #test-hand-modal.open {
-    transform: translateY(0);
+    transform: translateY(0) !important;
   }
 }
 
