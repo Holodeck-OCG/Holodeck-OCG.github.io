@@ -1135,13 +1135,61 @@
       // Credentials are asked lazily (button click / submit time) instead of at
       // page load; the Firebase session persists afterwards, so later calls
       // with an already-signed-in user are a no-op.
+      // Custom masked password prompt (native prompt() shows plain text)
+      window.promptPassword = function (message) {
+        return new Promise((resolve) => {
+          const overlay = document.createElement("div");
+          overlay.style.cssText =
+            "position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;";
+          const box = document.createElement("div");
+          box.style.cssText =
+            "background:var(--navy-2);border:1px solid var(--border-mid);border-radius:12px;padding:20px;width:90%;max-width:360px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,0.8);";
+          const lbl = document.createElement("label");
+          lbl.textContent = message || "Password:";
+          lbl.style.cssText = "color:var(--text-bright);font-weight:700;font-size:14px;";
+          const inp = document.createElement("input");
+          inp.type = "password";
+          inp.placeholder = "••••••••";
+          inp.style.cssText =
+            "padding:12px 16px;background:var(--navy-3);color:var(--text-bright);border:1px solid var(--border-dim);border-radius:8px;font-size:16px;outline:none;font-family:inherit;";
+          const row = document.createElement("div");
+          row.style.cssText = "display:flex;gap:8px;justify-content:flex-end;";
+          const cancel = document.createElement("button");
+          cancel.textContent = "Cancel";
+          cancel.style.cssText =
+            "padding:10px 16px;background:transparent;border:1px solid var(--border-dim);color:var(--text-mid);border-radius:8px;cursor:pointer;font-weight:700;";
+          const ok = document.createElement("button");
+          ok.textContent = "OK";
+          ok.style.cssText =
+            "padding:10px 16px;background:var(--brand-main);border:none;color:#fff;border-radius:8px;cursor:pointer;font-weight:700;";
+          row.appendChild(cancel);
+          row.appendChild(ok);
+          box.appendChild(lbl);
+          box.appendChild(inp);
+          box.appendChild(row);
+          overlay.appendChild(box);
+          document.body.appendChild(overlay);
+          inp.focus();
+          function done(val) {
+            document.body.removeChild(overlay);
+            resolve(val);
+          }
+          ok.addEventListener("click", () => done(inp.value));
+          cancel.addEventListener("click", () => done(null));
+          inp.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") done(inp.value);
+            if (e.key === "Escape") done(null);
+          });
+        });
+      };
+
       window.ensureAdminLogin = async function (promptMessage) {
         if (auth.currentUser) return true;
 
         const email = prompt(promptMessage);
         if (!email) return false;
 
-        const password = prompt("Admin Password:");
+        const password = await window.promptPassword("Admin Password:");
         if (!password) return false;
 
         try {
