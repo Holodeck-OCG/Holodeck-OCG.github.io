@@ -227,9 +227,9 @@
         buttons.forEach((btn) => {
           const cardId = btn.getAttribute("data-card-id");
           if (savedCardIds.has(cardId)) {
-            btn.outerHTML = `<button class="btn-saved btn-add btn-bookmark-toggle" data-card-id="${cardId}" onclick="event.stopPropagation();">Γ£ô</button>`;
+            btn.outerHTML = `<button class="btn-saved btn-add btn-bookmark-toggle" data-card-id="${cardId}" onclick="event.stopPropagation();">✓</button>`;
           } else {
-            btn.outerHTML = `<button class="btn-add btn-bookmark-toggle" data-card-id="${cardId}" onclick='event.stopPropagation(); window.handleAddClick("${cardId}")'>Γÿå</button>`;
+            btn.outerHTML = `<button class="btn-add btn-bookmark-toggle" data-card-id="${cardId}" onclick='event.stopPropagation(); window.handleAddClick("${cardId}")'>☆</button>`;
           }
         });
       }
@@ -624,8 +624,8 @@
             formatSkillText(card);
 
           let btnHtml = isSaved
-            ? `<button class="btn-saved btn-add btn-bookmark-toggle" data-card-id="${card.card_id}" onclick="event.stopPropagation();">Γ£ô</button>`
-            : `<button class="btn-add btn-bookmark-toggle" data-card-id="${card.card_id}" onclick='event.stopPropagation(); window.handleAddClick("${card.card_id}")'>Γÿå</button>`;
+            ? `<button class="btn-saved btn-add btn-bookmark-toggle" data-card-id="${card.card_id}" onclick="event.stopPropagation();">✓</button>`
+            : `<button class="btn-add btn-bookmark-toggle" data-card-id="${card.card_id}" onclick='event.stopPropagation(); window.handleAddClick("${card.card_id}")'>☆</button>`;
 
           htmlBuilder += `
                   <div class="deck-history-item" style="border-left-color: ${typeColor};" onmouseenter="setPreview('${imagePath}')">
@@ -675,7 +675,7 @@
         countDisplay.innerText = deck.length;
 
         if (deck.length === 0) {
-          deckContainer.innerHTML = `<div class="empty-state">You haven't bookmarked any cards yet. Search for a card in the database and tap "Γÿå".</div>`;
+          deckContainer.innerHTML = `<div class="empty-state">You haven't bookmarked any cards yet. Search for a card in the database and tap "☆".</div>`;
           return;
         }
 

@@ -181,7 +181,7 @@
           ctrl.files.forEach((file, idx) => {
             const thumb = makeThumb(URL.createObjectURL(file));
             const name = makeCaption(file.name);
-            const remove = makeSmallButton("Γ£ò", () => {
+            const remove = makeSmallButton("✕", () => {
               ctrl.files.splice(idx, 1);
               ctrl.renderAdd();
             });
@@ -208,7 +208,7 @@
               if (!originals.includes(url))
                 thumb.style.border = "2px solid var(--brand-main)";
               const caption = makeCaption(`Current #${idx + 1}`);
-              const remove = makeSmallButton("Γ£ò", () => {
+              const remove = makeSmallButton("✕", () => {
                 ctrl.listItems.splice(idx, 1);
                 ctrl.renderEdit();
               });
@@ -223,7 +223,7 @@
                 `New #${idx + 1}`,
                 "var(--holo-gold)",
               );
-              const remove = makeSmallButton("Γ£ò", () => {
+              const remove = makeSmallButton("✕", () => {
                 ctrl.files.splice(idx, 1);
                 ctrl.renderEdit();
               });
@@ -266,7 +266,7 @@
             );
           }
           preview.appendChild(
-            makeSmallButton(ctrl.state === "new" ? "Γ£ò" : "Remove", () => {
+            makeSmallButton(ctrl.state === "new" ? "✕" : "Remove", () => {
               if (ctrl.state === "new") {
                 ctrl.state = "existing";
                 ctrl.files = [];
