@@ -418,100 +418,104 @@
         return result;
       }
 
+      async function loadCsvCards(fileName) {
+        try {
+          const response = await fetch(fileName);
+          if (!response.ok) return [];
+          const text = await response.text();
+          if (
+            text.trim().toLowerCase().startsWith("<!doctype html") ||
+            text.trim().toLowerCase().startsWith("<html")
+          )
+            return [];
+          const rows = parseCSV(text);
+          if (rows.length < 2) return [];
+          const headers = rows[0].map((h) =>
+            h.replace(/"/g, "").trim().toLowerCase(),
+          );
+          let typeIdx = 3,
+            hpIdx = 6,
+            tagsIdx = -1,
+            textIdx = 8;
+          for (let i = 0; i < headers.length; i++) {
+            if (headers[i].includes("type")) typeIdx = i;
+            if (headers[i].includes("life") || headers[i].includes("hp"))
+              hpIdx = i;
+            if (headers[i].includes("tag")) tagsIdx = i;
+            if (headers[i].includes("text")) textIdx = i;
+          }
+          const out = [];
+          for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i];
+            if (cols.length < 3) continue;
+            const setCode = cols[0];
+            const nameRaw = cols[1];
+            if (
+              !setCode ||
+              !nameRaw ||
+              setCode.toLowerCase().includes("setcode")
+            )
+              continue;
+            const finalCardId = setCode.trim();
+            let cardName = nameRaw;
+            const match = nameRaw.match(/\((.*?)\)/);
+            if (match) cardName = match[1].trim();
+            const typeRaw = cols[typeIdx] || "";
+            let cardType = "Unknown",
+              bloomLevel = null;
+            if (typeRaw.toLowerCase().includes("holomem")) {
+              if (typeRaw.includes("Oshi")) cardType = "Oshi";
+              else {
+                cardType = "Holomem";
+                if (typeRaw.includes("Debut")) bloomLevel = "Debut";
+                if (typeRaw.includes("1st")) bloomLevel = "1st";
+                if (typeRaw.includes("2nd")) bloomLevel = "2nd";
+                if (typeRaw.includes("Spot")) bloomLevel = "Spot";
+              }
+            } else if (typeRaw.includes("Support")) cardType = "Support";
+            else if (typeRaw.includes("Cheer")) cardType = "Cheer";
+            const hpRaw = cols[hpIdx];
+            let hp = hpRaw ? parseInt(hpRaw.replace(/,/g, "")) : null;
+            let rawSkills = cols[textIdx] || "None";
+            let rawTags = tagsIdx !== -1 ? cols[tagsIdx] || "" : "";
+            let finalSkillsText = rawTags
+              ? `${rawTags} | ${rawSkills}`
+              : rawSkills;
+            out.push({
+              card_name: cardName,
+              card_type: cardType,
+              bloom_level: bloomLevel,
+              card_id: finalCardId,
+              hp: isNaN(hp) ? null : hp,
+              skills_text: finalSkillsText,
+              thumbnail: null,
+              raw_type: typeRaw.toLowerCase(),
+            });
+          }
+          return out;
+        } catch (error) {
+          return [];
+        }
+      }
+
       async function initializeDatabase() {
         let combinedDatabase = [];
         let seenIds = new Set();
-
-        for (const fileName of csvFilesToLoad) {
-          try {
-            const response = await fetch(fileName);
-            if (!response.ok) continue;
-            const text = await response.text();
-            if (
-              text.trim().toLowerCase().startsWith("<!doctype html") ||
-              text.trim().toLowerCase().startsWith("<html")
-            )
-              continue;
-
-            const rows = parseCSV(text);
-            if (rows.length < 2) continue;
-
-            const headers = rows[0].map((h) =>
-              h.replace(/"/g, "").trim().toLowerCase(),
-            );
-            let typeIdx = 3,
-              hpIdx = 6,
-              tagsIdx = -1,
-              textIdx = 8;
-            for (let i = 0; i < headers.length; i++) {
-              if (headers[i].includes("type")) typeIdx = i;
-              if (headers[i].includes("life") || headers[i].includes("hp"))
-                hpIdx = i;
-              if (headers[i].includes("tag")) tagsIdx = i;
-              if (headers[i].includes("text")) textIdx = i;
-            }
-
-            for (let i = 1; i < rows.length; i++) {
-              const cols = rows[i];
-              if (cols.length < 3) continue;
-
-              const setCode = cols[0];
-              const nameRaw = cols[1];
-              if (
-                !setCode ||
-                !nameRaw ||
-                setCode.toLowerCase().includes("setcode")
-              )
-                continue;
-
-              const finalCardId = setCode.trim();
-              if (seenIds.has(finalCardId)) continue;
-              seenIds.add(finalCardId);
-
-              let cardName = nameRaw;
-              const match = nameRaw.match(/\((.*?)\)/);
-              if (match) cardName = match[1].trim();
-
-              const typeRaw = cols[typeIdx] || "";
-              let cardType = "Unknown",
-                bloomLevel = null;
-
-              if (typeRaw.toLowerCase().includes("holomem")) {
-                if (typeRaw.includes("Oshi")) cardType = "Oshi";
-                else {
-                  cardType = "Holomem";
-                  if (typeRaw.includes("Debut")) bloomLevel = "Debut";
-                  if (typeRaw.includes("1st")) bloomLevel = "1st";
-                  if (typeRaw.includes("2nd")) bloomLevel = "2nd";
-                  if (typeRaw.includes("Spot")) bloomLevel = "Spot";
-                }
-              } else if (typeRaw.includes("Support")) cardType = "Support";
-              else if (typeRaw.includes("Cheer")) cardType = "Cheer";
-
-              const hpRaw = cols[hpIdx];
-              let hp = hpRaw ? parseInt(hpRaw.replace(/,/g, "")) : null;
-              let rawSkills = cols[textIdx] || "None";
-              let rawTags = tagsIdx !== -1 ? cols[tagsIdx] || "" : "";
-              let finalSkillsText = rawTags
-                ? `${rawTags} | ${rawSkills}`
-                : rawSkills;
-
-              combinedDatabase.push({
-                card_name: cardName,
-                card_type: cardType,
-                bloom_level: bloomLevel,
-                card_id: finalCardId,
-                hp: isNaN(hp) ? null : hp,
-                skills_text: finalSkillsText,
-                thumbnail: null,
-                raw_type: typeRaw.toLowerCase(),
-              });
-            }
-          } catch (error) {}
+        // Fetch all card-pool CSVs in parallel instead of one-by-one.
+        const results = await Promise.all(
+          csvFilesToLoad.map((fileName) => loadCsvCards(fileName)),
+        );
+        for (const cards of results) {
+          for (const card of cards) {
+            if (seenIds.has(card.card_id)) continue;
+            seenIds.add(card.card_id);
+            combinedDatabase.push(card);
+          }
         }
-
         masterCardPool = combinedDatabase;
-        masterCardPool.sort((a, b) => a.card_id.localeCompare(b.card_id));
+        masterCardPool.sort((a, b) =>
+          a.card_id.localeCompare(b.card_id),
+        );
         await fetchTournaments();
       }
 
