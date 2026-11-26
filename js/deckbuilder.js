@@ -778,7 +778,7 @@
               <div class="card-item ${premiumClass}" tabindex="0" data-id="${card.card_id}" data-name="${card.card_name}" onclick="addCardToDeck('${card.card_id}')">
                   
                   <div class="card-face ${typeClass} grid-element">
-                      <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                      <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                       <i class="ti ${iconClass}"></i>
                       <span class="face-label">${type.toUpperCase()}</span>
                   </div>
@@ -805,7 +805,7 @@
 
                   <div class="list-header list-element" onclick="event.stopPropagation(); toggleAccordion(this)">
                       <div class="list-thumb ${typeClass}">
-                          <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                          <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                       </div>
                       <div class="list-info">
                           <div class="list-name">${level}${card.card_name}</div>
@@ -819,7 +819,7 @@
                   <div class="list-content list-element">
                       <div class="list-content-inner">
                           <div class="list-full-img">
-                              <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                              <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                           </div>
                           <div class="list-details">
                               ${formattedTagsHtml}
@@ -1035,7 +1035,7 @@
               <div class="card-item ${premiumClass}" tabindex="0" data-id="${card.card_id}" data-name="${card.card_name}" onclick="addCardToDeck('${card.card_id}')">
                   
                   <div class="card-face ${typeClass} grid-element">
-                      <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                      <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                       <i class="ti ${iconClass}"></i>
                       <span class="face-label">${type.toUpperCase()}</span>
                   </div>
@@ -1061,7 +1061,7 @@
 
                   <div class="list-header list-element" onclick="event.stopPropagation(); toggleAccordion(this)">
                       <div class="list-thumb ${typeClass}">
-                          <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                          <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                       </div>
                       <div class="list-info">
                           <div class="list-name">${level}${card.card_name}</div>
@@ -1074,7 +1074,7 @@
                   <div class="list-content list-element">
                       <div class="list-content-inner">
                           <div class="list-full-img">
-                              <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                              <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                           </div>
                           <div class="list-details">
                               ${formattedTagsHtml}
@@ -1480,7 +1480,7 @@
             <div class="card-item fade-in ${premiumClass}">
                 ${qtyBadge}
                 <div class="card-face ${typeClass} grid-element">
-                    <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                    <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                     <i class="ti ${iconClass}"></i>
                     <span class="face-label">${card.card_type.toUpperCase()}</span>
                 </div>
@@ -1624,7 +1624,7 @@
             htmlBuilder += `
                   <div class="card-item ${premiumClass}" style="width: 200px; min-height: 280px;">
                       <div class="card-face ${typeClass} grid-element">
-                          <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.style.display='none'" />
+                          <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.style.display='none'" />
                           <i class="ti ${iconClass}"></i>
                           <span class="face-label">${card.card_type.toUpperCase()}</span>
                       </div>

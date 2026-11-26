@@ -618,7 +618,7 @@
             ? card.thumbnail
             : `images/${setPrefix}/${card.card_id}.webp`;
 
-          const imgTag = `<img src="${imagePath}" loading="lazy" class="card-thumb" onerror="this.onerror=null; this.outerHTML='<div class=\\'card-thumb\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; font-size:10px; color:#777;\\'>IMG</div>';"/>`;
+          const imgTag = `<img src="${imagePath}" loading="lazy" decoding="async" class="card-thumb" onerror="this.onerror=null; this.outerHTML='<div class=\\'card-thumb\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; font-size:10px; color:#777;\\'>IMG</div>';"/>`;
 
           const { formattedTagsHtml, formattedSkillHtml, formattedArtsHtml } =
             formatSkillText(card);
@@ -689,7 +689,7 @@
           const imagePath = card.thumbnail
             ? card.thumbnail
             : `images/${setPrefix}/${card.card_id}.webp`;
-          const imgTag = `<img src="${imagePath}" loading="lazy" class="card-thumb" onerror="this.onerror=null; this.outerHTML='<div class=\\'card-thumb\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; font-size:10px; color:#777;\\'>IMG</div>';"/>`;
+          const imgTag = `<img src="${imagePath}" loading="lazy" decoding="async" class="card-thumb" onerror="this.onerror=null; this.outerHTML='<div class=\\'card-thumb\\' style=\\'background:#333; display:flex; align-items:center; justify-content:center; font-size:10px; color:#777;\\'>IMG</div>';"/>`;
           const { formattedTagsHtml, formattedSkillHtml, formattedArtsHtml } =
             formatSkillText(card);
 

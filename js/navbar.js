@@ -7,7 +7,7 @@ const NAVBAR_HTML = `
 <header class="topbar">
   <nav id="navbar-placeholder">
     <a href="index.html" class="logo" aria-label="Holodeck OCG Home">
-      <img src="images/logo.webp" alt="Holodeck OCG" style="height: 32px;">
+      <img src="images/logo.webp" alt="Holodeck OCG" style="height: 32px;" decoding="async">
     </a>
     
     <div class="tabs">

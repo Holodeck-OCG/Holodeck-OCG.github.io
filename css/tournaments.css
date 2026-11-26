@@ -433,8 +433,8 @@
           26,
           0.5
         ); /* 👉 Changed alpha from 0.95 to 0.5 */
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
         opacity: 0;
         transition: opacity 0.2s ease;
         padding: 14px;
@@ -663,7 +663,7 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(3px);
+        backdrop-filter: blur(2px);
         z-index: 1999;
         opacity: 0;
         pointer-events: none;
@@ -741,7 +741,7 @@
         justify-content: center;
         cursor: pointer;
         transition: 0.2s;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(2px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
       }
       .btn-alt-toggle:hover {

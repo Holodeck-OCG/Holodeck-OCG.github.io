@@ -136,6 +136,7 @@
           const img = document.createElement("img");
           img.src = src;
           img.alt = "Photo preview";
+          img.decoding = "async";
           img.style.cssText =
             "height: 64px; width: auto; max-width: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-dim); cursor: pointer;";
           img.onclick = () => window.openDeckImage(src);
@@ -983,6 +984,7 @@
           img.src = url;
           img.alt = "Commemorative Photo";
           img.loading = "lazy";
+          img.decoding = "async";
           img.title = "Click to enlarge";
           img.style.cssText =
             "width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-dim); cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s;";
@@ -1030,6 +1032,7 @@
         img.alt = label;
         img.title = "Click to enlarge";
         img.loading = "lazy";
+        img.decoding = "async";
         img.style.cssText =
           "max-width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); cursor: pointer; transition: transform 0.2s;";
         img.onclick = () => window.openDeckImage(url);
@@ -1086,7 +1089,7 @@
       <div class="card-item fade-in" style="min-height: auto; aspect-ratio: 5/7; cursor: pointer;" onclick="window.openDeckImage('${imagePath}')">
           ${qtyBadge}
           <div class="card-face ${typeClass} grid-element">
-              <img src="${imagePath}" loading="lazy" />
+              <img src="${imagePath}" loading="lazy" decoding="async" />
               <span class="face-label">${card.card_type.toUpperCase()}</span>
           </div>
       </div>
@@ -1142,7 +1145,7 @@
         return new Promise((resolve) => {
           const overlay = document.createElement("div");
           overlay.style.cssText =
-            "position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;";
+            "position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;";
           const box = document.createElement("div");
           box.style.cssText =
             "background:var(--navy-2);border:1px solid var(--border-mid);border-radius:12px;padding:20px;width:90%;max-width:360px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,0.8);";
@@ -1345,7 +1348,7 @@
             } else if (ctrl.state === "removed" && existing) {
               updates[`winner.${dbKey}`] = null;
             }
-            // "existing" / "empty" ΓåÆ omit, keeping the value already stored.
+            // "existing" / "empty" => omit, keeping the value already stored.
           }
 
           // The legacy field is superseded once the user explicitly changes the

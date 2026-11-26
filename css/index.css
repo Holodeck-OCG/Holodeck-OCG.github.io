@@ -620,8 +620,8 @@ html[data-theme="dark"] .badge.cheer {
   gap: 8px;
   padding: 14px;
   background: var(--overlay-bg);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -949,7 +949,7 @@ html[data-theme="dark"] .tl-hp {
   background: rgba(11, 17, 26, 0.82);
   color: var(--brand-main);
   cursor: pointer;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   transition: transform 0.18s var(--ease), background-color 0.18s var(--ease);
 }
@@ -1024,8 +1024,8 @@ html[data-theme="dark"] .tl-hp {
   inset: 0;
   z-index: 1999;
   background: rgba(4, 10, 18, 0.55);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s var(--ease);

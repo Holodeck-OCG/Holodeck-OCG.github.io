@@ -34,6 +34,7 @@ function fileToBase64(file) {
 function generateThumbnail(base64Image) {
   return new Promise((resolve) => {
     const img = new Image();
+    img.decoding = "async";
     img.onload = () => {
       const canvas = document.createElement("canvas");
       const size = 64;
@@ -208,7 +209,7 @@ function renderHistory() {
     const arts = escapeHtml(card.arts_text || "None");
 
     const imgTag = card.thumbnail
-      ? `<img src="${card.thumbnail}" class="history-thumb" alt="thumb"/>`
+      ? `<img src="${card.thumbnail}" class="history-thumb" alt="thumb" decoding="async"/>`
       : `<div class="history-thumb" style="background:#333;"></div>`;
 
     const parsedSkill = parseSkillText(card.skills_text);

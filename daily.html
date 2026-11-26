@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
-    <link rel="stylesheet" href="css/component.css?v=4" />
+    <link rel="stylesheet" href="css/component.css?v=5" />
     <link rel="stylesheet" href="css/theme.css" />
     <link rel="stylesheet" href="css/daily.css">
     <link rel="stylesheet" href="css/polish.css" />
@@ -350,7 +350,7 @@
         if (currentQuizMode === 'visual') {
             const setPrefix = correctCard.card_id.split('-')[0];
             const imagePath = `images/${setPrefix}/${correctCard.card_id}.webp`;
-            displayArea.innerHTML = `<img id="quiz-art" src="${imagePath}" class="quiz-image silhouette-mode" onerror="this.src=''; this.alt='Image not found'; this.classList.remove('silhouette-mode');" />`;
+            displayArea.innerHTML = `<img id="quiz-art" src="${imagePath}" decoding="async" class="quiz-image silhouette-mode" onerror="this.src=''; this.alt='Image not found'; this.classList.remove('silhouette-mode');" />`;
         } else {
             let hiddenText = correctCard.skills_text;
             let allNames = [...new Set(masterCardPool.map(c => c.card_name))].filter(n => n.length > 2).sort((a, b) => b.length - a.length);
@@ -460,7 +460,7 @@
         if (mode === 'visual') {
             const setPrefix = correctCard.card_id.split('-')[0];
             const imagePath = `images/${setPrefix}/${correctCard.card_id}.webp`;
-            displayArea.innerHTML = `<img id="quiz-art" src="${imagePath}" class="quiz-image silhouette-mode" onerror="this.src=''; this.alt='Image not found'; this.classList.remove('silhouette-mode');" />`;
+            displayArea.innerHTML = `<img id="quiz-art" src="${imagePath}" decoding="async" class="quiz-image silhouette-mode" onerror="this.src=''; this.alt='Image not found'; this.classList.remove('silhouette-mode');" />`;
         } else {
             let hiddenText = correctCard.skills_text;
 

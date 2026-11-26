@@ -722,7 +722,7 @@ function buildCardHtml(card, isSaved) {
             <div class="card-item ${premiumClass}" tabindex="0" data-id="${safeId}" data-name="${safeName}" onclick="tapToggle(this)" onmouseleave="this.classList.remove('hide-translation')">
                 ${altToggleHtml}
                 <div class="card-face ${typeClass} grid-element">
-                    <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                    <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                     <i class="ti ${iconClass}"></i>
                     <span class="face-label">${type.toUpperCase()}</span>
                 </div>
@@ -754,7 +754,7 @@ function buildCardHtml(card, isSaved) {
 
                 <div class="list-header list-element" onclick="event.stopPropagation(); toggleAccordion(this)">
                     <div class="list-thumb ${typeClass}">
-                        <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                        <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                     </div>
                     <div class="list-info">
                         <div class="list-name">${level}${safeName}</div>
@@ -768,7 +768,7 @@ function buildCardHtml(card, isSaved) {
                 <div class="list-content list-element">
                     <div class="list-content-inner">
                         <div class="list-full-img">
-                            <img src="${imagePath}" loading="lazy" onerror="this.onerror=null; this.src='${fallbackImage}'" />
+                            <img src="${imagePath}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackImage}'" />
                         </div>
                         <div class="list-details">
                             ${formattedTagsHtml}
