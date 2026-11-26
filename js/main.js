@@ -491,11 +491,25 @@ document.addEventListener("DOMContentLoaded", () => {
   if (currentTheme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
+  syncThemeIcons();
 });
+
+// Keep every theme switch (navbar + mobile drawer) showing the right icon
+function syncThemeIcons() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.querySelectorAll('.toggle-thumb i').forEach((icon) => {
+    icon.classList.toggle('ti-sun', !isDark);
+    icon.classList.toggle('ti-moon-stars', isDark);
+  });
+  document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
+    btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    btn.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+  });
+}
 
 document.addEventListener("click", (event) => {
   // .closest() ensures it works even if you click an icon inside the button
-  const themeToggle = event.target.closest('#theme-toggle');
+  const themeToggle = event.target.closest('.theme-toggle-btn');
   
   if (themeToggle) {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -503,12 +517,11 @@ document.addEventListener("click", (event) => {
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
       localStorage.setItem('theme', 'light');
-      console.log("Switched to Light Mode");
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('theme', 'dark');
-      console.log("Switched to Dark Mode");
     }
+    syncThemeIcons();
   }
 });
 function initNavbar(html) {
@@ -537,16 +550,18 @@ function initNavbar(html) {
   });
 
   // Initialize mobile drawer after navbar is injected
-  const drawerToggle = document.getElementById('mobile-drawer-toggle');
-  if (drawerToggle) {
-    drawerToggle.addEventListener('click', openMobileDrawer);
+  // (the burger already calls openMobileDrawer() from its inline onclick)
+  // Close on escape, bound once even if the navbar is re-injected
+  if (!initNavbar.keydownBound) {
+    document.addEventListener('keydown', handleDrawerKeydown);
+    initNavbar.keydownBound = true;
   }
-  // Close on escape
-  document.addEventListener('keydown', handleDrawerKeydown);
   // Dropdown toggles in drawer
   document.querySelectorAll('.mobile-drawer-nav .dropdown').forEach(dd => {
     dd.addEventListener('click', handleDrawerDropdown);
   });
+  // Keep the injected theme switches in sync with the active theme
+  syncThemeIcons();
 }
 
 // 1. Render immediately from sessionStorage if available (eliminates the blink)
@@ -556,7 +571,7 @@ if (cachedNavbar) {
 }
 
 // 2. Fetch fresh copy in background and update cache
-fetch("navbar.html")
+fetch("navbar.html?v=1.9.9")
   .then((response) => response.text())
   .then((data) => {
     sessionStorage.setItem("holodeck_navbar_html", data);

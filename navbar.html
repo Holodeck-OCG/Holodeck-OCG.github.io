@@ -1,13 +1,6 @@
 <header class="topbar">
   <div class="topbar-left">
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        align-items: center;
-      "
-    >
+    <div class="topbar-brand">
       <a href="index.html" class="brand-logo">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +80,13 @@
     </nav>
   </div>
   <div class="topbar-right hide-on-mobile">
-    <button id="theme-toggle" class="theme-toggle-btn">
+    <button
+      id="theme-toggle"
+      class="theme-toggle-btn"
+      aria-label="Switch to dark theme"
+      aria-pressed="false"
+      type="button"
+    >
       <span class="toggle-track">
         <span class="toggle-thumb">
           <i id="theme-icon" class="ti ti-moon-stars"></i>
@@ -153,10 +152,10 @@
       <i class="ti ti-trophy" style="margin-right: 10px;"></i>
       <span>Winning Decks</span>
     </a>
-    <button id="theme-toggle" class="theme-toggle-btn" style="margin-top: 8px;">
+    <button class="theme-toggle-btn" style="margin-top: 8px" aria-label="Switch to dark theme" aria-pressed="false" type="button">
       <span class="toggle-track">
         <span class="toggle-thumb">
-          <i id="theme-icon" class="ti ti-moon-stars"></i>
+          <i class="ti ti-moon-stars" aria-hidden="true"></i>
         </span>
       </span>
     </button>

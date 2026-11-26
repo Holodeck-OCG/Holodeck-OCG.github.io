@@ -15,11 +15,11 @@
       href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
     />
     <link rel="icon" type="image/svg+xml" href="images/Holodeck-logo.svg.svg" />
-    <link rel="stylesheet" href="css/component.css?v=5" />
-    <link rel="stylesheet" href="css/theme.css" />
-    <link rel="stylesheet" href="css/index.css" />
-    <link rel="stylesheet" href="css/polish.css" />
-    <script src="js/polish.js" defer></script>
+    <link rel="stylesheet" href="css/theme.css?v=1.9.9" />
+    <link rel="stylesheet" href="css/component.css?v=1.9.9" />
+    <link rel="stylesheet" href="css/index.css?v=1.9.9" />
+    <link rel="stylesheet" href="css/polish.css?v=1.9.9" />
+    <script src="js/polish.js?v=1.9.9" defer></script>
   </head>
   <body>
     <div class="holo-bg-container">
@@ -239,6 +239,43 @@
               <div class="skeleton-card"></div>
               <div class="skeleton-card"></div>
             </div>
+            
+            <!-- Hero section shown when no cards are loaded and no filters active -->
+            <div id="hero-section" class="hero-section" style="display: none;">
+              <div class="hero-icon">
+                <i class="ti ti-database"></i>
+              </div>
+              <h2 class="hero-title">Welcome to hOCG DB</h2>
+              <p class="hero-subtitle">
+                Browse the complete Hololive Official Card Game database.
+                Search, filter, and bookmark your favorite cards.
+              </p>
+              <div class="hero-actions">
+                <button class="btn-action primary" onclick="document.getElementById('search-db-input').focus()">
+                  <i class="ti ti-search"></i> <span>Start Searching</span>
+                </button>
+                <button class="btn-action" onclick="setChipFilter('oshi', document.querySelector('.chip:nth-child(6)'))">
+                  <i class="ti ti-star"></i> <span>Oshi Cards</span>
+                </button>
+                <button class="btn-action" onclick="setChipFilter('_SR', document.querySelector('.chip:nth-child(14)'))">
+                  <i class="ti ti-crown"></i> <span>Super Rare</span>
+                </button>
+              </div>
+              <div class="hero-stats">
+                <div class="hero-stat">
+                  <span id="hero-total-cards" class="hero-stat-value">—</span>
+                  <span class="hero-stat-label">Total Cards</span>
+                </div>
+                <div class="hero-stat">
+                  <span id="hero-total-sets" class="hero-stat-value">—</span>
+                  <span class="hero-stat-label">Sets</span>
+                </div>
+                <div class="hero-stat">
+                  <span id="hero-total-rarities" class="hero-stat-value">—</span>
+                  <span class="hero-stat-label">Rarities</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -393,9 +430,9 @@
     >
       <i class="ti ti-arrow-up"></i>
     </button>
-    <script src="js/index.js"></script>
-    <script src="js/version.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/index.js?v=1.9.9"></script>
+    <script src="js/version.js?v=1.9.9"></script>
+    <script src="js/main.js?v=1.9.9"></script>
     <script>
       // Keyboard-aware bottom sheet
       (function() {
